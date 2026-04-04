@@ -5,3 +5,32 @@
   padding-bottom: 20px;
   color: var(--text-primary-color);
 }
+
+.ingredients_list {
+  max-height: 80%;
+  overflow-y: auto;
+}
+
+.ingredient_item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 10px;
+  padding-right: 2px;
+}
+
+.drag_item_prefix {
+  cursor: grab;
+}
+
+.order {
+  display: flex;
+  justify-content: flex-end;
+  gap: 40px;
+}
+
+.order_price {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
