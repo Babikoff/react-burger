@@ -1,0 +1,21 @@
+.order_details_card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 50px;
+  padding-top: 50px;
+  padding-bottom: 50px;
+}
+
+.order_number {
+  text-shadow:
+    0 0 10px rgb(120 120 255 / 90%),
+    0 10px 30px rgb(76 76 255 / 75%);
+}
+
+.message_block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}

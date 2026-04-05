@@ -32,10 +32,6 @@
   padding-right: 2px;
 }
 
-.drag_item_prefix {
-  cursor: grab;
-}
-
 .order {
   display: flex;
   justify-content: flex-end;

@@ -4,17 +4,29 @@ import {
   CurrencyIcon,
   DragIcon,
 } from '@krgaa/react-developer-burger-ui-components';
+import { useState } from 'react';
+
+import Modal from '../modal/modal.jsx';
+import OrderCard from './order-card/order-card.jsx';
 
 import styles from './burger-constructor.module.css';
 
 export const BurgerConstructor = ({ ingredients }) => {
   console.log(ingredients);
 
+  const [isOrderCardOpen, setIsOrderCardOpen] = useState(false);
+  const orderNumber = '034537'; //TODO: как-то получать с backend
+
   const chosenBun = ingredients.find((item) => item.type === 'bun');
   const bunInternals = ingredients.filter((item) => item.type !== 'bun');
 
   function handleOrderButtonClick() {
     console.log('Order');
+    setIsOrderCardOpen(true);
+  }
+
+  function handleCloseModal() {
+    setIsOrderCardOpen(false);
   }
 
   return (
@@ -33,9 +45,7 @@ export const BurgerConstructor = ({ ingredients }) => {
       <ul className={`${styles.ingredients_list} custom-scroll`}>
         {bunInternals.map((item) => (
           <li key={item._id} className={styles.ingredient_item}>
-            <div className={styles.drag_item_prefix}>
-              <DragIcon type="primary" />
-            </div>
+            <DragIcon type="primary" />
             <ConstructorElement
               text={item.name}
               type={item.type}
@@ -72,6 +82,11 @@ export const BurgerConstructor = ({ ingredients }) => {
           Оформить заказ
         </Button>
       </section>
+      {isOrderCardOpen && (
+        <Modal closeModal={handleCloseModal}>
+          <OrderCard orderNumber={orderNumber} />
+        </Modal>
+      )}
     </section>
   );
 };
