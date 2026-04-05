@@ -1,0 +1,34 @@
+.ingredient_details_card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 0 20px 60px;
+}
+
+.inredient_header {
+  text-align: center;
+}
+
+.inredient_params {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.ingredient_param {
+  min-width: 0;
+  text-align: center;
+}
+
+.inredient_text {
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
