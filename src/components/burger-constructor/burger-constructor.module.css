@@ -5,3 +5,35 @@
   padding-bottom: 20px;
   color: var(--text-primary-color);
 }
+
+.bun {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+  box-sizing: border-box;
+}
+
+.ingredients_list {
+  max-height: 70%;
+  overflow-y: auto;
+  list-style-type: none;
+}
+
+.ingredient_item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.order {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 40px;
+}
+
+.order_price {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}

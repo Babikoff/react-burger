@@ -13,3 +13,8 @@
   text-align: center;
   list-style-type: none;
 }
+
+.ingredient_groups {
+  max-height: 80%;
+  overflow-y: auto;
+}
