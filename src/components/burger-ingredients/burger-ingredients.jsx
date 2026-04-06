@@ -2,7 +2,7 @@ import { Tab } from '@krgaa/react-developer-burger-ui-components';
 import { useMemo, useState, useRef } from 'react';
 
 import Modal from '../modal/modal.jsx';
-import IngredientDetailsCard from './ingredient-details-card/ingredient-details-card.jsx';
+import IngredientDetails from './ingredient-details/ingredient-details.jsx';
 import IngredientsGroup from './ingredients-group/ingredients-group.jsx';
 
 import styles from './burger-ingredients.module.css';
@@ -93,7 +93,7 @@ export const BurgerIngredients = ({ ingredients }) => {
       </section>
       {selectedIngredient && (
         <Modal header="Детали ингредиента" closeModal={handleCloseModal}>
-          <IngredientDetailsCard ingredient={selectedIngredient} />
+          <IngredientDetails ingredient={selectedIngredient} />
         </Modal>
       )}
     </section>

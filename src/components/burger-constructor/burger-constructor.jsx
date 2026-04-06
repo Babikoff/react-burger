@@ -7,7 +7,7 @@ import {
 import { useState } from 'react';
 
 import Modal from '../modal/modal.jsx';
-import OrderCard from './order-card/order-card.jsx';
+import OrderDetails from './order-details/order-details.jsx';
 
 import styles from './burger-constructor.module.css';
 
@@ -83,7 +83,7 @@ export const BurgerConstructor = ({ ingredients }) => {
       </section>
       {isOrderCardOpen && (
         <Modal closeModal={handleCloseModal}>
-          <OrderCard orderNumber={orderNumber} />
+          <OrderDetails orderNumber={orderNumber} />
         </Modal>
       )}
     </section>

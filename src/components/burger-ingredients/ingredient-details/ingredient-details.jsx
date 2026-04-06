@@ -1,6 +1,6 @@
-import styles from './ingredient-details-card.module.css';
+import styles from './ingredient-details.module.css';
 
-function IngredientDetailsCard({ ingredient }) {
+function IngredientDetails({ ingredient }) {
   return (
     <section className={styles.ingredient_details_card}>
       <img src={ingredient.image_large} alt={ingredient.name} />
@@ -61,4 +61,4 @@ function IngredientDetailsCard({ ingredient }) {
   );
 }
 
-export default IngredientDetailsCard;
+export default IngredientDetails;

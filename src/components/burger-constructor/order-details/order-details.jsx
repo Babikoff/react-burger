@@ -1,8 +1,8 @@
 import done from '../../../images/done.svg';
 
-import styles from './order-card.module.css';
+import styles from './order-details.module.css';
 
-function OrderCard({ orderNumber }) {
+function OrderDetails({ orderNumber }) {
   return (
     <section className={styles.order_details_card}>
       <h1 className={`${styles.order_number} text text_type_digits-large`}>
@@ -20,4 +20,4 @@ function OrderCard({ orderNumber }) {
   );
 }
 
-export default OrderCard;
+export default OrderDetails;
