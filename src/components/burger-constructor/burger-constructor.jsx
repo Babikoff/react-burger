@@ -20,7 +20,6 @@ export const BurgerConstructor = ({ ingredients }) => {
   const bunInternals = ingredients.filter((item) => item.type !== 'bun');
 
   function handleOrderButtonClick() {
-    console.log('Order');
     setIsOrderCardOpen(true);
   }
 

@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 import { AppHeader } from '@components/app-header/app-header';
 import { BurgerConstructor } from '@components/burger-constructor/burger-constructor';
 import { BurgerIngredients } from '@components/burger-ingredients/burger-ingredients';
-import { ingredientsApiUrl } from '@utils/consts.js';
 import { ingredients } from '@utils/ingredients';
+import { fetchIngredients } from '@utils/loadData.js';
 
 import styles from './app.module.css';
 
@@ -17,31 +17,44 @@ export const App = () => {
   });
 
   useEffect(() => {
-    function loadIngredientsData() {
-      setIngredientsData({ ...ingredientsData, isLoading: true, hasError: false });
-      return fetch(ingredientsApiUrl)
-        .then((result) => {
-          console.log(result);
-          if (!result.ok) {
-            result.reject(result.statusText);
-          }
-          return result.json();
-        })
-        .then((data) => {
-          console.log(data);
-          setIngredientsData({
-            ...ingredientsData,
+    let isComponentMounted = true;
+
+    async function loadIngredientsData() {
+      setIngredientsData((prevState) => ({
+        ...prevState,
+        isLoading: true,
+        hasError: false,
+      }));
+
+      try {
+        const data = await fetchIngredients();
+
+        if (isComponentMounted) {
+          setIngredientsData((prevState) => ({
+            ...prevState,
             ingredients: data,
             isLoading: false,
             hasError: false,
-          });
-        })
-        .catch((error) => {
-          console.log(error);
-          setIngredientsData({ ...ingredientsData, isLoading: false, hasError: true });
-        });
+          }));
+        }
+      } catch (error) {
+        console.error('Failed to load ingredients:', error);
+
+        if (isComponentMounted) {
+          setIngredientsData((prevState) => ({
+            ...prevState,
+            isLoading: false,
+            hasError: true,
+          }));
+        }
+      }
     }
+
     loadIngredientsData();
+
+    return () => {
+      isComponentMounted = false;
+    };
   }, []);
 
   return (
