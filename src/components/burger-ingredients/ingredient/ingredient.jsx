@@ -18,7 +18,7 @@ function Ingredient({ ingredient, onSelect }) {
       onKeyDown={handleListItemKeyDown}
     >
       <Counter count={1} />
-      <img src={ingredient.image} />
+      <img src={ingredient.image} alt={ingredient.name} />
       <div className={styles.ingredient_price}>
         <span className="text text_type_digits-default">{ingredient.price}</span>
         <CurrencyIcon type="primary" />

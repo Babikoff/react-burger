@@ -1,5 +1,5 @@
 import { Tab } from '@krgaa/react-developer-burger-ui-components';
-import { useState } from 'react';
+import { useMemo, useState, useRef } from 'react';
 
 import Modal from '../modal/modal.jsx';
 import IngredientDetailsCard from './ingredient-details-card/ingredient-details-card.jsx';
@@ -8,21 +8,44 @@ import IngredientsGroup from './ingredients-group/ingredients-group.jsx';
 import styles from './burger-ingredients.module.css';
 
 export const BurgerIngredients = ({ ingredients }) => {
-  console.log(ingredients);
-
   const [selectedTab, setSelectedTab] = useState('bun');
   const [selectedIngredient, setSelectedIngredient] = useState(null);
 
-  const bunsData = ingredients.filter((item) => item.type === 'bun');
-  const mainPartsData = ingredients.filter((item) => item.type === 'main');
-  const saucesData = ingredients.filter((item) => item.type === 'sauce');
+  // Разделим данные по группам и закешируем
+  const bunsData = useMemo(
+    () => ingredients.filter((item) => item.type === 'bun'),
+    [ingredients]
+  );
+  const mainPartsData = useMemo(
+    () => ingredients.filter((item) => item.type === 'main'),
+    [ingredients]
+  );
+  const saucesData = useMemo(
+    () => ingredients.filter((item) => item.type === 'sauce'),
+    [ingredients]
+  );
+
+  const bunGroupRef = useRef(null);
+  const mainPartsGroupRef = useRef(null);
+  const sauceGroupRef = useRef(null);
 
   function handleTabClick(eventSourceTab) {
     setSelectedTab(eventSourceTab);
+
+    switch (eventSourceTab) {
+      case 'bun':
+        bunGroupRef.current?.scrollIntoView({ behavior: 'smooth' });
+        break;
+      case 'main':
+        mainPartsGroupRef.current?.scrollIntoView({ behavior: 'smooth' });
+        break;
+      case 'sauce':
+        sauceGroupRef.current?.scrollIntoView({ behavior: 'smooth' });
+        break;
+    }
   }
 
   function handleSelectIngredient(ingredient) {
-    console.log('handleSelectIngredient', ingredient);
     setSelectedIngredient(ingredient);
   }
 
@@ -46,21 +69,27 @@ export const BurgerIngredients = ({ ingredients }) => {
         </ul>
       </nav>
       <section className={`${styles.ingredient_groups} custom-scroll`}>
-        <IngredientsGroup
-          title="Булки"
-          ingredients={bunsData}
-          onSelectIngredient={handleSelectIngredient}
-        />
-        <IngredientsGroup
-          title="Начинки"
-          ingredients={mainPartsData}
-          onSelectIngredient={handleSelectIngredient}
-        />
-        <IngredientsGroup
-          title="Соусы"
-          ingredients={saucesData}
-          onSelectIngredient={handleSelectIngredient}
-        />
+        <section ref={bunGroupRef}>
+          <IngredientsGroup
+            title="Булки"
+            ingredients={bunsData}
+            onSelectIngredient={handleSelectIngredient}
+          />
+        </section>
+        <section ref={mainPartsGroupRef}>
+          <IngredientsGroup
+            title="Начинки"
+            ingredients={mainPartsData}
+            onSelectIngredient={handleSelectIngredient}
+          />
+        </section>
+        <section ref={sauceGroupRef}>
+          <IngredientsGroup
+            title="Соусы"
+            ingredients={saucesData}
+            onSelectIngredient={handleSelectIngredient}
+          />
+        </section>
       </section>
       {selectedIngredient && (
         <Modal header="Детали ингредиента" closeModal={handleCloseModal}>

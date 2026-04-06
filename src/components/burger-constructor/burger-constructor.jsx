@@ -12,10 +12,9 @@ import OrderCard from './order-card/order-card.jsx';
 import styles from './burger-constructor.module.css';
 
 export const BurgerConstructor = ({ ingredients }) => {
-  console.log(ingredients);
-
   const [isOrderCardOpen, setIsOrderCardOpen] = useState(false);
   const orderNumber = '034537'; //TODO: как-то получать с backend
+  const totalPrice = '5678'; //TODO: вычислить
 
   const chosenBun = ingredients.find((item) => item.type === 'bun');
   const bunInternals = ingredients.filter((item) => item.type !== 'bun');
@@ -35,7 +34,7 @@ export const BurgerConstructor = ({ ingredients }) => {
         <header className={styles.bun}>
           <ConstructorElement
             type="top"
-            text={chosenBun.name}
+            text={`${chosenBun.name} (верх)`}
             price={chosenBun.price}
             thumbnail={chosenBun.image}
             isLocked={true}
@@ -60,7 +59,7 @@ export const BurgerConstructor = ({ ingredients }) => {
         <footer className={styles.bun}>
           <ConstructorElement
             type="bottom"
-            text={chosenBun.name}
+            text={`${chosenBun.name} (низ)`}
             price={chosenBun.price}
             thumbnail={chosenBun.image}
             isLocked={true}
@@ -70,7 +69,7 @@ export const BurgerConstructor = ({ ingredients }) => {
 
       <section className={styles.order}>
         <div className={styles.order_price}>
-          <span className="text text_type_digits-medium">totalPrice</span>
+          <span className="text text_type_digits-medium">{totalPrice}</span>
           <CurrencyIcon type="primary" />
         </div>
         <Button

@@ -6,11 +6,6 @@
   color: var(--text-primary-color);
 }
 
-.burger_parts {
-  display: flex;
-  flex-direction: column;
-}
-
 .bun {
   display: flex;
   justify-content: flex-end;
