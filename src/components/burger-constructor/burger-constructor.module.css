@@ -10,7 +10,7 @@
   display: flex;
   justify-content: flex-end;
   gap: 4px;
-  margin-right: 10px;
+  box-sizing: border-box;
 }
 
 .ingredients_list {
@@ -23,8 +23,6 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  margin-bottom: 10px;
-  padding-right: 2px;
 }
 
 .order {
@@ -32,7 +30,6 @@
   justify-content: flex-end;
   align-items: center;
   gap: 40px;
-  margin-top: 20px;
 }
 
 .order_price {

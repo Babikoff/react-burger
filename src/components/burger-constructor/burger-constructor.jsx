@@ -31,7 +31,7 @@ export const BurgerConstructor = ({ ingredients }) => {
   return (
     <section className={styles.burger_constructor}>
       {chosenBun && (
-        <header className={styles.bun}>
+        <header className={`${styles.bun} pl-15 pr-4`}>
           <ConstructorElement
             type="top"
             text={`${chosenBun.name} (верх)`}
@@ -43,7 +43,7 @@ export const BurgerConstructor = ({ ingredients }) => {
       )}
       <ul className={`${styles.ingredients_list} custom-scroll`}>
         {bunInternals.map((item) => (
-          <li key={item._id} className={styles.ingredient_item}>
+          <li key={item._id} className={`${styles.ingredient_item} mb-2 pr-1`}>
             <DragIcon type="primary" />
             <ConstructorElement
               text={item.name}
@@ -56,7 +56,7 @@ export const BurgerConstructor = ({ ingredients }) => {
         ))}
       </ul>
       {chosenBun && (
-        <footer className={styles.bun}>
+        <footer className={`${styles.bun} pl-15 pr-4`}>
           <ConstructorElement
             type="bottom"
             text={`${chosenBun.name} (низ)`}
@@ -67,7 +67,7 @@ export const BurgerConstructor = ({ ingredients }) => {
         </footer>
       )}
 
-      <section className={styles.order}>
+      <section className={`${styles.order} mt-4`}>
         <div className={styles.order_price}>
           <span className="text text_type_digits-medium">{totalPrice}</span>
           <CurrencyIcon type="primary" />

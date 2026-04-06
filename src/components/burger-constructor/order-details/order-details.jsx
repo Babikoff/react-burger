@@ -4,7 +4,7 @@ import styles from './order-details.module.css';
 
 function OrderDetails({ orderNumber }) {
   return (
-    <section className={styles.order_details_card}>
+    <section className={styles.order_details}>
       <h1 className={`${styles.order_number} text text_type_digits-large`}>
         {orderNumber}
       </h1>
