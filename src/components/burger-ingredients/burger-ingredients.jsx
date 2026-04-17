@@ -53,6 +53,28 @@ export const BurgerIngredients = ({ ingredients }) => {
     setSelectedIngredient(null);
   }
 
+  function adjustSelectedTab(tabName) {
+    if (selectedTab !== tabName) {
+      setSelectedTab(tabName);
+    }
+  }
+
+  function handleIngredientsScroll() {
+    const bunsGroupRect = bunGroupRef?.current?.getBoundingClientRect();
+    const mainPartsGroupRect = mainPartsGroupRef?.current?.getBoundingClientRect();
+    const sauceGroupRect = sauceGroupRef?.current?.getBoundingClientRect();
+
+    if (bunsGroupRect && mainPartsGroupRect && sauceGroupRect) {
+      if (bunsGroupRect.top > 0) {
+        adjustSelectedTab('bun');
+      } else if (mainPartsGroupRect.top > 0) {
+        adjustSelectedTab('main');
+      } else {
+        adjustSelectedTab('sauce');
+      }
+    }
+  }
+
   return (
     <section className={styles.burger_ingredients}>
       <nav>
@@ -68,7 +90,10 @@ export const BurgerIngredients = ({ ingredients }) => {
           </Tab>
         </ul>
       </nav>
-      <section className={`${styles.ingredient_groups} custom-scroll`}>
+      <section
+        className={`${styles.ingredient_groups} custom-scroll`}
+        onScroll={handleIngredientsScroll}
+      >
         <section ref={bunGroupRef}>
           <IngredientsGroup
             title="Булки"
