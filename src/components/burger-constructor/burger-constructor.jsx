@@ -6,25 +6,42 @@ import {
 } from '@krgaa/react-developer-burger-ui-components';
 import { useState } from 'react';
 
+import { useCreateOrderMutation } from '../../api/burgerApi.js';
 import Modal from '../modal/modal.jsx';
 import OrderDetails from './order-details/order-details.jsx';
 
 import styles from './burger-constructor.module.css';
 
 export const BurgerConstructor = ({ ingredients }) => {
+  const [orderNumber, setOrderNumber] = useState('');
   const [isOrderCardOpen, setIsOrderCardOpen] = useState(false);
-  const orderNumber = '034537'; //TODO: как-то получать с backend
+  const [isErrorMessageOpen, setIsErrorMessageOpen] = useState(false);
+  const [createOrderMutation] = useCreateOrderMutation();
+
   const totalPrice = '5678'; //TODO: вычислить
 
   const chosenBun = ingredients.find((item) => item.type === 'bun');
   const bunInternals = ingredients.filter((item) => item.type !== 'bun');
 
-  function handleOrderButtonClick() {
-    setIsOrderCardOpen(true);
+  async function handleOrderButtonClick() {
+    const response = await createOrderMutation();
+
+    if (response.data) {
+      setOrderNumber(response.data?.order?.number);
+      setIsOrderCardOpen(true);
+    } else if (response.error) {
+      console.log('Order creation error:', response.error); // Log the whole object
+      console.log(`Error details: ${JSON.stringify(response.error)}`);
+      setIsErrorMessageOpen(true);
+    }
   }
 
   function handleCloseModal() {
     setIsOrderCardOpen(false);
+  }
+
+  function handleCloseErrorMessage() {
+    setIsErrorMessageOpen(false);
   }
 
   return (
@@ -83,6 +100,13 @@ export const BurgerConstructor = ({ ingredients }) => {
       {isOrderCardOpen && (
         <Modal closeModal={handleCloseModal}>
           <OrderDetails orderNumber={orderNumber} />
+        </Modal>
+      )}
+      {isErrorMessageOpen && (
+        <Modal closeModal={handleCloseErrorMessage}>
+          <h2 className={`${styles.error_message} text text_type_main-large`}>
+            Произошла ошибка отправки данных.
+          </h2>
         </Modal>
       )}
     </section>

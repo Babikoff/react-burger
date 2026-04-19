@@ -37,3 +37,9 @@
   align-items: center;
   gap: 15px;
 }
+
+.error_message {
+  position: relative;
+  padding: 10px 100px;
+  text-align: center;
+}
