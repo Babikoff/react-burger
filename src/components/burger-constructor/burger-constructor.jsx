@@ -56,8 +56,11 @@ export const BurgerConstructor = ({ ingredients }) => {
     });
 
   function isOrderButtonDisabled() {
-    console.log(selectedBunFillings.length);
     return !selectedBun || !selectedBunFillings || selectedBunFillings.length <= 0;
+  }
+
+  function hasFillings() {
+    return selectedBunFillings && selectedBunFillings.length > 0;
   }
 
   async function handleOrderButtonClick() {
@@ -97,20 +100,40 @@ export const BurgerConstructor = ({ ingredients }) => {
 
   return (
     <section ref={dropTargetRef} className={styles.burger_constructor}>
-      {selectedBun && (
-        <header className={`${styles.bun} pl-15 pr-4`}>
+      <header className={`${styles.bun_block} pl-4 pr-2`}>
+        {selectedBun ? (
           <ConstructorElement
+            className={styles.bun}
             type="top"
-            text={`${selectedBun.name} (верх)`}
-            price={selectedBun.price}
-            thumbnail={selectedBun.image}
+            text={`${selectedBun?.name} (верх)`}
+            price={selectedBun?.price}
+            thumbnail={selectedBun?.image}
             isLocked={true}
           />
-        </header>
-      )}
-      <ul className={`${styles.ingredients_list} custom-scroll`}>
+        ) : (
+          <div
+            className={`${styles.emptyItem} ${styles.empty_bun} ${styles.empty_top_bun}`}
+          >
+            <div className="text text_type_main-small">Выберите булки</div>
+          </div>
+        )}
+      </header>
+      <ul className={`${styles.ingredients_list} pl-1 pr-8 custom-scroll`}>
+        {
+          // Вставляем заглушку "пустой ингредиент" во внутрь списка, чтобы не повторять его отступы
+          !hasFillings() && (
+            <li className={`${styles.ingredient_item} mt-2 mb-2 ml-7 mr-0`}>
+              <div className={`${styles.emptyItem} text text_type_main-small`}>
+                Выберите начинку
+              </div>
+            </li>
+          )
+        }
         {selectedBunFillings.map((ingredient) => (
-          <li key={ingredient.key} className={`${styles.ingredient_item} mb-2 pr-1`}>
+          <li
+            key={ingredient.key}
+            className={`${styles.ingredient_item} mt-2 mb-2 pr-1`}
+          >
             <DragIcon type="primary" />
             <ConstructorElement
               text={ingredient.name}
@@ -124,19 +147,25 @@ export const BurgerConstructor = ({ ingredients }) => {
           </li>
         ))}
       </ul>
-      {selectedBun && (
-        <footer className={`${styles.bun} pl-15 pr-4`}>
+      <footer className={`${styles.bun_block} pl-4 pr-2`}>
+        {selectedBun ? (
           <ConstructorElement
+            className={styles.bun}
             type="bottom"
-            text={`${selectedBun.name} (низ)`}
-            price={selectedBun.price}
-            thumbnail={selectedBun.image}
+            text={`${selectedBun?.name} (низ)`}
+            price={selectedBun?.price}
+            thumbnail={selectedBun?.image}
             isLocked={true}
           />
-        </footer>
-      )}
-
-      <section className={`${styles.order} mt-4`}>
+        ) : (
+          <div
+            className={`${styles.emptyItem} ${styles.empty_bun} ${styles.empty_bottom_bun}`}
+          >
+            <div className="text text_type_main-small">Выберите булки</div>
+          </div>
+        )}
+      </footer>
+      <section className={`${styles.order} mt-8 mr-10`}>
         <div className={styles.order_price}>
           <span className="text text_type_digits-medium">{totalPrice}</span>
           <CurrencyIcon type="primary" />
