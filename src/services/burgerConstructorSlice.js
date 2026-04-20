@@ -1,31 +1,39 @@
 import { createSlice, nanoid } from '@reduxjs/toolkit';
 
 const initialState = {
-  fillings: [],
+  bun: null,
+  bunFillings: [],
 };
 
 const burgerConstructorSlice = createSlice({
   name: 'burgerConstructorSlice',
   initialState,
   reducers: {
-    appendItem: {
+    setBun: (state, action) => {
+      state.bun = action.payload;
+    },
+    appendBunFilling: {
       reducer: (state, action) => {
-        state.fillings.push(action.payload);
+        state.bunFillings.push(action.payload);
       },
       prepare: (item) => {
         return { payload: { ...item, key: nanoid() } };
       },
     },
-    removeItem: (state, action) => {
+    removeBunFilling: (state, action) => {
       console.log('removeItem: ', action.payload);
-      state.fillings = state.fillings.filter((item) => item.key !== action.payload.key);
+      state.bunFillings = state.bunFillings.filter(
+        (item) => item.key !== action.payload.key
+      );
     },
-    removeAllItems: (state) => {
-      state.fillings = [];
+    clearAll: (state) => {
+      state.bun = null;
+      state.bunFillings = [];
     },
   },
 });
 
-export const { appendItem, removeItem, removeAllItems } = burgerConstructorSlice.actions;
+export const { setBun, appendBunFilling, removeBunFilling, clearAll } =
+  burgerConstructorSlice.actions;
 
 export default burgerConstructorSlice;

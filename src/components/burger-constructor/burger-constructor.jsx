@@ -10,9 +10,10 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { useCreateOrderMutation } from '../../api/burgerApi.js';
 import {
-  appendItem,
-  removeItem,
-  removeAllItems,
+  setBun,
+  appendBunFilling,
+  removeBunFilling,
+  clearAll,
 } from '../../services/burgerConstructorSlice.js';
 import { DndItemTypes } from '../../utils/consts.js';
 import Modal from '../modal/modal.jsx';
@@ -27,12 +28,12 @@ export const BurgerConstructor = ({ ingredients }) => {
 
   const [createOrderMutation] = useCreateOrderMutation();
 
-  const { fillings } = useSelector((state) => state.burgerConstructorSlice);
+  // Ссылки на булку и начинку в глобальном хранилище
+  const { bun: selectedBun, bunFillings: selectedBunFillings } = useSelector(
+    (state) => state.burgerConstructorSlice
+  );
 
   const totalPrice = '5678'; //TODO: вычислить
-
-  const chosenBun = ingredients.find((item) => item.type === 'bun');
-  const bunInternals = fillings;
 
   const dispatch = useDispatch();
 
@@ -42,16 +43,33 @@ export const BurgerConstructor = ({ ingredients }) => {
       drop(item) {
         const { ingredient } = item;
         console.log('dragged', ingredient);
-        dispatch(appendItem(ingredient));
-        ingredients = [...ingredients, ingredient];
+        if (ingredient.type === 'bun') {
+          dispatch(setBun(ingredient));
+        } else {
+          dispatch(appendBunFilling(ingredient));
+          ingredients = [...ingredients, ingredient];
+        }
       },
       collect: (monitor) => ({
         isOver: monitor.isOver(),
       }),
     });
 
+  function isOrderButtonDisabled() {
+    console.log(selectedBunFillings.length);
+    return !selectedBun || !selectedBunFillings || selectedBunFillings.length <= 0;
+  }
+
   async function handleOrderButtonClick() {
-    const response = await createOrderMutation();
+    if (isOrderButtonDisabled()) {
+      console.log('No data for order');
+      return;
+    }
+    const response = await createOrderMutation([
+      selectedBun._id,
+      ...selectedBunFillings.map((filling) => filling._id),
+      selectedBun._id,
+    ]);
 
     if (response.data) {
       setOrderNumber(response.data?.order?.number);
@@ -65,11 +83,11 @@ export const BurgerConstructor = ({ ingredients }) => {
 
   function removeIngredient(ingredient) {
     console.log('removing: ', ingredient);
-    dispatch(removeItem(ingredient));
+    dispatch(removeBunFilling(ingredient));
   }
 
   function handleCloseModal() {
-    dispatch(removeAllItems());
+    dispatch(clearAll());
     setIsOrderCardOpen(false);
   }
 
@@ -79,19 +97,19 @@ export const BurgerConstructor = ({ ingredients }) => {
 
   return (
     <section ref={dropTargetRef} className={styles.burger_constructor}>
-      {chosenBun && (
+      {selectedBun && (
         <header className={`${styles.bun} pl-15 pr-4`}>
           <ConstructorElement
             type="top"
-            text={`${chosenBun.name} (верх)`}
-            price={chosenBun.price}
-            thumbnail={chosenBun.image}
+            text={`${selectedBun.name} (верх)`}
+            price={selectedBun.price}
+            thumbnail={selectedBun.image}
             isLocked={true}
           />
         </header>
       )}
       <ul className={`${styles.ingredients_list} custom-scroll`}>
-        {bunInternals.map((ingredient) => (
+        {selectedBunFillings.map((ingredient) => (
           <li key={ingredient.key} className={`${styles.ingredient_item} mb-2 pr-1`}>
             <DragIcon type="primary" />
             <ConstructorElement
@@ -106,13 +124,13 @@ export const BurgerConstructor = ({ ingredients }) => {
           </li>
         ))}
       </ul>
-      {chosenBun && (
+      {selectedBun && (
         <footer className={`${styles.bun} pl-15 pr-4`}>
           <ConstructorElement
             type="bottom"
-            text={`${chosenBun.name} (низ)`}
-            price={chosenBun.price}
-            thumbnail={chosenBun.image}
+            text={`${selectedBun.name} (низ)`}
+            price={selectedBun.price}
+            thumbnail={selectedBun.image}
             isLocked={true}
           />
         </footer>
@@ -127,6 +145,7 @@ export const BurgerConstructor = ({ ingredients }) => {
           type="primary"
           size="large"
           htmlType="button"
+          disabled={isOrderButtonDisabled()}
           onClick={handleOrderButtonClick}
         >
           Оформить заказ
