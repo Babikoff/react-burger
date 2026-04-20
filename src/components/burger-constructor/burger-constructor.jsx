@@ -29,11 +29,11 @@ export const BurgerConstructor = ({ ingredients }) => {
   const [createOrderMutation] = useCreateOrderMutation();
 
   // Ссылки на булку и начинку в глобальном хранилище
-  const { bun: selectedBun, bunFillings: selectedBunFillings } = useSelector(
-    (state) => state.burgerConstructorSlice
-  );
-
-  const totalPrice = '5678'; //TODO: вычислить
+  const {
+    bun: selectedBun,
+    bunFillings: selectedBunFillings,
+    totalPrice,
+  } = useSelector((state) => state.burgerConstructorSlice);
 
   const dispatch = useDispatch();
 
