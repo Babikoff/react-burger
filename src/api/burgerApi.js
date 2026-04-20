@@ -25,7 +25,7 @@ export const burgerApi = createApi({
     }),
     createOrder: builder.mutation({
       query: () => ({
-        url: '/orders2',
+        url: '/orders',
         method: 'POST',
         body: JSON.stringify({
           ingredients: [

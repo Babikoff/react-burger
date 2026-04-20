@@ -12,7 +12,6 @@ const selectedIngredientSlice = createSlice({
   },
 });
 
-export const { setSelectedIngredient, clearSelectedIngredient } =
-  selectedIngredientSlice.actions;
+export const { setSelectedIngredient } = selectedIngredientSlice.actions;
 
 export default selectedIngredientSlice;

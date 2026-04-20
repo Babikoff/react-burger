@@ -1,4 +1,6 @@
 import { Preloader } from '@krgaa/react-developer-burger-ui-components';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
 import { AppHeader } from '@components/app-header/app-header';
 import { BurgerConstructor } from '@components/burger-constructor/burger-constructor';
@@ -22,7 +24,7 @@ export const App = () => {
     <div className={styles.app}>
       <AppHeader />
       {!isLoading && !hasError && (
-        <>
+        <DndProvider backend={HTML5Backend}>
           <h1 className={`${styles.title} text text_type_main-large mt-10 mb-5 pl-5`}>
             Соберите бургер
           </h1>
@@ -30,7 +32,7 @@ export const App = () => {
             <BurgerIngredients ingredients={ingredients.data} />
             <BurgerConstructor ingredients={ingredients.data} />
           </main>
-        </>
+        </DndProvider>
       )}
       {hasError && (
         <h2 className={`${styles.error_message} text text_type_main-large`}>

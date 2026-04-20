@@ -5,8 +5,16 @@ import {
   DragIcon,
 } from '@krgaa/react-developer-burger-ui-components';
 import { useState } from 'react';
+import { useDrop } from 'react-dnd';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { useCreateOrderMutation } from '../../api/burgerApi.js';
+import {
+  appendItem,
+  removeItem,
+  removeAllItems,
+} from '../../services/burgerConstructorSlice.js';
+import { DndItemTypes } from '../../utils/consts.js';
 import Modal from '../modal/modal.jsx';
 import OrderDetails from './order-details/order-details.jsx';
 
@@ -16,12 +24,31 @@ export const BurgerConstructor = ({ ingredients }) => {
   const [orderNumber, setOrderNumber] = useState('');
   const [isOrderCardOpen, setIsOrderCardOpen] = useState(false);
   const [isErrorMessageOpen, setIsErrorMessageOpen] = useState(false);
+
   const [createOrderMutation] = useCreateOrderMutation();
+
+  const { fillings } = useSelector((state) => state.burgerConstructorSlice);
 
   const totalPrice = '5678'; //TODO: вычислить
 
   const chosenBun = ingredients.find((item) => item.type === 'bun');
-  const bunInternals = ingredients.filter((item) => item.type !== 'bun');
+  const bunInternals = fillings;
+
+  const dispatch = useDispatch();
+
+  const [, /*{ draggedItemType, canDrop, isOver: isDraggingItemOver }*/ dropTargetRef] =
+    useDrop({
+      accept: DndItemTypes.Ingredient,
+      drop(item) {
+        const { ingredient } = item;
+        console.log('dragged', ingredient);
+        dispatch(appendItem(ingredient));
+        ingredients = [...ingredients, ingredient];
+      },
+      collect: (monitor) => ({
+        isOver: monitor.isOver(),
+      }),
+    });
 
   async function handleOrderButtonClick() {
     const response = await createOrderMutation();
@@ -36,7 +63,13 @@ export const BurgerConstructor = ({ ingredients }) => {
     }
   }
 
+  function removeIngredient(ingredient) {
+    console.log('removing: ', ingredient);
+    dispatch(removeItem(ingredient));
+  }
+
   function handleCloseModal() {
+    dispatch(removeAllItems());
     setIsOrderCardOpen(false);
   }
 
@@ -45,7 +78,7 @@ export const BurgerConstructor = ({ ingredients }) => {
   }
 
   return (
-    <section className={styles.burger_constructor}>
+    <section ref={dropTargetRef} className={styles.burger_constructor}>
       {chosenBun && (
         <header className={`${styles.bun} pl-15 pr-4`}>
           <ConstructorElement
@@ -58,15 +91,17 @@ export const BurgerConstructor = ({ ingredients }) => {
         </header>
       )}
       <ul className={`${styles.ingredients_list} custom-scroll`}>
-        {bunInternals.map((item) => (
-          <li key={item._id} className={`${styles.ingredient_item} mb-2 pr-1`}>
+        {bunInternals.map((ingredient) => (
+          <li key={ingredient.key} className={`${styles.ingredient_item} mb-2 pr-1`}>
             <DragIcon type="primary" />
             <ConstructorElement
-              text={item.name}
-              type={item.type}
-              price={item.price}
-              thumbnail={item.image}
+              text={ingredient.name}
+              type={ingredient.type}
+              price={ingredient.price}
+              thumbnail={ingredient.image}
               isLocked={false}
+              isDraggable={true}
+              handleClose={() => removeIngredient(ingredient)}
             />
           </li>
         ))}
