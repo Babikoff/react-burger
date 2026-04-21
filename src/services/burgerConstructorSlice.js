@@ -42,10 +42,25 @@ const burgerConstructorSlice = createSlice({
       state.bunsPrice = 0;
       state.totalPrice = 0;
     },
+    moveBunFilling: (state, action) => {
+      const { fromIndex, toIndex } = action.payload;
+      console.log(`swingBunFilling: ${action.payload} ${fromIndex} ${toIndex}`);
+
+      if (fromIndex < 0 || fromIndex >= state.bunFillings.length) {
+        throw new Error(`Index [${fromIndex}"] is out of array bounds`);
+      }
+      if (toIndex < 0 || toIndex >= state.bunFillings.length) {
+        throw new Error(`Index [${toIndex}] is out of array bounds`);
+      }
+
+      const movingItem = state.bunFillings[fromIndex];
+      state.bunFillings.splice(fromIndex, 1);
+      state.bunFillings.splice(toIndex, 0, movingItem);
+    },
   },
 });
 
-export const { setBun, appendBunFilling, removeBunFilling, clearAll } =
+export const { setBun, appendBunFilling, removeBunFilling, clearAll, moveBunFilling } =
   burgerConstructorSlice.actions;
 
 export default burgerConstructorSlice;
