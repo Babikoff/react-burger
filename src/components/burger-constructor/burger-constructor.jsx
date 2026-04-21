@@ -9,11 +9,13 @@ import { useDrop } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { useCreateOrderMutation } from '../../api/burgerApi.js';
+import withSwing from '../../hocs/with-swing.jsx';
 import {
   setBun,
   appendBunFilling,
   removeBunFilling,
   clearAll,
+  moveBunFilling,
 } from '../../services/burgerConstructorSlice.js';
 import { DndItemTypes } from '../../utils/consts.js';
 import Modal from '../modal/modal.jsx';
@@ -68,6 +70,7 @@ export const BurgerConstructor = ({ ingredients }) => {
       console.log('No data for order');
       return;
     }
+
     const response = await createOrderMutation([
       selectedBun._id,
       ...selectedBunFillings.map((filling) => filling._id),
@@ -97,6 +100,17 @@ export const BurgerConstructor = ({ ingredients }) => {
   function handleCloseErrorMessage() {
     setIsErrorMessageOpen(false);
   }
+
+  function handleItemMove(fromIndex, toIndex) {
+    console.log(`Moving ${fromIndex} to ${toIndex}`);
+    dispatch(moveBunFilling({ fromIndex, toIndex }));
+  }
+
+  const WithSwingConstructorElement = withSwing(
+    ConstructorElement,
+    DndItemTypes.ConstructorItem,
+    handleItemMove
+  );
 
   return (
     <section ref={dropTargetRef} className={styles.burger_constructor}>
@@ -129,13 +143,14 @@ export const BurgerConstructor = ({ ingredients }) => {
             </li>
           )
         }
-        {selectedBunFillings.map((ingredient) => (
+        {selectedBunFillings.map((ingredient, index) => (
           <li
             key={ingredient.key}
             className={`${styles.ingredient_item} mt-2 mb-2 pr-1`}
           >
             <DragIcon type="primary" />
-            <ConstructorElement
+            <WithSwingConstructorElement
+              itemIndex={index}
               text={ingredient.name}
               type={ingredient.type}
               price={ingredient.price}
