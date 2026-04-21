@@ -64,5 +64,28 @@ export const selectTotalPrice = createSelector(
   (fillingsTotalPrice, bunsPrice) => fillingsTotalPrice + bunsPrice
 );
 
+// Мемоизированный селектор для IngredientCount
+export const selectIngredientCount = createSelector(
+  [
+    (state) => state.burgerConstructorSlice.bunFillings,
+    (state) => state.burgerConstructorSlice.bun,
+    (state, ingredient) => ingredient,
+  ],
+  (items, bun, ingredient) => {
+    switch (ingredient.type) {
+      case 'bun':
+        return bun?._id === ingredient._id ? 2 : 0;
+      default:
+        return items.filter((item) => item._id === ingredient._id).length;
+    }
+  }
+);
+
+// Мемоизированный селектор для BunCount
+export const selectBunCount = createSelector(
+  [(state) => state.burgerConstructorSlice.bun, (state, id) => id],
+  (bun, id) => bun._id === id
+);
+
 export default burgerConstructorSlice;
 export const selectBurgerConstructorSlice = (state) => state.burgerConstructorSlice;

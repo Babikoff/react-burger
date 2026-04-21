@@ -1,11 +1,17 @@
 import { CurrencyIcon, Counter } from '@krgaa/react-developer-burger-ui-components';
 import { useDrag } from 'react-dnd';
+import { useSelector } from 'react-redux';
 
+import { selectIngredientCount } from '../../../services/burgerConstructorSlice.js';
 import { DndItemTypes } from '../../../utils/consts';
 
 import styles from './ingredient.module.css';
 
 function Ingredient({ ingredient, onSelect }) {
+  const ingredientCount = useSelector((state) =>
+    selectIngredientCount(state, ingredient)
+  );
+
   const [{ isDragging }, dragRef] = useDrag({
     type: DndItemTypes.Ingredient,
     item: { ingredient },
@@ -29,7 +35,7 @@ function Ingredient({ ingredient, onSelect }) {
       onClick={handleListItemClick}
       onKeyDown={handleListItemKeyDown}
     >
-      <Counter count={1} />
+      {ingredientCount > 0 && <Counter count={ingredientCount} />}
       <div>
         <img src={ingredient.image} alt={ingredient.name} />
         <div className={styles.ingredient_price}>

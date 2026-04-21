@@ -18,8 +18,6 @@ export const App = () => {
     isError: hasError = false,
   } = useGetIngredientsQuery();
 
-  console.log('api', ingredients);
-
   return (
     <div className={styles.app}>
       <AppHeader />
