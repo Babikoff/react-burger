@@ -1,0 +1,5 @@
+.indicate_can_drop {
+  border-width: 1px;
+  border-style: dashed;
+  border-color: blueviolet;
+}

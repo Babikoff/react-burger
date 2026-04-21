@@ -8,8 +8,8 @@ import { useState } from 'react';
 import { useDrop } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { useCreateOrderMutation } from '../../api/burgerApi.js';
-import withSwing from '../../hocs/with-swing.jsx';
+import withDragShift from '../../hocs/with-drag-shift.jsx';
+import { useCreateOrderMutation } from '../../services/burgerApi.js';
 import {
   setBun,
   appendBunFilling,
@@ -19,6 +19,7 @@ import {
 } from '../../services/burgerConstructorSlice.js';
 import { DndItemTypes } from '../../utils/consts.js';
 import Modal from '../modal/modal.jsx';
+import DragHowerIndicator from './drag-hower-indicator/drag-hower-indicator.jsx';
 import OrderDetails from './order-details/order-details.jsx';
 
 import styles from './burger-constructor.module.css';
@@ -39,23 +40,22 @@ export const BurgerConstructor = ({ ingredients }) => {
 
   const dispatch = useDispatch();
 
-  const [, /*{ draggedItemType, canDrop, isOver: isDraggingItemOver }*/ dropTargetRef] =
-    useDrop({
-      accept: DndItemTypes.Ingredient,
-      drop(item) {
-        const { ingredient } = item;
-        console.log('dragged', ingredient);
-        if (ingredient.type === 'bun') {
-          dispatch(setBun(ingredient));
-        } else {
-          dispatch(appendBunFilling(ingredient));
-          ingredients = [...ingredients, ingredient];
-        }
-      },
-      collect: (monitor) => ({
-        isOver: monitor.isOver(),
-      }),
-    });
+  const [{ isDraggingNewIngredient, draggingIngredientType }, dropTargetRef] = useDrop({
+    accept: DndItemTypes.Ingredient,
+    drop(item) {
+      const { ingredient } = item;
+      if (ingredient.type === 'bun') {
+        dispatch(setBun(ingredient));
+      } else {
+        dispatch(appendBunFilling(ingredient));
+        ingredients = [...ingredients, ingredient];
+      }
+    },
+    collect: (monitor) => ({
+      isDraggingNewIngredient: monitor.isOver() && monitor.canDrop(),
+      draggingIngredientType: monitor.getItem()?.ingredient?.type,
+    }),
+  });
 
   function isOrderButtonDisabled() {
     return !selectedBun || !selectedBunFillings || selectedBunFillings.length <= 0;
@@ -88,7 +88,6 @@ export const BurgerConstructor = ({ ingredients }) => {
   }
 
   function removeIngredient(ingredient) {
-    console.log('removing: ', ingredient);
     dispatch(removeBunFilling(ingredient));
   }
 
@@ -102,11 +101,10 @@ export const BurgerConstructor = ({ ingredients }) => {
   }
 
   function handleItemMove(fromIndex, toIndex) {
-    console.log(`Moving ${fromIndex} to ${toIndex}`);
     dispatch(moveBunFilling({ fromIndex, toIndex }));
   }
 
-  const WithSwingConstructorElement = withSwing(
+  const WithDragShiftConstructorElement = withDragShift(
     ConstructorElement,
     DndItemTypes.ConstructorItem,
     handleItemMove
@@ -125,11 +123,13 @@ export const BurgerConstructor = ({ ingredients }) => {
             isLocked={true}
           />
         ) : (
-          <div
+          <DragHowerIndicator
             className={`${styles.emptyItem} ${styles.empty_bun} ${styles.empty_top_bun}`}
+            dragItemTypeId={DndItemTypes.Ingredient}
+            isHover={isDraggingNewIngredient && draggingIngredientType === 'bun'}
           >
             <div className="text text_type_main-small">Выберите булки</div>
-          </div>
+          </DragHowerIndicator>
         )}
       </header>
       <ul className={`${styles.ingredients_list} pl-1 pr-8 custom-scroll`}>
@@ -137,9 +137,13 @@ export const BurgerConstructor = ({ ingredients }) => {
           // Вставляем заглушку "пустой ингредиент" во внутрь списка, чтобы не повторять его отступы
           !hasFillings() && (
             <li className={`${styles.ingredient_item} mt-2 mb-2 ml-7 mr-0`}>
-              <div className={`${styles.emptyItem} text text_type_main-small`}>
+              <DragHowerIndicator
+                className={`${styles.emptyItem} text text_type_main-small`}
+                dragItemTypeId={DndItemTypes.Ingredient}
+                isHover={isDraggingNewIngredient && draggingIngredientType !== 'bun'}
+              >
                 Выберите начинку
-              </div>
+              </DragHowerIndicator>
             </li>
           )
         }
@@ -149,7 +153,7 @@ export const BurgerConstructor = ({ ingredients }) => {
             className={`${styles.ingredient_item} mt-2 mb-2 pr-1`}
           >
             <DragIcon type="primary" />
-            <WithSwingConstructorElement
+            <WithDragShiftConstructorElement
               itemIndex={index}
               text={ingredient.name}
               type={ingredient.type}
@@ -173,11 +177,13 @@ export const BurgerConstructor = ({ ingredients }) => {
             isLocked={true}
           />
         ) : (
-          <div
+          <DragHowerIndicator
             className={`${styles.emptyItem} ${styles.empty_bun} ${styles.empty_bottom_bun}`}
+            dragItemTypeId={DndItemTypes.Ingredient}
+            isHover={isDraggingNewIngredient && draggingIngredientType === 'bun'}
           >
             <div className="text text_type_main-small">Выберите булки</div>
-          </div>
+          </DragHowerIndicator>
         )}
       </footer>
       <section className={`${styles.order} mt-8 mr-10`}>

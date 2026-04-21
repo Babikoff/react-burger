@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 
-function withSwing(Component, dragItemTypeId, handleItemMove) {
+function withDragShift(Component, dragItemTypeId, handleItemMove) {
   return function ComponentWithSwing(props) {
     const { itemId, itemIndex, ...internalItemProps } = props;
 
@@ -74,4 +74,4 @@ function withSwing(Component, dragItemTypeId, handleItemMove) {
   };
 }
 
-export default withSwing;
+export default withDragShift;

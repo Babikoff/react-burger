@@ -1,6 +1,6 @@
 import { combineSlices, configureStore as createStore } from '@reduxjs/toolkit';
 
-import { burgerApi } from '../api/burgerApi';
+import { burgerApi } from './burgerApi';
 import burgerConstructorSlice from './burgerConstructorSlice';
 import selectedIngredientSlice from './selectedIngredientSlice';
 

@@ -28,7 +28,6 @@ const burgerConstructorSlice = createSlice({
       },
     },
     removeBunFilling: (state, action) => {
-      console.log('removeItem: ', action.payload);
       state.bunFillings = state.bunFillings.filter(
         (item) => item.key !== action.payload.key
       );
@@ -44,7 +43,6 @@ const burgerConstructorSlice = createSlice({
     },
     moveBunFilling: (state, action) => {
       const { fromIndex, toIndex } = action.payload;
-      console.log(`swingBunFilling: ${action.payload} ${fromIndex} ${toIndex}`);
 
       if (fromIndex < 0 || fromIndex >= state.bunFillings.length) {
         throw new Error(`Index [${fromIndex}"] is out of array bounds`);
