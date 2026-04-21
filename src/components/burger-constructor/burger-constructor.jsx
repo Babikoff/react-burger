@@ -16,6 +16,7 @@ import {
   removeBunFilling,
   clearAll,
   moveBunFilling,
+  selectTotalPrice,
 } from '../../services/burgerConstructorSlice.js';
 import { DndItemTypes } from '../../utils/consts.js';
 import Modal from '../modal/modal.jsx';
@@ -32,11 +33,11 @@ export const BurgerConstructor = ({ ingredients }) => {
   const [createOrderMutation] = useCreateOrderMutation();
 
   // Ссылки на булку и начинку в глобальном хранилище
-  const {
-    bun: selectedBun,
-    bunFillings: selectedBunFillings,
-    totalPrice,
-  } = useSelector((state) => state.burgerConstructorSlice);
+  const { bun: selectedBun, bunFillings: selectedBunFillings } = useSelector(
+    (state) => state.burgerConstructorSlice
+  );
+
+  const totalPrice = useSelector(selectTotalPrice); // Мемоизированный селектор для TotalPrice
 
   const dispatch = useDispatch();
 
