@@ -7,7 +7,7 @@ function withSwing(Component, dragItemTypeId, handleItemMove) {
 
     const ref = useRef(null);
 
-    const [dragRef] = useDrag({
+    const [, dragRef] = useDrag({
       type: dragItemTypeId,
       item: { itemId, itemIndex },
       collect: (monitor) => ({
@@ -57,8 +57,10 @@ function withSwing(Component, dragItemTypeId, handleItemMove) {
           }
         }
 
-        if (nextIndex !== undefined && nextIndex !== draggingItemIndex)
+        if (nextIndex !== undefined && nextIndex !== draggingItemIndex) {
           handleItemMove(draggingItemIndex, nextIndex);
+          item.itemIndex = nextIndex;
+        }
       },
     });
 
