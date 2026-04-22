@@ -81,11 +81,5 @@ export const selectIngredientCount = createSelector(
   }
 );
 
-// Мемоизированный селектор для BunCount
-export const selectBunCount = createSelector(
-  [(state) => state.burgerConstructorSlice.bun, (state, id) => id],
-  (bun, id) => bun._id === id
-);
-
 export default burgerConstructorSlice;
 export const selectBurgerConstructorSlice = (state) => state.burgerConstructorSlice;

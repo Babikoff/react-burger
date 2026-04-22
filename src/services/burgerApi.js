@@ -8,6 +8,8 @@ const API_HEADERS = {
 
 export const burgerApi = createApi({
   reducerPath: 'burgerApi',
+
+  // Получение списка ингредиентов
   baseQuery: fetchBaseQuery({
     baseUrl: baseApiUrl,
     //TODO: аутентификация через prepareHeaders
@@ -17,6 +19,8 @@ export const burgerApi = createApi({
       }
     },
   }),
+
+  // Создание заказа
   endpoints: (builder) => ({
     getIngredients: builder.query({
       query: () => ({

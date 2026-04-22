@@ -4,7 +4,7 @@ import {
   CurrencyIcon,
   DragIcon,
 } from '@krgaa/react-developer-burger-ui-components';
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useDrop } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -32,12 +32,14 @@ export const BurgerConstructor = ({ ingredients }) => {
 
   const [createOrderMutation] = useCreateOrderMutation();
 
-  // Ссылки на булку и начинку в глобальном хранилище
-  const { bun: selectedBun, bunFillings: selectedBunFillings } = useSelector(
-    (state) => state.burgerConstructorSlice
+  // Ссылки на булку и начинку из глобального хранилища
+  const selectedBun = useSelector((state) => state.burgerConstructorSlice.bun);
+  const selectedBunFillings = useSelector(
+    (state) => state.burgerConstructorSlice.bunFillings
   );
 
-  const totalPrice = useSelector(selectTotalPrice); // Мемоизированный селектор для TotalPrice
+  // Мемоизированный селектор для TotalPrice
+  const totalPrice = useSelector(selectTotalPrice);
 
   const dispatch = useDispatch();
 
@@ -101,14 +103,19 @@ export const BurgerConstructor = ({ ingredients }) => {
     setIsErrorMessageOpen(false);
   }
 
-  function handleItemMove(fromIndex, toIndex) {
-    dispatch(moveBunFilling({ fromIndex, toIndex }));
-  }
+  // Мемоизируем callback для перестановки ингредиентов
+  const handleItemMove = useCallback(
+    (fromIndex, toIndex) => {
+      dispatch(moveBunFilling({ fromIndex, toIndex }));
+    },
+    [dispatch]
+  );
 
-  const WithDragShiftConstructorElement = withDragShift(
-    ConstructorElement,
-    DndItemTypes.ConstructorItem,
-    handleItemMove
+  // Мемоизируем HOC
+  const WithDragShiftConstructorElement = useMemo(
+    () =>
+      withDragShift(ConstructorElement, DndItemTypes.ConstructorItem, handleItemMove),
+    []
   );
 
   return (

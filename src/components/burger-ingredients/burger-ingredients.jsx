@@ -55,7 +55,6 @@ export const BurgerIngredients = ({ ingredients }) => {
 
   function handleCloseModal() {
     dispatch(setSelectedIngredient(null));
-    //dispatch(clearSelectedIngredient());
   }
 
   function adjustSelectedTab(tabName) {
