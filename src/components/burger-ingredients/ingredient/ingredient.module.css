@@ -6,6 +6,10 @@
   width: 270px;
 }
 
+.ingredient_dragging {
+  opacity: 0.2;
+}
+
 .ingredient_price {
   display: flex;
   align-items: center;
