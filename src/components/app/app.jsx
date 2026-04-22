@@ -28,7 +28,7 @@ export const App = () => {
           </h1>
           <main className={`${styles.main} pl-5 pr-5`}>
             <BurgerIngredients ingredients={ingredients.data} />
-            <BurgerConstructor ingredients={ingredients.data} />
+            <BurgerConstructor />
           </main>
         </DndProvider>
       )}

@@ -25,7 +25,7 @@ import OrderDetails from './order-details/order-details.jsx';
 
 import styles from './burger-constructor.module.css';
 
-export const BurgerConstructor = ({ ingredients }) => {
+export const BurgerConstructor = () => {
   const [orderNumber, setOrderNumber] = useState('');
   const [isOrderCardOpen, setIsOrderCardOpen] = useState(false);
   const [isErrorMessageOpen, setIsErrorMessageOpen] = useState(false);
@@ -51,7 +51,6 @@ export const BurgerConstructor = ({ ingredients }) => {
         dispatch(setBun(ingredient));
       } else {
         dispatch(appendBunFilling(ingredient));
-        ingredients = [...ingredients, ingredient];
       }
     },
     collect: (monitor) => ({

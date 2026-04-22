@@ -30,10 +30,14 @@ function withDragShift(Component, dragItemTypeId, handleItemMove) {
           return;
         }
 
-        // Получим координаты этого item-а
+        // Получим координаты данного элемента
         const thisItemRect = ref.current.getBoundingClientRect();
+
+        // и координаты перетаскиваемого
         const draggingItemRect = monitor.getSourceClientOffset();
 
+        // Определим направление движения и пересечение середины текущего элемента.
+        // При пересечении середины будем считать что требуется перемещение.
         let nextIndex = undefined;
         // Если тащим вниз
         if (draggingItemIndex < thisItemIndex) {
