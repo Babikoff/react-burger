@@ -1,43 +1,37 @@
-import { Preloader } from '@krgaa/react-developer-burger-ui-components';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
+import { Routes, Route } from 'react-router-dom';
 
 import { AppHeader } from '@components/app-header/app-header';
-import { BurgerConstructor } from '@components/burger-constructor/burger-constructor';
-import { BurgerIngredients } from '@components/burger-ingredients/burger-ingredients';
-
-import { useGetIngredientsQuery } from '../../services/burgerApi';
-
-import styles from './app.module.css';
+import { Home } from '@components/home/home';
+import { ForgotPasswordPage } from '@pages/forgot-password/forgot-password';
+import { LoginPage } from '@pages/login/login';
+import { NotFoundPage } from '@pages/not-found/not-found';
+import { RegisterPage } from '@pages/register/register';
+import { ResetPasswordPage } from '@pages/reset-password/reset-password';
 
 export const App = () => {
-  const {
-    data: ingredients = {},
-    isLoading = true,
-    isFetching = true,
-    isError: hasError = false,
-  } = useGetIngredientsQuery();
+  //   const {
+  //     data: ingredients = {},
+  //     isLoading = true,
+  //     isFetching = true,
+  //     isError: hasError = false,
+  //   } = useGetIngredientsQuery();
 
   return (
-    <div className={styles.app}>
+    <>
       <AppHeader />
-      {!isLoading && !hasError && (
-        <DndProvider backend={HTML5Backend}>
-          <h1 className={`${styles.title} text text_type_main-large mt-10 mb-5 pl-5`}>
-            Соберите бургер
-          </h1>
-          <main className={`${styles.main} pl-5 pr-5`}>
-            <BurgerIngredients ingredients={ingredients.data} />
-            <BurgerConstructor />
-          </main>
-        </DndProvider>
-      )}
-      {hasError && (
-        <h2 className={`${styles.error_message} text text_type_main-large`}>
-          Произошла ошибка загрузки данных.
-        </h2>
-      )}
-      {(isLoading || isFetching) && <Preloader />}
-    </div>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
+        {/* <Route
+          path="/login"
+          element={<ProtectedRoute onlyUnAuth component={<Login />} />}
+        />
+        <Route path="/profile" element={<ProtectedRoute component={<Profile />} />} /> */}
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </>
   );
 };

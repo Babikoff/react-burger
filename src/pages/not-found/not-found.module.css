@@ -1,0 +1,15 @@
+.container {
+  display: flex;
+  height: 100vh;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: auto;
+}
+
+.link {
+  color: var(--color-text);
+}
