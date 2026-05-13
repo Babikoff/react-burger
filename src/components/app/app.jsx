@@ -1,12 +1,13 @@
 import { Routes, Route } from 'react-router-dom';
 
+import { ForgotPasswordPage } from '@/pages/auth-pages/forgot-password/forgot-password';
+import { LoginPage } from '@/pages/auth-pages/login/login';
+import { NotFoundPage } from '@/pages/auth-pages/not-found/not-found';
+import { RegisterPage } from '@/pages/auth-pages/register/register';
+import { ResetPasswordPage } from '@/pages/auth-pages/reset-password/reset-password';
+import { Home } from '@/pages/home/home';
+import { IngredientDetailsPage } from '@/pages/ingredient-details/ingredient-details-page';
 import { AppHeader } from '@components/app-header/app-header';
-import { Home } from '@components/home/home';
-import { ForgotPasswordPage } from '@pages/forgot-password/forgot-password';
-import { LoginPage } from '@pages/login/login';
-import { NotFoundPage } from '@pages/not-found/not-found';
-import { RegisterPage } from '@pages/register/register';
-import { ResetPasswordPage } from '@pages/reset-password/reset-password';
 
 export const App = () => {
   //   const {
@@ -25,6 +26,7 @@ export const App = () => {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/ingredients/:ingredientId" element={<IngredientDetailsPage />} />
         {/* <Route
           path="/login"
           element={<ProtectedRoute onlyUnAuth component={<Login />} />}
