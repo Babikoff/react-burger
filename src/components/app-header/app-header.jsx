@@ -23,7 +23,7 @@ export const AppHeader = () => {
           </NavLink>
           <NavLink
             to="/feed"
-            className={`${currentPath.pathname === '/feed' ? styles.link_active : styles.link} ml-10`}
+            className={`${currentPath.pathname.startsWith('/feed') ? styles.link_active : styles.link} ml-10`}
           >
             <ListIcon type="secondary" />
             <p className="text text_type_main-default ml-2">Лента заказов</p>
@@ -34,7 +34,7 @@ export const AppHeader = () => {
         </div>
         <NavLink
           to="/profile"
-          className={`${currentPath.pathname === '/profile' ? styles.link_active : styles.link} ${styles.link_position_last}`}
+          className={`${currentPath.pathname.startsWith('/profile') ? styles.link_active : styles.link} ${styles.link_position_last}`}
         >
           <ProfileIcon type="secondary" />
           <p className="text text_type_main-default ml-2">Личный кабинет</p>
