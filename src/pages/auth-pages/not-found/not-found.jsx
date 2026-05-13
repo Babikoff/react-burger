@@ -1,4 +1,4 @@
-import pageNotFound from '../../images/404.svg';
+import pageNotFound from '../../../images/404.svg';
 
 import styles from './not-found.module.css';
 
