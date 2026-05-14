@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 
 import { ForgotPasswordPage } from '@/pages/auth-pages/forgot-password/forgot-password';
 import { LoginPage } from '@/pages/auth-pages/login/login';
@@ -10,20 +10,31 @@ import { IngredientDetailsPage } from '@/pages/ingredient-details/ingredient-det
 import { AppHeader } from '@components/app-header/app-header';
 
 import { useGetIngredientsQuery } from '../../services/burgerApi';
+import IngredientDetails from '../burger-ingredients/ingredient-details/ingredient-details.jsx';
+import Modal from '../modal/modal.jsx';
 
 export const App = () => {
   // Сразу стартуем загрузку данных
   useGetIngredientsQuery();
+  const location = useLocation();
+  const backgroundLocation = location.state?.backgroundLocation;
+
+  const navigate = useNavigate();
+
+  function handleCloseModal() {
+    navigate(-1);
+  }
 
   return (
     <>
       <AppHeader />
-      <Routes>
+      <Routes location={backgroundLocation || location}>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
+
         <Route path="/ingredients/:ingredientId" element={<IngredientDetailsPage />} />
         {/* <Route
           path="/login"
@@ -32,6 +43,19 @@ export const App = () => {
         <Route path="/profile" element={<ProtectedRoute component={<Profile />} />} /> */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
+
+      {backgroundLocation && (
+        <Routes>
+          <Route
+            path="/ingredients/:ingredientId"
+            element={
+              <Modal header="Детали ингредиента" closeModal={handleCloseModal}>
+                <IngredientDetails />
+              </Modal>
+            }
+          />
+        </Routes>
+      )}
     </>
   );
 };

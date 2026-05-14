@@ -23,3 +23,11 @@
 .inredient_text {
   text-align: center;
 }
+
+.imageWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 480px;
+  height: 240px;
+}
