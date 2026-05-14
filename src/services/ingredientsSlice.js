@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { createSelector } from 'reselect';
 
 import { burgerApi } from './burgerApi';
 
@@ -6,9 +7,6 @@ import { burgerApi } from './burgerApi';
 const selectIngredientsResult = burgerApi.endpoints.getIngredients.select();
 
 // Публичные селекторы с ингредиентами и статусами их загрузки
-export const selectIngredientsData = (state) =>
-  selectIngredientsResult(state).data?.data ?? [];
-
 export const selectIsLoading = (state) =>
   selectIngredientsResult(state).isLoading ?? true;
 
@@ -28,6 +26,12 @@ const ingredientsSlice = createSlice({
     },
   },
 });
+
+// Мемоизированный селектор для IngredientsData
+export const selectIngredientsData = createSelector(
+  [selectIngredientsResult],
+  (result) => result.data?.data ?? []
+);
 
 export const { setSelectedIngredient } = ingredientsSlice.actions;
 export default ingredientsSlice;
