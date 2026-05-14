@@ -2,13 +2,9 @@ import { combineSlices, configureStore as createStore } from '@reduxjs/toolkit';
 
 import { burgerApi } from './burgerApi';
 import burgerConstructorSlice from './burgerConstructorSlice';
-import selectedIngredientSlice from './selectedIngredientSlice';
+import ingredientsSlice from './ingredientsSlice';
 
-const rootReducer = combineSlices(
-  burgerApi,
-  burgerConstructorSlice,
-  selectedIngredientSlice
-);
+const rootReducer = combineSlices(burgerApi, burgerConstructorSlice, ingredientsSlice);
 
 export const configureStore = (initialState) => {
   return createStore({

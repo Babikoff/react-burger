@@ -9,13 +9,11 @@ import { Home } from '@/pages/home/home';
 import { IngredientDetailsPage } from '@/pages/ingredient-details/ingredient-details-page';
 import { AppHeader } from '@components/app-header/app-header';
 
+import { useGetIngredientsQuery } from '../../services/burgerApi';
+
 export const App = () => {
-  //   const {
-  //     data: ingredients = {},
-  //     isLoading = true,
-  //     isFetching = true,
-  //     isError: hasError = false,
-  //   } = useGetIngredientsQuery();
+  // Сразу стартуем загрузку данных
+  useGetIngredientsQuery();
 
   return (
     <>

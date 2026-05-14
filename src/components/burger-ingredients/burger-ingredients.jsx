@@ -2,17 +2,23 @@ import { Tab } from '@krgaa/react-developer-burger-ui-components';
 import { useMemo, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { setSelectedIngredient } from '../../services/selectedIngredientSlice.js';
+import {
+  selectIngredientsData,
+  setSelectedIngredient,
+} from '../../services/ingredientsSlice.js';
 import Modal from '../modal/modal.jsx';
 import IngredientDetails from './ingredient-details/ingredient-details.jsx';
 import IngredientsGroup from './ingredients-group/ingredients-group.jsx';
 
 import styles from './burger-ingredients.module.css';
 
-export const BurgerIngredients = ({ ingredients }) => {
+export const BurgerIngredients = () => {
+  const ingredients = useSelector(selectIngredientsData);
+
   const [selectedTab, setSelectedTab] = useState('bun');
 
-  const { selectedIngredient } = useSelector((store) => store.selectedIngredientDetails);
+  const { selectedIngredient } = useSelector((store) => store.ingredients);
+
   const dispatch = useDispatch();
 
   // Разделим данные по группам и закешируем
