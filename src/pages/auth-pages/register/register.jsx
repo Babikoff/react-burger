@@ -4,34 +4,99 @@ import {
   PasswordInput,
   Button,
 } from '@krgaa/react-developer-burger-ui-components';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+import { useRegisterMutation } from '@services/api';
+
+import { useFormWithValidation } from '../../../hooks/use-form-with-validation';
+import { validators } from '../../../utils/validators';
+
 import globalStyles from '../../../global.module.css';
-import styles from '../auth-pages-common.module.css';
+import commonAuthStyles from '../auth-pages-common.module.css';
 
 export const RegisterPage = () => {
+  const inputRef = useRef(null);
+  const [register, { isLoading, error }] = useRegisterMutation();
+  const [response, setResponse] = useState(null);
+
+  useLayoutEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
+
+  const { values, handleChange, errors, isValid } = useFormWithValidation({
+    name: '',
+    email: '',
+    password: '',
+  });
+
   function handleSubmit(event) {
     event.preventDefault();
+    setResponse(register(values));
   }
 
   return (
     <>
-      <main className={styles.page}>
-        <div className={styles.container}>
+      <main className={commonAuthStyles.page}>
+        <div className={commonAuthStyles.container}>
           <h2 className="text text_type_main-medium">Регистрация</h2>
-          <form className={`mt-6 ${styles.form}`} onSubmit={handleSubmit}>
+          <form className={`mt-6 ${commonAuthStyles.form}`} onSubmit={handleSubmit}>
             <div className="mb-6">
-              <Input placeholder="Имя" />
+              <Input
+                id="name"
+                ref={inputRef}
+                type="text"
+                name="name"
+                placeholder="Имя"
+                value={values.name || ''}
+                error={errors.name}
+                onChange={handleChange}
+                aria-invalid={!!errors.name}
+              />
             </div>
             <div className="mb-6">
-              <EmailInput />
+              <EmailInput
+                id="email"
+                type="email"
+                name="email"
+                placeholder="Email"
+                value={values.email || ''}
+                error={errors.email}
+                errorText={validators.email.message}
+                onChange={handleChange}
+                aria-invalid={!!errors.email}
+              />
             </div>
             <div className="mb-6">
-              <PasswordInput />
+              <PasswordInput
+                type="password"
+                name="password"
+                id="password"
+                placeholder="Пароль"
+                value={values.password || ''}
+                error={errors.password}
+                errorText={validators.password.message}
+                onChange={handleChange}
+                aria-invalid={!!errors.password}
+              />
             </div>
-            <Button>Зарегистрироваться</Button>
+            <Button disabled={isLoading || !isValid}>
+              {isLoading ? 'Регистрация...' : 'Зарегистрироваться'}
+            </Button>
           </form>
-          <footer className={styles.footer}>
+          {error && (
+            <span
+              className={`${commonAuthStyles.error} text_type_main-default mt-1`}
+            >{`Ошибка: ${error.message}`}</span>
+          )}
+          {response && error === undefined && (
+            <span className="text_type_main-default  mt-3">
+              Вы успешно зарегистрировались!
+            </span>
+          )}
+          <footer className={commonAuthStyles.footer}>
             <div className="text_type_main-default text_color_inactive">
               <span className="mr-2">Вы - новый пользователь?</span>
               <Link to="/login" className={globalStyles.link}>

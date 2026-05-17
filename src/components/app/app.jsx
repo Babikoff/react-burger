@@ -2,11 +2,11 @@ import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 
 import { ForgotPasswordPage } from '@/pages/auth-pages/forgot-password/forgot-password';
 import { LoginPage } from '@/pages/auth-pages/login/login';
-import { NotFoundPage } from '@/pages/auth-pages/not-found/not-found';
 import { RegisterPage } from '@/pages/auth-pages/register/register';
 import { ResetPasswordPage } from '@/pages/auth-pages/reset-password/reset-password';
 import { Home } from '@/pages/home/home';
 import { IngredientDetailsPage } from '@/pages/ingredient-details/ingredient-details-page';
+import { NotFoundPage } from '@/pages/not-found/not-found.jsx';
 import { AppHeader } from '@components/app-header/app-header';
 
 import { useGetIngredientsQuery } from '../../services/burgerApi';
