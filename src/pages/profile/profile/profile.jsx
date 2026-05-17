@@ -13,9 +13,9 @@ import { useFormWithValidation } from '../../../hooks/use-form-with-validation';
 import { validators } from '../../../utils/validators';
 
 import globalStyles from '../../../global.module.css';
-import commonAuthStyles from '../auth-pages-common.module.css';
+import styles from './profile.module.css';
 
-export const RegisterPage = () => {
+export const Profile = () => {
   const inputRef = useRef(null);
   const [register, { isLoading, error }] = useRegisterMutation();
   const [response, setResponse] = useState(null);
@@ -39,10 +39,9 @@ export const RegisterPage = () => {
 
   return (
     <>
-      <main className={commonAuthStyles.page}>
-        <div className={commonAuthStyles.container}>
-          <h2 className="text text_type_main-medium">Регистрация</h2>
-          <form className={`mt-6 ${commonAuthStyles.form}`} onSubmit={handleSubmit}>
+      <main className={styles.page}>
+        <div className={styles.container}>
+          <form className={`mt-6 ${styles.form}`} onSubmit={handleSubmit}>
             <div className="mb-6">
               <Input
                 id="name"
@@ -58,9 +57,8 @@ export const RegisterPage = () => {
             <div className="mb-6">
               <EmailInput
                 id="email"
-                type="email"
                 name="email"
-                placeholder="Email"
+                placeholder="Логин"
                 value={values.email || ''}
                 errorText={validators.email.message}
                 onChange={handleChange}
@@ -69,7 +67,6 @@ export const RegisterPage = () => {
             </div>
             <div className="mb-6">
               <PasswordInput
-                type="password"
                 name="password"
                 id="password"
                 placeholder="Пароль"
@@ -79,13 +76,14 @@ export const RegisterPage = () => {
                 aria-invalid={!!errors.password}
               />
             </div>
-            <Button disabled={isLoading || !isValid}>
-              {isLoading ? 'Регистрация...' : 'Зарегистрироваться'}
-            </Button>
+            <section className={styles.buttonsSection}>
+              <Button disabled={isLoading || !isValid}>Сохранить</Button>
+              <Button disabled={isLoading || !isValid}>Отмена</Button>
+            </section>
           </form>
           {error && (
             <span
-              className={`${commonAuthStyles.error} text_type_main-default mt-1`}
+              className={`${styles.error} text_type_main-default mt-1`}
             >{`Ошибка: ${error.message}`}</span>
           )}
           {response && error === undefined && (
@@ -93,7 +91,7 @@ export const RegisterPage = () => {
               Вы успешно зарегистрировались!
             </span>
           )}
-          <footer className={commonAuthStyles.footer}>
+          <footer className={styles.footer}>
             <div className="text_type_main-default text_color_inactive">
               <span className="mr-2">Вы - новый пользователь?</span>
               <Link to="/login" className={globalStyles.link}>

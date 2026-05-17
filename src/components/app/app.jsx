@@ -7,6 +7,9 @@ import { ResetPasswordPage } from '@/pages/auth-pages/reset-password/reset-passw
 import { Home } from '@/pages/home/home';
 import { IngredientDetailsPage } from '@/pages/ingredient-details/ingredient-details-page';
 import { NotFoundPage } from '@/pages/not-found/not-found.jsx';
+import { ProfileOrders } from '@/pages/profile/profile-orders/profile-orders.jsx';
+import { ProfilePage } from '@/pages/profile/profile-page.jsx';
+import { Profile } from '@/pages/profile/profile/profile.jsx';
 import { AppHeader } from '@components/app-header/app-header';
 
 import { useGetIngredientsQuery } from '../../services/burgerApi';
@@ -41,6 +44,10 @@ export const App = () => {
           element={<ProtectedRoute onlyUnAuth component={<Login />} />}
         />
         <Route path="/profile" element={<ProtectedRoute component={<Profile />} />} /> */}
+        <Route path="/profile" element={<ProfilePage />}>
+          <Route index element={<Profile />} />
+          <Route path="orders" element={<ProfileOrders />} />
+        </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
 

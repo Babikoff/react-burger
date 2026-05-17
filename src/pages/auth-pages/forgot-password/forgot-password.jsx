@@ -44,7 +44,6 @@ export const ForgotPasswordPage = () => {
                 name="email"
                 placeholder="Email"
                 value={values.email || ''}
-                error={errors.email}
                 errorText={validators.email.message}
                 onChange={handleChange}
                 aria-invalid={!!errors.email}

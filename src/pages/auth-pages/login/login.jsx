@@ -48,7 +48,6 @@ export const LoginPage = () => {
                 name="email"
                 placeholder="Email"
                 value={values.email || ''}
-                error={errors.email}
                 errorText={validators.email.message}
                 onChange={handleChange}
                 aria-invalid={!!errors.email}
@@ -61,7 +60,6 @@ export const LoginPage = () => {
                 id="password"
                 placeholder="Пароль"
                 value={values.password || ''}
-                error={errors.password}
                 onChange={handleChange}
                 errorText={validators.password.message}
                 aria-invalid={!!errors.password}

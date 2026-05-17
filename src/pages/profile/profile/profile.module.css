@@ -1,0 +1,32 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-height: 90vh;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.footer {
+  margin-top: 80px;
+}
+
+.error {
+  color: red;
+}
+
+.buttonsSection {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
