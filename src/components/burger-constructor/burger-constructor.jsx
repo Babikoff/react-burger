@@ -9,7 +9,7 @@ import { useDrop } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
 
 import withDragShift from '../../hocs/with-drag-shift.jsx';
-import { useCreateOrderMutation } from '../../services/burgerApi.js';
+import { useCreateOrderMutation } from '../../services/api.js';
 import {
   setBun,
   appendBunFilling,

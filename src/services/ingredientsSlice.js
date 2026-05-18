@@ -1,10 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { createSelector } from 'reselect';
 
-import { burgerApi } from './burgerApi';
+import { authApi } from './api';
 
 // Внутренний селектор читает из кеша RTK Query
-const selectIngredientsResult = burgerApi.endpoints.getIngredients.select();
+const selectIngredientsResult = authApi.endpoints.getIngredients.select();
 
 // Публичные селекторы с ингредиентами и статусами их загрузки
 export const selectIsLoading = (state) =>

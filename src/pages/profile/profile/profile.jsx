@@ -12,13 +12,11 @@ import {
   useRef,
   useState,
 } from 'react';
-import { Link } from 'react-router-dom';
 
 import { useGetUserQuery, useSetUserMutation } from '@services/api';
 
 import { getValidators } from '../../../utils/validators';
 
-import globalStyles from '../../../global.module.css';
 import styles from './profile.module.css';
 
 export const Profile = () => {
@@ -168,14 +166,6 @@ export const Profile = () => {
           {response && errorUpdatingUser === undefined && (
             <span className="text_type_main-default  mt-3">Данные обновлены</span>
           )}
-          <footer className={styles.footer}>
-            <div className="text_type_main-default text_color_inactive">
-              <span className="mr-2">Вы - новый пользователь?</span>
-              <Link to="/login" className={globalStyles.link}>
-                Вход
-              </Link>
-            </div>
-          </footer>
         </div>
       </main>
     </>

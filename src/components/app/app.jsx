@@ -12,7 +12,7 @@ import { ProfilePage } from '@/pages/profile/profile-page.jsx';
 import { Profile } from '@/pages/profile/profile/profile.jsx';
 import { AppHeader } from '@components/app-header/app-header';
 
-import { useGetIngredientsQuery } from '../../services/burgerApi';
+import { useGetIngredientsQuery } from '../../services/api';
 import IngredientDetails from '../burger-ingredients/ingredient-details/ingredient-details.jsx';
 import Modal from '../modal/modal.jsx';
 

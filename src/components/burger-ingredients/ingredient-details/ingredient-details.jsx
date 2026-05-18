@@ -2,7 +2,7 @@ import { Preloader } from '@krgaa/react-developer-burger-ui-components';
 import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { useGetIngredientsQuery } from '../../../services/burgerApi';
+import { useGetIngredientsQuery } from '../../../services/api';
 
 import styles from './ingredient-details.module.css';
 

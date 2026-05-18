@@ -145,15 +145,33 @@ export const authApi = createApi({
         return response.message;
       },
     }),
+    // Получение ингредиентов
+    getIngredients: builder.query({
+      query: () => ({
+        url: 'ingredients',
+      }),
+    }),
+    // Создание заказа
+    createOrder: builder.mutation({
+      query: (orderIngredientsIds) => ({
+        url: 'orders',
+        method: 'POST',
+        body: JSON.stringify({
+          ingredients: orderIngredientsIds,
+        }),
+      }),
+    }),
   }),
 });
 
 export const {
   useGetUserQuery,
+  useGetIngredientsQuery,
   useSetUserMutation,
   useLoginMutation,
   useRegisterMutation,
   useLogoutMutation,
   usePasswordResetMutation,
   useSetNewPasswordMutation,
+  useCreateOrderMutation,
 } = authApi;
