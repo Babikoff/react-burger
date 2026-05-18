@@ -16,8 +16,7 @@ import { Link } from 'react-router-dom';
 
 import { useGetUserQuery, useSetUserMutation } from '@services/api';
 
-import { useFormWithValidation } from '../../../hooks/use-form-with-validation';
-import { validators } from '../../../utils/validators';
+import { getValidators } from '../../../utils/validators';
 
 import globalStyles from '../../../global.module.css';
 import styles from './profile.module.css';
@@ -34,17 +33,25 @@ export const Profile = () => {
 
   const [response, setResponse] = useState(null);
 
+  const validators = getValidators(true);
+  const [values, setValues] = useState({
+    name: '',
+    email: '',
+    password: '',
+  });
+  const isValid = useMemo(
+    () =>
+      validators.name.validator(values.name) &&
+      validators.email.validator(values.email) &&
+      validators.password.validator(values.password),
+    [values, validators]
+  );
+
   useLayoutEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus();
     }
   }, []);
-
-  const { values, setValues, handleChange, errors, isValid } = useFormWithValidation({
-    name: '',
-    email: '',
-    password: '',
-  });
 
   const [initialValues, setInitialValues] = useState(null);
 
@@ -78,6 +85,11 @@ export const Profile = () => {
     }
   }, [initialValues, setValues]);
 
+  function handleChange(event) {
+    const { name, value } = event.target;
+    setValues((prev) => ({ ...prev, [name]: value }));
+  }
+
   async function handleSubmit(event) {
     event.preventDefault();
     try {
@@ -106,7 +118,6 @@ export const Profile = () => {
                 placeholder="Имя"
                 value={values.name || ''}
                 onChange={handleChange}
-                aria-invalid={!!errors.name}
               />
             </div>
             <div className="mb-6">
@@ -117,7 +128,6 @@ export const Profile = () => {
                 value={values.email || ''}
                 errorText={validators.email.message}
                 onChange={handleChange}
-                aria-invalid={!!errors.email}
               />
             </div>
             <div className="mb-6">
@@ -129,7 +139,6 @@ export const Profile = () => {
                 errorText={validators.password.message}
                 onChange={handleChange}
                 autoComplete="new-password"
-                aria-invalid={!!errors.password}
               />
             </div>
             <section className={styles.buttonsSection}>

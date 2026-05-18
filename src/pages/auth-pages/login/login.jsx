@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom';
 import { useLoginMutation } from '@services/api';
 
 import { useFormWithValidation } from '../../../hooks/use-form-with-validation';
-import { validators } from '../../../utils/validators';
+import { getValidators } from '../../../utils/validators';
 
 import globalStyles from '../../../global.module.css';
 import commonAuthStyles from '../auth-pages-common.module.css';
@@ -18,6 +18,8 @@ export const LoginPage = () => {
   const inputRef = useRef(null);
   const [login, { isLoading, error }] = useLoginMutation();
   const [response, setResponse] = useState(null);
+
+  const validators = getValidators(false);
 
   useLayoutEffect(() => {
     if (inputRef.current) {

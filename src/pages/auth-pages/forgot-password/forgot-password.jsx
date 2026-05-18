@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { usePasswordResetMutation } from '@services/api';
 
 import { useFormWithValidation } from '../../../hooks/use-form-with-validation';
-import { validators } from '../../../utils/validators';
+import { getValidators } from '../../../utils/validators';
 
 import globalStyles from '../../../global.module.css';
 import commonAuthStyles from '../auth-pages-common.module.css';
@@ -14,6 +14,8 @@ export const ForgotPasswordPage = () => {
   const inputRef = useRef(null);
   const [passwordReset, { isLoading, error }] = usePasswordResetMutation();
   const [response, setResponse] = useState(null);
+
+  const validators = getValidators(false);
 
   useLayoutEffect(() => {
     if (inputRef.current) {

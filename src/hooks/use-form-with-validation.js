@@ -1,11 +1,12 @@
 import { useState } from 'react';
 
-import { validators } from '../utils/validators';
+import { getValidators } from '../utils/validators';
 
-export function useFormWithValidation(initialValues = {}) {
+export function useFormWithValidation(initialValues = {}, allowEmptyPassword) {
   const [values, setValues] = useState(initialValues);
   const [errors, setErrors] = useState(initErrors(initialValues));
   const [isValid, setIsValid] = useState(false);
+  const myValidators = getValidators(allowEmptyPassword);
 
   function handleChange(event) {
     const input = event.target;
@@ -21,13 +22,12 @@ export function useFormWithValidation(initialValues = {}) {
 
     const newErrors = {
       ...errors,
-      [name]: validators[name]?.validator(value) ?? true,
+      [name]: myValidators[name]?.validator(value) ?? true,
     };
 
     setErrors(newErrors);
 
     const formIsNotValid = Object.values(newErrors).some((x) => !x);
-
     setIsValid(!formIsNotValid);
   }
 
