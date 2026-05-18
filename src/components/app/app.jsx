@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 
 import { ForgotPasswordPage } from '@/pages/auth-pages/forgot-password/forgot-password';
@@ -11,14 +13,23 @@ import { ProfileOrders } from '@/pages/profile/profile-orders/profile-orders.jsx
 import { ProfilePage } from '@/pages/profile/profile-page.jsx';
 import { Profile } from '@/pages/profile/profile/profile.jsx';
 import { AppHeader } from '@components/app-header/app-header';
+import { ProtectedRoute } from '@components/protected-route/protected-route.jsx';
+import { checkUserAuth } from '@services/user/actions.js';
 
 import { useGetIngredientsQuery } from '../../services/api';
 import IngredientDetails from '../burger-ingredients/ingredient-details/ingredient-details.jsx';
 import Modal from '../modal/modal.jsx';
 
 export const App = () => {
-  // Сразу стартуем загрузку данных
+  // Сразу стартуем загрузку данных ингредиентов
   useGetIngredientsQuery();
+
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(checkUserAuth());
+    console.log('Called checkUserAuth');
+  }, [dispatch]);
+
   const location = useLocation();
   const backgroundLocation = location.state?.backgroundLocation;
 
@@ -33,21 +44,29 @@ export const App = () => {
       <AppHeader />
       <Routes location={backgroundLocation || location}>
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="/reset-password" element={<ResetPasswordPage />} />
-
-        <Route path="/ingredients/:ingredientId" element={<IngredientDetailsPage />} />
-        {/* <Route
+        <Route
           path="/login"
-          element={<ProtectedRoute onlyUnAuth component={<Login />} />}
+          element={<ProtectedRoute onlyUnAuth component={<LoginPage />} />}
         />
-        <Route path="/profile" element={<ProtectedRoute component={<Profile />} />} /> */}
-        <Route path="/profile" element={<ProfilePage />}>
+        <Route
+          path="/register"
+          element={<ProtectedRoute onlyUnAuth component={<RegisterPage />} />}
+        />
+        <Route
+          path="/forgot-password"
+          element={<ProtectedRoute onlyUnAuth component={<ForgotPasswordPage />} />}
+        />
+        <Route
+          path="/reset-password"
+          element={<ProtectedRoute onlyUnAuth component={<ResetPasswordPage />} />}
+        />
+
+        <Route path="/profile" element={<ProtectedRoute component={<ProfilePage />} />}>
           <Route index element={<Profile />} />
           <Route path="orders" element={<ProfileOrders />} />
         </Route>
+
+        <Route path="/ingredients/:ingredientId" element={<IngredientDetailsPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
 
