@@ -50,7 +50,6 @@ export const ResetPasswordPage = () => {
                 name="password"
                 placeholder="Новый пароль"
                 value={values.password || ''}
-                error={errors.password}
                 errorText={validators.password.message}
                 onChange={handleChange}
                 aria-invalid={!!errors.password}

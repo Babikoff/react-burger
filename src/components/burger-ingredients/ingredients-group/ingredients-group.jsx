@@ -2,7 +2,7 @@ import Ingedient from '../ingredient/ingredient.jsx';
 
 import styles from './ingredients-group.module.css';
 
-function IngredientsGroup({ title, ingredients /*, onSelectIngredient*/ }) {
+function IngredientsGroup({ title, ingredients }) {
   return (
     <section className="mt-4 pt-4 pb-15">
       <h2 className="text text_type_main-medium">{title}</h2>
