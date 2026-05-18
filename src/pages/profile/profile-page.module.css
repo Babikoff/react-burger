@@ -1,0 +1,28 @@
+.page {
+  display: flex;
+  flex-direction: row;
+  gap: 60px;
+  max-width: 1240px;
+  padding-top: 60px;
+}
+
+.navigationBlock {
+  flex-shrink: 0;
+  max-width: 300px;
+}
+
+.navigationMenu {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.navigationMenuLink {
+  padding: 0;
+  text-align: left;
+  text-decoration: none;
+}
+
+.activeMenuLink {
+  color: white;
+}

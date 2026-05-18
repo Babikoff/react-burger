@@ -11,7 +11,7 @@ function OrderDetails({ orderNumber }) {
       <h2 className="text text_type_main-medium">идентификатор заказа</h2>
       <img src={done} />
       <section className={styles.message_block}>
-        <p className="text  text_type_main-default">Ваш заказ начали готовить</p>
+        <p className="text text_type_main-default">Ваш заказ начали готовить</p>
         <p className="text text_type_main-default text_color_inactive">
           Дождитесь готовности на орбитальной станции
         </p>

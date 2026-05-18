@@ -1,0 +1,19 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  align-items: center;
+  max-width: 600px;
+  height: 100vh;
+  margin: 0 auto;
+  color: var(--text-primary-color);
+  background-color: var(--background-alt);
+}
+
+.title {
+  width: 100%;
+  max-width: 1260px;
+  margin-right: auto;
+  margin-left: auto;
+  text-align: center;
+}
