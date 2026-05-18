@@ -39,6 +39,7 @@ export const Profile = () => {
     email: '',
     password: '',
   });
+
   const isValid = useMemo(
     () =>
       validators.name.validator(values.name) &&
@@ -88,13 +89,17 @@ export const Profile = () => {
   function handleChange(event) {
     const { name, value } = event.target;
     setValues((prev) => ({ ...prev, [name]: value }));
+    setResponse(null);
   }
 
   async function handleSubmit(event) {
     event.preventDefault();
     try {
       const result = await setUser(values).unwrap();
+      console.log(result);
       setResponse(result);
+      values.password = '';
+      setInitialValues(values);
     } catch {
       setResponse(null);
     }
