@@ -31,7 +31,7 @@ export function useFormWithValidation(initialValues = {}) {
     setIsValid(!formIsNotValid);
   }
 
-  return { values, handleChange, errors, isValid };
+  return { values, setValues, handleChange, errors, isValid };
 }
 
 function initErrors(formValues) {

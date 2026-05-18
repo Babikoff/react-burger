@@ -4,10 +4,17 @@ import {
   PasswordInput,
   Button,
 } from '@krgaa/react-developer-burger-ui-components';
-import { useLayoutEffect, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { Link } from 'react-router-dom';
 
-import { useRegisterMutation } from '@services/api';
+import { useGetUserQuery, useSetUserMutation } from '@services/api';
 
 import { useFormWithValidation } from '../../../hooks/use-form-with-validation';
 import { validators } from '../../../utils/validators';
@@ -17,7 +24,14 @@ import styles from './profile.module.css';
 
 export const Profile = () => {
   const inputRef = useRef(null);
-  const [register, { isLoading, error }] = useRegisterMutation();
+
+  const { data, isLoading } = useGetUserQuery();
+
+  const user = useMemo(() => data, [data]);
+
+  const [setUser, { isLoading: isUpdatingUser, error: errorUpdatingUser }] =
+    useSetUserMutation();
+
   const [response, setResponse] = useState(null);
 
   useLayoutEffect(() => {
@@ -26,22 +40,63 @@ export const Profile = () => {
     }
   }, []);
 
-  const { values, handleChange, errors, isValid } = useFormWithValidation({
+  const { values, setValues, handleChange, errors, isValid } = useFormWithValidation({
     name: '',
     email: '',
     password: '',
   });
 
-  function handleSubmit(event) {
+  const [initialValues, setInitialValues] = useState(null);
+
+  useEffect(() => {
+    if (user && !initialValues) {
+      const vals = {
+        name: user.name || '',
+        email: user.email || '',
+        password: '',
+      };
+      setInitialValues(vals);
+      setValues(vals);
+    }
+  }, [user, initialValues, setValues]);
+
+  const isDataChanged = useMemo(() => {
+    // Если начальное состояние ещё даже не установлено,
+    // заявляем что у нас ни чего пока не менялось
+    if (!initialValues) return false;
+
+    return (
+      initialValues.name !== (values.name || '') ||
+      initialValues.email !== (values.email || '') ||
+      (values.password || '') !== ''
+    );
+  }, [initialValues, values]);
+
+  const handleCancel = useCallback(() => {
+    if (initialValues) {
+      setValues(initialValues);
+    }
+  }, [initialValues, setValues]);
+
+  async function handleSubmit(event) {
     event.preventDefault();
-    setResponse(register(values));
+    try {
+      const result = await setUser(values).unwrap();
+      setResponse(result);
+    } catch {
+      setResponse(null);
+    }
   }
 
   return (
     <>
       <main className={styles.page}>
         <div className={styles.container}>
-          <form className={`mt-6 ${styles.form}`} onSubmit={handleSubmit}>
+          <form
+            className={`mt-6 ${styles.form}`}
+            onSubmit={handleSubmit}
+            autoComplete="off"
+          >
             <div className="mb-6">
               <Input
                 id="name"
@@ -73,23 +128,31 @@ export const Profile = () => {
                 value={values.password || ''}
                 errorText={validators.password.message}
                 onChange={handleChange}
+                autoComplete="new-password"
                 aria-invalid={!!errors.password}
               />
             </div>
             <section className={styles.buttonsSection}>
-              <Button disabled={isLoading || !isValid}>Сохранить</Button>
-              <Button disabled={isLoading || !isValid}>Отмена</Button>
+              <Button
+                disabled={isUpdatingUser || isLoading || !isValid || !isDataChanged}
+              >
+                Сохранить
+              </Button>
+              <Button
+                disabled={isUpdatingUser || isLoading || !isDataChanged}
+                onClick={handleCancel}
+              >
+                Отмена
+              </Button>
             </section>
           </form>
-          {error && (
+          {errorUpdatingUser && (
             <span
               className={`${styles.error} text_type_main-default mt-1`}
-            >{`Ошибка: ${error.message}`}</span>
+            >{`Ошибка: ${errorUpdatingUser.message}`}</span>
           )}
-          {response && error === undefined && (
-            <span className="text_type_main-default  mt-3">
-              Вы успешно зарегистрировались!
-            </span>
+          {response && errorUpdatingUser === undefined && (
+            <span className="text_type_main-default  mt-3">Данные обновлены</span>
           )}
           <footer className={styles.footer}>
             <div className="text_type_main-default text_color_inactive">

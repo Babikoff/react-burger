@@ -6,7 +6,7 @@ export async function refreshToken() {
   const response = await request('auth/token', {
     body: JSON.stringify({ token: localStorage.getItem('refreshToken') }),
   });
-  console.log('Token refreshed');
+  console.log('refreshToken: token refreshed');
   localStorage.setItem('accessToken', response.accessToken);
   localStorage.setItem('refreshToken', response.refreshToken);
   return response;
@@ -21,13 +21,13 @@ export async function fetchWithRefresh(endpoint, options) {
       (error.statusCode === 403 && localStorage.getItem('refreshToken'))
     ) {
       console.log('We need to refresh token');
-      const refreshData = refreshToken();
-      console.log('Token refreshed');
+      const refreshData = await refreshToken();
+      console.log('Token refreshed. New access token: ', refreshData.accessToken);
 
       return await request(endpoint, {
         ...options,
         headers: {
-          ...options,
+          ...options.headers,
           authorization: refreshData.accessToken,
         },
       });
@@ -40,6 +40,8 @@ export async function fetchWithRefresh(endpoint, options) {
 async function baseQueryWithRefresh(args) {
   const { url, method = 'GET', ...rest } = args;
   const token = localStorage.getItem('accessToken');
+
+  console.log('sending accessToken', token);
 
   const headers = {
     'Content-Type': 'application/json',
@@ -89,10 +91,18 @@ export const authApi = createApi({
         return response.user;
       },
     }),
-    getUser: builder.mutation({
+    getUser: builder.query({
       query: () => ({
         url: 'auth/user',
         method: 'GET',
+      }),
+      transformResponse: (response) => response.user,
+    }),
+    setUser: builder.mutation({
+      query: (user) => ({
+        url: 'auth/user',
+        method: 'PATCH',
+        body: JSON.stringify(user),
       }),
       transformResponse: (response) => response.user,
     }),
@@ -139,6 +149,8 @@ export const authApi = createApi({
 });
 
 export const {
+  useGetUserQuery,
+  useSetUserMutation,
   useLoginMutation,
   useRegisterMutation,
   useLogoutMutation,

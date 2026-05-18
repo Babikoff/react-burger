@@ -20,13 +20,14 @@ export const burgerApi = createApi({
     },
   }),
 
-  // Создание заказа
   endpoints: (builder) => ({
+    // Получение ингредиентов
     getIngredients: builder.query({
       query: () => ({
         url: '/ingredients',
       }),
     }),
+    // Создание заказа
     createOrder: builder.mutation({
       query: (orderIngredientsIds) => ({
         url: '/orders',
