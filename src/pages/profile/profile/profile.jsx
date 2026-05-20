@@ -155,23 +155,25 @@ export const Profile = () => {
                 autoComplete="new-password"
               />
             </div>
-            <section className={styles.buttonsSection}>
-              <Button
-                visible={!(isUpdatingUser || isLoading || !isValid || !isDataChanged)}
-                type="primary"
-                htmlType="submit"
-              >
-                Сохранить
-              </Button>
-              <Button
-                visible={!(isUpdatingUser || isLoading || !isDataChanged)}
-                onClick={handleCancel}
-                type="secondary"
-                htmlType="button"
-              >
-                Отмена
-              </Button>
-            </section>
+            {isDataChanged && (
+              <section className={styles.buttonsSection}>
+                <Button
+                  disabled={!isValid || isUpdatingUser || isLoading}
+                  type="primary"
+                  htmlType="submit"
+                >
+                  Сохранить
+                </Button>
+                <Button
+                  disabled={isUpdatingUser || isLoading}
+                  onClick={handleCancel}
+                  type="secondary"
+                  htmlType="button"
+                >
+                  Отмена
+                </Button>
+              </section>
+            )}
           </form>
           {errorUpdatingUser && (
             <span
