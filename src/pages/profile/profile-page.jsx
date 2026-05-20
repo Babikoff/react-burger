@@ -12,7 +12,7 @@ export const ProfilePage = () => {
   }
 
   const isOrdersActive = !!useMatch('/profile/orders');
-  const isProfileActive = !!(useMatch('/profile') && !isOrdersActive);
+  const isProfileActive = !!useMatch('/profile');
 
   const navLinkClass = `${styles.navigationMenuLink} text_color_inactive text_type_main-medium`;
   const activeNavLinkClass = `${styles.navigationMenuLink} ${styles.activeMenuLink} text_type_main-medium`;
@@ -25,13 +25,18 @@ export const ProfilePage = () => {
             <div className={styles.navigationMenu}>
               <NavLink
                 to="/profile"
-                className={`${isProfileActive ? activeNavLinkClass : navLinkClass}`}
+                end
+                className={({ isActive }) =>
+                  `${isActive ? activeNavLinkClass : navLinkClass}`
+                }
               >
                 Профиль
               </NavLink>
               <NavLink
                 to="/profile/orders"
-                className={`${isOrdersActive ? activeNavLinkClass : navLinkClass}`}
+                className={({ isActive }) =>
+                  `${isActive ? activeNavLinkClass : navLinkClass}`
+                }
               >
                 История заказов
               </NavLink>
