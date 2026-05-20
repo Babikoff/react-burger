@@ -31,9 +31,13 @@
 
 .ingredient_item {
   display: flex;
-  justify-content: center;
+  justify-content: stretch;
   align-items: center;
   gap: 4px;
+}
+
+.constructor_item {
+  width: 100%;
 }
 
 .order {

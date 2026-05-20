@@ -31,6 +31,7 @@ function Ingredient({ ingredient }) {
       <Link
         to={`ingredients/${ingredient._id}`}
         state={{ backgroundLocation: location }}
+        className={styles.ingredient_link}
       >
         {ingredientCount > 0 && <Counter count={ingredientCount} />}
         <div>
@@ -39,7 +40,7 @@ function Ingredient({ ingredient }) {
             <span className="text text_type_digits-default">{ingredient.price}</span>
             <CurrencyIcon type="primary" />
           </div>
-          <div>
+          <div className={`${styles.ingredient_name} pl-1`}>
             <span className="text text_type_main-default">{ingredient.name}</span>
           </div>
         </div>

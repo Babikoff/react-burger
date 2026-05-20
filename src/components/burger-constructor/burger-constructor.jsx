@@ -160,16 +160,18 @@ export const BurgerConstructor = () => {
             className={`${styles.ingredient_item} mt-2 mb-2 pr-1`}
           >
             <DragIcon type="primary" />
-            <WithDragShiftConstructorElement
-              itemIndex={index}
-              text={ingredient.name}
-              type={ingredient.type}
-              price={ingredient.price}
-              thumbnail={ingredient.image}
-              isLocked={false}
-              isDraggable={true}
-              handleClose={() => removeIngredient(ingredient)}
-            />
+            <div className={styles.constructor_item}>
+              <WithDragShiftConstructorElement
+                itemIndex={index}
+                text={ingredient.name}
+                type={ingredient.type}
+                price={ingredient.price}
+                thumbnail={ingredient.image}
+                isLocked={false}
+                isDraggable={true}
+                handleClose={() => removeIngredient(ingredient)}
+              />
+            </div>
           </li>
         ))}
       </ul>
