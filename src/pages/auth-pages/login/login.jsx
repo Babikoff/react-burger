@@ -4,7 +4,7 @@ import {
   Button,
 } from '@krgaa/react-developer-burger-ui-components';
 import { useLayoutEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate, useLocation } from 'react-router-dom';
 
 import { useLoginMutation } from '@services/api';
 
@@ -19,6 +19,7 @@ export const LoginPage = () => {
   const [login, { isLoading, error }] = useLoginMutation();
   const [response, setResponse] = useState(null);
 
+  const location = useLocation();
   const validators = getValidators(false);
 
   useLayoutEffect(() => {
@@ -31,9 +32,15 @@ export const LoginPage = () => {
     email: '',
   });
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
-    setResponse(login(values));
+    await setResponse(login(values));
+    if (error) {
+      console.log(`Login failed. Error: ${error.message}`);
+    } else {
+      const { from } = location.state || { from: { pathname: '/' } };
+      return <Navigate to={from} replace />;
+    }
   }
 
   return (
