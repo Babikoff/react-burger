@@ -1,5 +1,11 @@
 .page {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.mainContainer {
+  display: flex;
   flex-direction: row;
   gap: 60px;
   max-width: 1240px;
