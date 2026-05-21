@@ -4,7 +4,7 @@ import {
   Button,
 } from '@krgaa/react-developer-burger-ui-components';
 import { useLayoutEffect, useRef } from 'react';
-import { Link, Navigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 import { useLoginMutation } from '@services/api';
 
@@ -27,6 +27,7 @@ export const LoginPage = () => {
     }
   }, []);
 
+  const navigate = useNavigate();
   const { values, handleChange, errors, isValid } = useFormWithValidation({
     email: '',
   });
@@ -34,6 +35,7 @@ export const LoginPage = () => {
   async function handleSubmit(event) {
     event.preventDefault();
     const result = await login(values);
+
     if (result.error) {
       console.log(
         `Login failed. Error: ${result.error.data?.message || result.error.message}`
@@ -41,7 +43,7 @@ export const LoginPage = () => {
     } else {
       const { from } = location.state || { from: { pathname: '/' } };
       console.log(`Navigate to ${from?.pathname}`);
-      return <Navigate to={from} replace />;
+      navigate(from, { replace: true });
     }
   }
 

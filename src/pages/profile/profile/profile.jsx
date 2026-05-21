@@ -7,8 +7,10 @@ import {
   useRef,
   useState,
 } from 'react';
+import { useSelector } from 'react-redux';
 
-import { useGetUserQuery, useSetUserMutation } from '@services/api';
+import { useSetUserMutation } from '@services/api';
+import { selectUser } from '@services/user/userSlice.js';
 
 import { getValidators } from '../../../utils/validators';
 
@@ -17,9 +19,7 @@ import styles from './profile.module.css';
 export const Profile = () => {
   const inputRef = useRef(null);
 
-  const { data, isLoading } = useGetUserQuery();
-
-  const user = useMemo(() => data, [data]);
+  const user = useSelector(selectUser);
 
   const [setUser, { isLoading: isUpdatingUser, error: errorUpdatingUser }] =
     useSetUserMutation();
@@ -158,14 +158,14 @@ export const Profile = () => {
             {isDataChanged && (
               <section className={styles.buttonsSection}>
                 <Button
-                  disabled={!isValid || isUpdatingUser || isLoading}
+                  disabled={!isValid || isUpdatingUser}
                   type="primary"
                   htmlType="submit"
                 >
                   Сохранить
                 </Button>
                 <Button
-                  disabled={isUpdatingUser || isLoading}
+                  disabled={isUpdatingUser}
                   onClick={handleCancel}
                   type="secondary"
                   htmlType="button"
