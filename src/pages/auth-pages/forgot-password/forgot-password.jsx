@@ -1,6 +1,6 @@
 import { Button, EmailInput } from '@krgaa/react-developer-burger-ui-components';
-import { useLayoutEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useLayoutEffect, useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { usePasswordResetMutation } from '@services/api';
 
@@ -13,7 +13,7 @@ import commonAuthStyles from '../auth-pages-common.module.css';
 export const ForgotPasswordPage = () => {
   const inputRef = useRef(null);
   const [passwordReset, { isLoading, error }] = usePasswordResetMutation();
-  const [response, setResponse] = useState(null);
+  const navigate = useNavigate();
 
   const validators = getValidators(false);
 
@@ -27,9 +27,18 @@ export const ForgotPasswordPage = () => {
     email: '',
   });
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
-    setResponse(passwordReset(values));
+    const result = await passwordReset(values);
+
+    if (result.error) {
+      console.log(
+        `Reset password failed. Error: ${result.error.data?.message || result.error.message}`
+      );
+    } else {
+      console.log('Navigate to /reset-password');
+      navigate('/reset-password', { state: { replace: true, resetPassword: true } });
+    }
   }
 
   return (
@@ -57,11 +66,6 @@ export const ForgotPasswordPage = () => {
             <span
               className={`${commonAuthStyles.error} text_type_main-default mt-1`}
             >{`Ошибка: ${error.message}`}</span>
-          )}
-          {response && error === undefined && (
-            <span className="text_type_main-default  mt-3">
-              Запрос на сборос пароля отправлен. Проверьте почту.
-            </span>
           )}
           <footer className={commonAuthStyles.footer}>
             <div className="text_type_main-default text_color_inactive">

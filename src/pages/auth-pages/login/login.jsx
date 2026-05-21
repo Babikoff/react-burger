@@ -3,7 +3,7 @@ import {
   PasswordInput,
   Button,
 } from '@krgaa/react-developer-burger-ui-components';
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 import { Link, Navigate, useLocation } from 'react-router-dom';
 
 import { useLoginMutation } from '@services/api';
@@ -17,7 +17,6 @@ import commonAuthStyles from '../auth-pages-common.module.css';
 export const LoginPage = () => {
   const inputRef = useRef(null);
   const [login, { isLoading, error }] = useLoginMutation();
-  const [response, setResponse] = useState(null);
 
   const location = useLocation();
   const validators = getValidators(false);
@@ -34,11 +33,14 @@ export const LoginPage = () => {
 
   async function handleSubmit(event) {
     event.preventDefault();
-    await setResponse(login(values));
-    if (error) {
-      console.log(`Login failed. Error: ${error.message}`);
+    const result = await login(values);
+    if (result.error) {
+      console.log(
+        `Login failed. Error: ${result.error.data?.message || result.error.message}`
+      );
     } else {
       const { from } = location.state || { from: { pathname: '/' } };
+      console.log(`Navigate to ${from?.pathname}`);
       return <Navigate to={from} replace />;
     }
   }
@@ -82,9 +84,6 @@ export const LoginPage = () => {
             <span
               className={`${commonAuthStyles.error} text_type_main-default mt-1`}
             >{`Ошибка: ${error.message}`}</span>
-          )}
-          {response && error === undefined && (
-            <span className="text_type_main-default  mt-3">Вы успешно вошли!</span>
           )}
           <footer className={commonAuthStyles.footer}>
             <div className="text_type_main-default text_color_inactive">

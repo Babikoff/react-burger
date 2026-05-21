@@ -3,8 +3,8 @@ import {
   PasswordInput,
   Button,
 } from '@krgaa/react-developer-burger-ui-components';
-import { useLayoutEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useLayoutEffect, useRef } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import { useSetNewPasswordMutation } from '@services/api';
 
@@ -16,12 +16,17 @@ import commonAuthStyles from '../auth-pages-common.module.css';
 
 export const ResetPasswordPage = () => {
   const inputRef = useRef(null);
-  const [login, { isLoading, error }] = useSetNewPasswordMutation();
-  const [response, setResponse] = useState(null);
+  const [setNewPassword, { isLoading, error }] = useSetNewPasswordMutation();
 
   const validators = getValidators(false);
 
+  const location = useLocation();
+  const navigate = useNavigate();
+
   useLayoutEffect(() => {
+    if (!location.state?.resetPassword) {
+      navigate('/forgot-password', { state: { resetPassword: false } });
+    }
     if (inputRef.current) {
       inputRef.current.focus();
     }
@@ -31,9 +36,18 @@ export const ResetPasswordPage = () => {
     token: '',
   });
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
-    setResponse(login(values));
+
+    const result = await setNewPassword(values);
+    if (result.error) {
+      console.log(
+        `Reset password failed. Error: ${result.error.data?.message || result.error.message}`
+      );
+    } else {
+      console.log('Navigate to /login');
+      navigate('/login');
+    }
   }
 
   return (
@@ -71,9 +85,6 @@ export const ResetPasswordPage = () => {
             <span
               className={`${commonAuthStyles.error} text_type_main-default mt-1`}
             >{`Ошибка: ${error.message}`}</span>
-          )}
-          {response && error === undefined && (
-            <span className="text_type_main-default  mt-3">Пароль переустановлен</span>
           )}
           <footer className={commonAuthStyles.footer}>
             <div className="text_type_main-default text_color_inactive">
