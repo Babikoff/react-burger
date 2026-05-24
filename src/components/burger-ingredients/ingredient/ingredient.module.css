@@ -12,6 +12,16 @@
 
 .ingredient_price {
   display: flex;
+  justify-content: center;
   align-items: center;
   gap: 15px;
+}
+
+.ingredient_link {
+  color: #f2f2f3;
+  text-decoration: none;
+}
+
+.ingredient_name {
+  text-align: center;
 }

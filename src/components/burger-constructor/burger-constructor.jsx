@@ -7,9 +7,9 @@ import {
 import { useCallback, useMemo, useState } from 'react';
 import { useDrop } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
-import withDragShift from '../../hocs/with-drag-shift.jsx';
-import { useCreateOrderMutation } from '../../services/burgerApi.js';
+import { useCreateOrderMutation } from '@services/api.js';
 import {
   setBun,
   appendBunFilling,
@@ -17,7 +17,10 @@ import {
   clearAll,
   moveBunFilling,
   selectTotalPrice,
-} from '../../services/burgerConstructorSlice.js';
+} from '@services/burgerConstructorSlice.js';
+import { selectUser } from '@services/user/userSlice.js';
+
+import withDragShift from '../../hocs/with-drag-shift.jsx';
 import { DndItemTypes } from '../../utils/consts.js';
 import Modal from '../modal/modal.jsx';
 import DragHowerIndicator from './drag-hower-indicator/drag-hower-indicator.jsx';
@@ -26,6 +29,8 @@ import OrderDetails from './order-details/order-details.jsx';
 import styles from './burger-constructor.module.css';
 
 export const BurgerConstructor = () => {
+  const user = useSelector(selectUser);
+  const navigate = useNavigate();
   const [orderNumber, setOrderNumber] = useState('');
   const [isOrderCardOpen, setIsOrderCardOpen] = useState(false);
   const [isErrorMessageOpen, setIsErrorMessageOpen] = useState(false);
@@ -70,6 +75,11 @@ export const BurgerConstructor = () => {
   async function handleOrderButtonClick() {
     if (isOrderButtonDisabled()) {
       console.log('No data for order');
+      return;
+    }
+
+    if (!user) {
+      navigate('/login');
       return;
     }
 
@@ -160,16 +170,18 @@ export const BurgerConstructor = () => {
             className={`${styles.ingredient_item} mt-2 mb-2 pr-1`}
           >
             <DragIcon type="primary" />
-            <WithDragShiftConstructorElement
-              itemIndex={index}
-              text={ingredient.name}
-              type={ingredient.type}
-              price={ingredient.price}
-              thumbnail={ingredient.image}
-              isLocked={false}
-              isDraggable={true}
-              handleClose={() => removeIngredient(ingredient)}
-            />
+            <div className={styles.constructor_item}>
+              <WithDragShiftConstructorElement
+                itemIndex={index}
+                text={ingredient.name}
+                type={ingredient.type}
+                price={ingredient.price}
+                thumbnail={ingredient.image}
+                isLocked={false}
+                isDraggable={true}
+                handleClose={() => removeIngredient(ingredient)}
+              />
+            </div>
           </li>
         ))}
       </ul>
