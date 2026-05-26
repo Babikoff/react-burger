@@ -1,4 +1,4 @@
-import { defaultRequestOptions, host } from '@services/constants';
+import { defaultRequestOptions, host } from '@/services/apiConstants';
 
 import type { RequestOptions, TokenResponse } from './api_types';
 

@@ -4,17 +4,28 @@ const PWD_REGEX_WITH_EMPTY_VALUES =
 const EMAIL_REGEX = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 const NAME_REGEX = /^[A-Za-zА-Яа-яЁё0-9\s-]{2,}$/;
 
-export const getValidators = (allowEmptyPassword) => ({
+type TValidator = {
+  validator: (value: string) => boolean;
+  message: string;
+};
+
+type TValidators = {
+  name: TValidator;
+  email: TValidator;
+  password: TValidator;
+};
+
+export const getValidators = (allowEmptyPassword: boolean): TValidators => ({
   name: {
-    validator: (value) => value && NAME_REGEX.test(value.trim()),
+    validator: (value: string) => !!value && NAME_REGEX.test(value.trim()),
     message: 'Укажите корретное имя.',
   },
   email: {
-    validator: (value) => EMAIL_REGEX.test(value.trim()),
+    validator: (value: string) => EMAIL_REGEX.test(value.trim()),
     message: 'Укажите корректный email.',
   },
   password: {
-    validator: (value) =>
+    validator: (value: string) =>
       (allowEmptyPassword ? PWD_REGEX_WITH_EMPTY_VALUES : PWD_REGEX).test(value.trim()),
     message: 'Укажите пароль посложнее.',
   },

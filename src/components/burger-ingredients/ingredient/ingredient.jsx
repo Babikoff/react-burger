@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 
 import { selectIngredientCount } from '../../../services/burgerConstructorSlice.js';
-import { DndItemTypes } from '../../../utils/consts';
+import { DndItemTypes } from '../../../utils/appConstants.js';
 
 import styles from './ingredient.module.css';
 

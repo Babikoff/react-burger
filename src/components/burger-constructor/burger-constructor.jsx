@@ -21,7 +21,7 @@ import {
 import { selectUser } from '@services/user/userSlice.js';
 
 import withDragShift from '../../hocs/with-drag-shift.jsx';
-import { DndItemTypes } from '../../utils/consts.js';
+import { DndItemTypes } from '../../utils/appConstants.js';
 import Modal from '../modal/modal.jsx';
 import DragHowerIndicator from './drag-hower-indicator/drag-hower-indicator.jsx';
 import OrderDetails from './order-details/order-details.jsx';
