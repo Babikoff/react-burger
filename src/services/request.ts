@@ -1,8 +1,12 @@
-import { defaultRequestOptions, host } from '@services/constants.js';
+import { defaultRequestOptions, host } from '@services/constants';
+
+import type { RequestOptions, TokenResponse } from './api_types';
 
 // Кастомный класс для обработки ошибок ответа сервера
 class ServerError extends Error {
-  constructor(message, statusCode) {
+  name: string;
+  statusCode: number;
+  constructor(message: string, statusCode: number) {
     super(message);
     this.name = 'ServerError';
     this.statusCode = statusCode;
@@ -10,7 +14,7 @@ class ServerError extends Error {
 }
 
 // Функция проверки ответа от сервера
-export async function checkResponse(response) {
+export async function checkResponse(response: Response): Promise<TokenResponse> {
   const res = await response.json();
 
   if (response.ok) {
@@ -21,8 +25,11 @@ export async function checkResponse(response) {
 }
 
 // Функция отправки запроса
-export async function request(endpoint, options) {
-  const response = await fetch(`${host}/api/${endpoint}`, {
+export async function request(
+  endpoint: string,
+  options: RequestOptions
+): Promise<TokenResponse> {
+  const response: Response = await fetch(`${host}/api/${endpoint}`, {
     ...defaultRequestOptions,
     ...options,
   });
