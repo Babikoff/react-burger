@@ -1,5 +1,5 @@
 import { Tab } from '@krgaa/react-developer-burger-ui-components';
-import { useMemo, useState, useRef } from 'react';
+import { useMemo, useState, useRef, type JSX } from 'react';
 import { useSelector } from 'react-redux';
 
 import { selectIngredientsData } from '../../services/ingredientsSlice.js';
@@ -7,7 +7,7 @@ import IngredientsGroup from './ingredients-group/ingredients-group.jsx';
 
 import styles from './burger-ingredients.module.css';
 
-export const BurgerIngredients = () => {
+export const BurgerIngredients = (): JSX.Element => {
   const ingredients = useSelector(selectIngredientsData);
   const [selectedTab, setSelectedTab] = useState('bun');
 
@@ -25,14 +25,14 @@ export const BurgerIngredients = () => {
     [ingredients]
   );
 
-  const bunGroupRef = useRef(null);
-  const mainPartsGroupRef = useRef(null);
-  const sauceGroupRef = useRef(null);
+  const bunGroupRef = useRef<HTMLDivElement>(null);
+  const mainPartsGroupRef = useRef<HTMLDivElement>(null);
+  const sauceGroupRef = useRef<HTMLDivElement>(null);
 
-  function handleTabClick(eventSourceTab) {
-    setSelectedTab(eventSourceTab);
+  function handleTabClick(newTab: string): void {
+    setSelectedTab(newTab);
 
-    switch (eventSourceTab) {
+    switch (newTab) {
       case 'bun':
         bunGroupRef.current?.scrollIntoView({ behavior: 'smooth' });
         break;
@@ -45,13 +45,13 @@ export const BurgerIngredients = () => {
     }
   }
 
-  function adjustSelectedTab(tabName) {
+  function adjustSelectedTab(tabName: string): void {
     if (selectedTab !== tabName) {
       setSelectedTab(tabName);
     }
   }
 
-  function handleIngredientsScroll() {
+  function handleIngredientsScroll(): void {
     const bunsGroupRect = bunGroupRef?.current?.getBoundingClientRect();
     const mainPartsGroupRect = mainPartsGroupRef?.current?.getBoundingClientRect();
     const sauceGroupRect = sauceGroupRef?.current?.getBoundingClientRect();

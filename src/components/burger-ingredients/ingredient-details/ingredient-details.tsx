@@ -1,18 +1,20 @@
 import { Preloader } from '@krgaa/react-developer-burger-ui-components';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type JSX } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useGetIngredientsQuery } from '../../../services/api';
 
+import type { Ingredient } from '@/services/api_types';
+
 import styles from './ingredient-details.module.css';
 
-function IngredientDetails() {
+function IngredientDetails(): JSX.Element {
   const params = useParams();
-  const { data, isLoading } = useGetIngredientsQuery();
+  const { data, isLoading } = useGetIngredientsQuery(undefined, undefined);
   const [imageIsLoaded, setImageIsLoaded] = useState(false);
 
   const ingredient = useMemo(
-    () => data?.data?.find((item) => item._id === params.ingredientId),
+    () => data?.data?.find((item: Ingredient) => item._id === params.ingredientId),
     [data, params.ingredientId]
   );
 
