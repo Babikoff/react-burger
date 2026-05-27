@@ -1,12 +1,23 @@
 // Типы REST API
 export type RequestOptions = {
-  method?: string;
-  headers: HeadersInit | undefined;
+  method: string | undefined;
+  headers?: HeadersInit | undefined;
   body?: string;
 };
 
+// Кастомный класс для обработки ошибок ответа сервера
+export class ServerError extends Error {
+  name: string;
+  statusCode: number;
+  constructor(message: string, statusCode: number) {
+    super(message);
+    this.name = 'ServerError';
+    this.statusCode = statusCode;
+  }
+}
+
 // Аутентификация
-export type TokenResponse = {
+export type ResponseWithTokens = {
   success: boolean;
   refreshToken: string;
   accessToken: string;
@@ -14,14 +25,14 @@ export type TokenResponse = {
 
 export type AuthResponse = {
   user: User;
-} & TokenResponse;
+} & ResponseWithTokens;
 
 export type GetUserResponse = {
   success: boolean;
   user: User;
 };
 
-export type RefreshTokenResponse = {} & TokenResponse;
+export type RefreshTokenResponse = {} & ResponseWithTokens;
 
 // Order API
 export type Ingredient = {
