@@ -13,6 +13,11 @@ interface IBurgerConstructor {
   bunsPrice: number;
 }
 
+interface IMoveBunFilling {
+  fromIndex: number;
+  toIndex: number;
+}
+
 const initialState: IBurgerConstructor = {
   bun: undefined,
   bunFillings: [],
@@ -33,7 +38,7 @@ const burgerConstructorSlice = createSlice({
         state.bunFillings.push(action.payload);
         state.fillingsTotalPrice += action.payload.price;
       },
-      prepare: (item) => {
+      prepare: (item: Ingredient) => {
         return { payload: { ...item, key: nanoid() } };
       },
     },
@@ -49,7 +54,7 @@ const burgerConstructorSlice = createSlice({
       state.fillingsTotalPrice = 0;
       state.bunsPrice = 0;
     },
-    moveBunFilling: (state, action) => {
+    moveBunFilling: (state, action: PayloadAction<IMoveBunFilling>) => {
       const { fromIndex, toIndex } = action.payload;
 
       if (fromIndex < 0 || fromIndex >= state.bunFillings.length) {
