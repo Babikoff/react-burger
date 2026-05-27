@@ -1,22 +1,28 @@
 import { CloseIcon } from '@krgaa/react-developer-burger-ui-components';
-import { useEffect } from 'react';
+import { useEffect, type JSX } from 'react';
 import ReactDOM from 'react-dom';
 
 import ModalOverlay from '../modal-overlay/modal-overlay.jsx';
 
 import styles from './modal.module.css';
 
-const modalRoot = document.getElementById('modal');
+const modalRoot = document.getElementById('modal')!;
 
-function Modal({ header, closeModal, children }) {
+interface IModalProps {
+  header: string;
+  closeModal: () => void;
+  children: React.ReactNode;
+}
+
+function Modal({ header, closeModal, children }: IModalProps): JSX.Element {
   useEffect(() => {
     document.addEventListener('keydown', handleEscKey);
-    return () => {
+    return (): void => {
       document.removeEventListener('keydown', handleEscKey);
     };
   }, []);
 
-  function handleEscKey(event) {
+  function handleEscKey(this: Document, event: KeyboardEvent): void {
     event.stopPropagation();
     if (event.key === 'Escape') closeModal();
   }
@@ -26,7 +32,7 @@ function Modal({ header, closeModal, children }) {
       <div className={styles.modal_window}>
         <div className={styles.header}>
           <h3 className={`text text_type_main-large`}>{header}</h3>
-          <CloseIcon onClick={closeModal} styles={{ width: '18px', height: '18px' }} />
+          <CloseIcon onClick={closeModal} type="secondary" />
         </div>
         <div className={styles.modal_content}>{children}</div>
       </div>
