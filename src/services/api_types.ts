@@ -1,9 +1,9 @@
 // Типы REST API
-export type RequestOptions = {
+export interface RequestOptions {
   method: string | undefined;
   headers?: HeadersInit | undefined;
   body?: string;
-};
+}
 
 // Кастомный класс для обработки ошибок ответа сервера
 export class ServerError extends Error {
@@ -17,25 +17,25 @@ export class ServerError extends Error {
 }
 
 // Аутентификация
-export type ResponseWithTokens = {
+export interface ResponseWithTokens {
   success: boolean;
   refreshToken: string;
   accessToken: string;
-};
+}
 
 export type AuthResponse = {
   user: User;
 } & ResponseWithTokens;
 
-export type GetUserResponse = {
+export interface GetUserResponse {
   success: boolean;
   user: User;
-};
+}
 
 export type RefreshTokenResponse = {} & ResponseWithTokens;
 
 // Order API
-export type Ingredient = {
+export interface Ingredient {
   _id: string;
   name: string;
   type: 'bun' | 'main' | 'sauce';
@@ -48,23 +48,23 @@ export type Ingredient = {
   image_large: string;
   image_mobile: string;
   //key?: string; // nanoid для Drag and Drop
-};
+}
 
 // User API
-export type User = {
+export interface User {
   name: string;
   email: string;
-};
+}
 
-export type ResetPassword = {
+export interface ResetPassword {
   password: string;
   token: string;
-};
+}
 
-export type ForgotPassword = {
+export interface ForgotPassword {
   email: string;
-};
+}
 
-export type OrderBurgerRequest = {
+export interface OrderBurgerRequest {
   ingredients: string[];
-};
+}

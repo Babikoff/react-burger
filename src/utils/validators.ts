@@ -4,16 +4,16 @@ const PWD_REGEX_WITH_EMPTY_VALUES =
 const EMAIL_REGEX = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 const NAME_REGEX = /^[A-Za-zА-Яа-яЁё0-9\s-]{2,}$/;
 
-type TValidator = {
+interface TValidator {
   validator: (value: string) => boolean;
   message: string;
-};
+}
 
-type TValidators = {
+interface TValidators {
   name: TValidator;
   email: TValidator;
   password: TValidator;
-};
+}
 
 export const getValidators = (allowEmptyPassword: boolean): TValidators => ({
   name: {

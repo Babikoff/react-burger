@@ -51,11 +51,11 @@ export async function fetchWithRefresh(
   }
 }
 
-type BaseQueryArgs = {
+interface IBaseQueryArgs {
   url: string;
   method?: string;
   body?: string;
-};
+}
 
 // BaseQueryFn — это тип из RTK Query, описывающий функцию базового запроса.
 // Он принимает три дженерика:
@@ -64,7 +64,7 @@ type BaseQueryArgs = {
 //   3) Тип ошибки (unknown) — произвольная структура ошибки.
 // Функция должна вернуть объект с полем `data` (успех) или `error` (ошибка).
 const baseQueryWithRefresh: BaseQueryFn<
-  BaseQueryArgs,
+  IBaseQueryArgs,
   ResponseWithTokens,
   unknown
 > = async (args) => {
@@ -177,6 +177,7 @@ export const authApi = createApi({
       },
     }),
     // Получение ингредиентов
+    //getIngredients: builder.query<{ success: boolean; data: Ingredient[] }, void>({
     getIngredients: builder.query({
       query: () => ({
         url: 'ingredients',
