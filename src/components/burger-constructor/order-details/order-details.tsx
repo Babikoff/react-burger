@@ -1,8 +1,14 @@
 import done from '../../../images/done.svg';
 
+import type { JSX } from 'react';
+
 import styles from './order-details.module.css';
 
-function OrderDetails({ orderNumber }) {
+interface IOrderDetailsProps {
+  orderNumber: number;
+}
+
+function OrderDetails({ orderNumber }: IOrderDetailsProps): JSX.Element {
   return (
     <section className={styles.order_details}>
       <h1 className={`${styles.order_number} text text_type_digits-large`}>
