@@ -13,7 +13,7 @@ import type {
 
 export async function refreshToken(): Promise<RefreshTokenResponse> {
   const response = await request('auth/token', {
-    method: 'GET',
+    method: 'POST',
     body: JSON.stringify({ token: localStorage.getItem('refreshToken') }),
   });
   console.log('refreshToken: token refreshed');
