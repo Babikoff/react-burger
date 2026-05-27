@@ -3,12 +3,20 @@ import { useDrag } from 'react-dnd';
 import { useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 
-import { selectIngredientCount } from '../../../services/burgerConstructorSlice.js';
-import { DndItemTypes } from '../../../utils/appConstants.js';
+import { selectIngredientCount } from '@services/burgerConstructorSlice';
+import { DndItemTypes } from '@utils/appConstants';
 
-import styles from './ingredient.module.css';
+import type { JSX } from 'react';
 
-function Ingredient({ ingredient }) {
+import type { Ingredient } from '@services/api_types';
+
+import styles from './ingredient-box.module.css';
+
+interface IIngredientBoxProps {
+  ingredient: Ingredient;
+}
+
+function IngredientBox({ ingredient }: IIngredientBoxProps): JSX.Element {
   const ingredientCount = useSelector((state) =>
     selectIngredientCount(state, ingredient)
   );
@@ -25,7 +33,9 @@ function Ingredient({ ingredient }) {
 
   return (
     <li
-      ref={dragRef}
+      ref={(node) => {
+        if (node) dragRef(node);
+      }}
       className={`${isDragging && styles.ingredient_dragging} ${styles.ingredient}`}
     >
       <Link
@@ -49,4 +59,4 @@ function Ingredient({ ingredient }) {
   );
 }
 
-export default Ingredient;
+export default IngredientBox;
