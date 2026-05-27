@@ -47,7 +47,7 @@ export interface Ingredient {
   image: string;
   image_large: string;
   image_mobile: string;
-  //key?: string; // nanoid для Drag and Drop
+  key?: string; // nanoid для Drag and Drop
 }
 
 // User API

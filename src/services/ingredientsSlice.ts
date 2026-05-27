@@ -51,13 +51,17 @@ export const selectIngredientsResult = createSelector(
   }
 );
 
-// Слайс
+// Объекты для слайса
+
+// Интерфейс для начального состояния слайса
 interface ISelectedIngredient {
   selectedIngredient?: Ingredient;
 }
 
+// Начальное состояние слайса
 const initialState: ISelectedIngredient = { selectedIngredient: undefined };
 
+// Слайс
 const ingredientsSlice = createSlice({
   name: 'ingredients',
   initialState,

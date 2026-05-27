@@ -1,8 +1,20 @@
 import { createSlice, nanoid } from '@reduxjs/toolkit';
 import { createSelector } from 'reselect';
 
-const initialState = {
-  bun: null,
+import type { PayloadAction } from '@reduxjs/toolkit';
+
+import type { Ingredient } from './api_types';
+
+// Интерфейс для начального состояния слайса
+interface IBurgerConstructor {
+  bun?: Ingredient;
+  bunFillings: Ingredient[];
+  fillingsTotalPrice: number;
+  bunsPrice: number;
+}
+
+const initialState: IBurgerConstructor = {
+  bun: undefined,
   bunFillings: [],
   fillingsTotalPrice: 0,
   bunsPrice: 0,
@@ -12,12 +24,12 @@ const burgerConstructorSlice = createSlice({
   name: 'burgerConstructorSlice',
   initialState,
   reducers: {
-    setBun: (state, action) => {
+    setBun: (state, action: PayloadAction<Ingredient>) => {
       state.bun = action.payload;
       state.bunsPrice = action.payload.price * 2;
     },
     appendBunFilling: {
-      reducer: (state, action) => {
+      reducer: (state, action: PayloadAction<Ingredient>) => {
         state.bunFillings.push(action.payload);
         state.fillingsTotalPrice += action.payload.price;
       },
@@ -25,14 +37,14 @@ const burgerConstructorSlice = createSlice({
         return { payload: { ...item, key: nanoid() } };
       },
     },
-    removeBunFilling: (state, action) => {
+    removeBunFilling: (state, action: PayloadAction<Ingredient>) => {
       state.bunFillings = state.bunFillings.filter(
         (item) => item.key !== action.payload.key
       );
       state.fillingsTotalPrice -= action.payload.price;
     },
     clearAll: (state) => {
-      state.bun = null;
+      state.bun = undefined;
       state.bunFillings = [];
       state.fillingsTotalPrice = 0;
       state.bunsPrice = 0;
@@ -67,9 +79,9 @@ export const selectTotalPrice = createSelector(
 // Мемоизированный селектор для IngredientCount
 export const selectIngredientCount = createSelector(
   [
-    (state) => state.burgerConstructorSlice.bunFillings,
-    (state) => state.burgerConstructorSlice.bun,
-    (state, ingredient) => ingredient,
+    (state): Ingredient[] => state.burgerConstructorSlice.bunFillings,
+    (state): Ingredient => state.burgerConstructorSlice.bun,
+    (state, ingredient: Ingredient): Ingredient => ingredient,
   ],
   (items, bun, ingredient) => {
     switch (ingredient.type) {
@@ -82,4 +94,3 @@ export const selectIngredientCount = createSelector(
 );
 
 export default burgerConstructorSlice;
-export const selectBurgerConstructorSlice = (state) => state.burgerConstructorSlice;
