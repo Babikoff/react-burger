@@ -283,6 +283,10 @@ export const authApi = createApi({
           ingredients: orderIngredientsIds,
         }),
       }),
+      transformResponse(response: AuthResponse) {
+        const result = response as unknown as { order: { number: number } };
+        return result.order.number.toString();
+      },
     }),
   }),
 });

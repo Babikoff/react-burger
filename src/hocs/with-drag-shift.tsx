@@ -4,7 +4,7 @@ import { useDrag, useDrop } from 'react-dnd';
 interface IComponentWithSwingProps {
   itemId: string;
   itemIndex: number;
-  internalItemProps: object;
+  // internalItemProps: object;
 }
 
 interface IDragItem {
@@ -12,32 +12,19 @@ interface IDragItem {
   itemIndex: number;
 }
 
-// interface IDragSourceMonitor {
-//   itemId: string;
-//   itemIndex: number;
-//   isDragging: () => void;
-// }
-
-// interface IDraggingItem {
-//   isDragging: boolean;
-// }
-
-// interface IDraggable
-// {
-//   type: string;
-//   item: IDragSourceMonitor;
-//   collect: (monitor: IDragSourceMonitor) => IDraggingItem;
-// }
-
-function withDragShift(
-  Component: React.ComponentType<object>,
+function withDragShift<TProps extends Record<string, unknown>>(
+  Component: React.ComponentType<TProps>,
   dragItemTypeId: string,
   handleItemMove: (draggingItemIndex: number, nextIndex: number) => void
 ) {
-  return function ComponentWithSwing(props: IComponentWithSwingProps): JSX.Element {
+  return function ComponentWithSwing(
+    props: IComponentWithSwingProps & TProps
+  ): JSX.Element {
     const { itemId, itemIndex, ...internalItemProps } = props;
 
     const ref = useRef<HTMLDivElement>(null);
+
+    const internalProps = internalItemProps as unknown as TProps;
 
     const [, dragRef] = useDrag({
       type: dragItemTypeId,
@@ -104,7 +91,7 @@ function withDragShift(
 
     return (
       <div ref={ref}>
-        <Component {...internalItemProps} />
+        <Component {...internalProps} />
       </div>
     );
   };

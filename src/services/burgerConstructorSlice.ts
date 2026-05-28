@@ -6,14 +6,14 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import type { Ingredient } from './api_types';
 
 // Интерфейс для начального состояния слайса
-interface IBurgerConstructor {
+export interface IBurgerConstructor {
   bun?: Ingredient;
   bunFillings: Ingredient[];
   fillingsTotalPrice: number;
   bunsPrice: number;
 }
 
-interface IMoveBunFilling {
+interface IMovingBunFilling {
   fromIndex: number;
   toIndex: number;
 }
@@ -54,7 +54,7 @@ const burgerConstructorSlice = createSlice({
       state.fillingsTotalPrice = 0;
       state.bunsPrice = 0;
     },
-    moveBunFilling: (state, action: PayloadAction<IMoveBunFilling>) => {
+    moveBunFilling: (state, action: PayloadAction<IMovingBunFilling>) => {
       const { fromIndex, toIndex } = action.payload;
 
       if (fromIndex < 0 || fromIndex >= state.bunFillings.length) {

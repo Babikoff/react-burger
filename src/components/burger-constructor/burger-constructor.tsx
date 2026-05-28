@@ -4,12 +4,13 @@ import {
   CurrencyIcon,
   DragIcon,
 } from '@krgaa/react-developer-burger-ui-components';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState, type JSX } from 'react';
 import { useDrop } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import { useCreateOrderMutation } from '@services/api.js';
+import { useAppSelector } from '@hooks/hooks';
+import { useCreateOrderMutation } from '@services/api';
 import {
   setBun,
   appendBunFilling,
@@ -17,18 +18,20 @@ import {
   clearAll,
   moveBunFilling,
   selectTotalPrice,
-} from '@services/burgerConstructorSlice.js';
-import { selectUser } from '@services/user/userSlice.js';
+} from '@services/burgerConstructorSlice';
+import { selectUser } from '@services/user/userSlice';
 
-import withDragShift from '../../hocs/with-drag-shift.jsx';
-import { DndItemTypes } from '../../utils/appConstants.js';
-import Modal from '../modal/modal.jsx';
-import DragHowerIndicator from './drag-hower-indicator/drag-hower-indicator.jsx';
-import OrderDetails from './order-details/order-details.jsx';
+import withDragShift from '../../hocs/with-drag-shift';
+import { DndItemTypes } from '../../utils/appConstants';
+import Modal from '../modal/modal';
+import DragHowerIndicator from './drag-hower-indicator/drag-hower-indicator';
+import OrderDetails from './order-details/order-details';
+
+import type { Ingredient } from '@services/api_types';
 
 import styles from './burger-constructor.module.css';
 
-export const BurgerConstructor = () => {
+export const BurgerConstructor = (): JSX.Element => {
   const user = useSelector(selectUser);
   const navigate = useNavigate();
   const [orderNumber, setOrderNumber] = useState('');
@@ -38,8 +41,8 @@ export const BurgerConstructor = () => {
   const [createOrderMutation] = useCreateOrderMutation();
 
   // Ссылки на булку и начинку из глобального хранилища
-  const selectedBun = useSelector((state) => state.burgerConstructorSlice.bun);
-  const selectedBunFillings = useSelector(
+  const selectedBun = useAppSelector((state) => state.burgerConstructorSlice.bun);
+  const selectedBunFillings = useAppSelector(
     (state) => state.burgerConstructorSlice.bunFillings
   );
 
@@ -48,7 +51,16 @@ export const BurgerConstructor = () => {
 
   const dispatch = useDispatch();
 
-  const [{ isDraggingNewIngredient, draggingIngredientType }, dropTargetRef] = useDrop({
+  const [{ isDraggingNewIngredient, draggingIngredientType }, dropTargetRef] = useDrop<
+    {
+      ingredient: Ingredient;
+    },
+    unknown,
+    {
+      isDraggingNewIngredient: boolean;
+      draggingIngredientType: string | undefined;
+    }
+  >({
     accept: DndItemTypes.Ingredient,
     drop(item) {
       const { ingredient } = item;
@@ -64,15 +76,15 @@ export const BurgerConstructor = () => {
     }),
   });
 
-  function isOrderButtonDisabled() {
+  function isOrderButtonDisabled(): boolean {
     return !selectedBun || !selectedBunFillings || selectedBunFillings.length <= 0;
   }
 
-  function hasFillings() {
+  function hasFillings(): boolean {
     return selectedBunFillings && selectedBunFillings.length > 0;
   }
 
-  async function handleOrderButtonClick() {
+  async function handleOrderButtonClick(): Promise<void> {
     if (isOrderButtonDisabled()) {
       console.log('No data for order');
       return;
@@ -83,14 +95,19 @@ export const BurgerConstructor = () => {
       return;
     }
 
+    if (!selectedBun || !selectedBunFillings || selectedBunFillings.length === 0) {
+      console.log('Burger is not completed');
+      return;
+    }
+
     const response = await createOrderMutation([
-      selectedBun._id,
+      selectedBun!._id,
       ...selectedBunFillings.map((filling) => filling._id),
-      selectedBun._id,
+      selectedBun!._id,
     ]);
 
     if (response.data) {
-      setOrderNumber(response.data?.order?.number);
+      setOrderNumber(response.data);
       setIsOrderCardOpen(true);
     } else if (response.error) {
       console.log('Order creation error:', response.error); // Log the whole object
@@ -99,22 +116,22 @@ export const BurgerConstructor = () => {
     }
   }
 
-  function removeIngredient(ingredient) {
+  function removeIngredient(ingredient: Ingredient): void {
     dispatch(removeBunFilling(ingredient));
   }
 
-  function handleCloseModal() {
+  function handleCloseModal(): void {
     dispatch(clearAll());
     setIsOrderCardOpen(false);
   }
 
-  function handleCloseErrorMessage() {
+  function handleCloseErrorMessage(): void {
     setIsErrorMessageOpen(false);
   }
 
   // Мемоизируем callback для перестановки ингредиентов
   const handleItemMove = useCallback(
-    (fromIndex, toIndex) => {
+    (fromIndex: number, toIndex: number) => {
       dispatch(moveBunFilling({ fromIndex, toIndex }));
     },
     [dispatch]
@@ -128,11 +145,16 @@ export const BurgerConstructor = () => {
   );
 
   return (
-    <section ref={dropTargetRef} className={styles.burger_constructor}>
+    <section
+      ref={(htmlElement) => {
+        dropTargetRef(htmlElement);
+      }}
+      className={styles.burger_constructor}
+    >
       <header className={`${styles.bun_block} pl-4 pr-2`}>
         {selectedBun ? (
           <ConstructorElement
-            className={styles.bun}
+            extraClass={styles.bun}
             type="top"
             text={`${selectedBun?.name} (верх)`}
             price={selectedBun?.price}
@@ -142,7 +164,6 @@ export const BurgerConstructor = () => {
         ) : (
           <DragHowerIndicator
             className={`${styles.emptyItem} ${styles.empty_bun} ${styles.empty_top_bun}`}
-            dragItemTypeId={DndItemTypes.Ingredient}
             isHover={isDraggingNewIngredient && draggingIngredientType === 'bun'}
           >
             <div className="text text_type_main-small">Выберите булки</div>
@@ -156,7 +177,6 @@ export const BurgerConstructor = () => {
             <li className={`${styles.ingredient_item} mt-2 mb-2 ml-7 mr-0`}>
               <DragHowerIndicator
                 className={`${styles.emptyItem} text text_type_main-small`}
-                dragItemTypeId={DndItemTypes.Ingredient}
                 isHover={isDraggingNewIngredient && draggingIngredientType !== 'bun'}
               >
                 Выберите начинку
@@ -173,12 +193,11 @@ export const BurgerConstructor = () => {
             <div className={styles.constructor_item}>
               <WithDragShiftConstructorElement
                 itemIndex={index}
+                itemId={DndItemTypes.ConstructorItem}
                 text={ingredient.name}
-                type={ingredient.type}
                 price={ingredient.price}
                 thumbnail={ingredient.image}
                 isLocked={false}
-                isDraggable={true}
                 handleClose={() => removeIngredient(ingredient)}
               />
             </div>
@@ -188,7 +207,7 @@ export const BurgerConstructor = () => {
       <footer className={`${styles.bun_block} pl-4 pr-2`}>
         {selectedBun ? (
           <ConstructorElement
-            className={styles.bun}
+            extraClass={styles.bun}
             type="bottom"
             text={`${selectedBun?.name} (низ)`}
             price={selectedBun?.price}
@@ -198,7 +217,6 @@ export const BurgerConstructor = () => {
         ) : (
           <DragHowerIndicator
             className={`${styles.emptyItem} ${styles.empty_bun} ${styles.empty_bottom_bun}`}
-            dragItemTypeId={DndItemTypes.Ingredient}
             isHover={isDraggingNewIngredient && draggingIngredientType === 'bun'}
           >
             <div className="text text_type_main-small">Выберите булки</div>
@@ -221,12 +239,12 @@ export const BurgerConstructor = () => {
         </Button>
       </section>
       {isOrderCardOpen && (
-        <Modal closeModal={handleCloseModal}>
+        <Modal header="" closeModal={handleCloseModal}>
           <OrderDetails orderNumber={orderNumber} />
         </Modal>
       )}
       {isErrorMessageOpen && (
-        <Modal closeModal={handleCloseErrorMessage}>
+        <Modal header="" closeModal={handleCloseErrorMessage}>
           <h2 className={`${styles.error_message} text text_type_main-large`}>
             Произошла ошибка отправки данных.
           </h2>

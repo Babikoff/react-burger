@@ -5,7 +5,7 @@ import type { JSX } from 'react';
 import styles from './order-details.module.css';
 
 interface IOrderDetailsProps {
-  orderNumber: number;
+  orderNumber: string;
 }
 
 function OrderDetails({ orderNumber }: IOrderDetailsProps): JSX.Element {
