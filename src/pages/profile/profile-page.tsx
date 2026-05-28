@@ -2,12 +2,14 @@ import { NavLink, Outlet, useMatch } from 'react-router-dom';
 
 import { useLogoutMutation } from '@services/api';
 
+import type { JSX } from 'react';
+
 import styles from './profile-page.module.css';
 
-export const ProfilePage = () => {
+export const ProfilePage = (): JSX.Element => {
   const [logout] = useLogoutMutation();
 
-  function onLogoutClick() {
+  async function onLogoutClick(): Promise<void> {
     logout();
   }
 
@@ -41,7 +43,7 @@ export const ProfilePage = () => {
                 >
                   История заказов
                 </NavLink>
-                <NavLink onClick={onLogoutClick} className={`${navLinkClass}`}>
+                <NavLink to="/" onClick={onLogoutClick} className={`${navLinkClass}`}>
                   Выход
                 </NavLink>
               </div>

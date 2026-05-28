@@ -12,9 +12,11 @@ import {
   selectIsLoading,
 } from '../../services/ingredientsSlice';
 
+import type { JSX } from 'react';
+
 import styles from './home.module.css';
 
-export const Home = () => {
+export const Home = (): JSX.Element => {
   const isLoading = useSelector(selectIsLoading);
   const isFetching = useSelector(selectIsFetching);
   const hasError = useSelector(selectHasError);

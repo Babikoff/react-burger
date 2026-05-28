@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 
 import { ForgotPasswordPage } from '@/pages/auth-pages/forgot-password/forgot-password';
@@ -8,23 +7,26 @@ import { RegisterPage } from '@/pages/auth-pages/register/register';
 import { ResetPasswordPage } from '@/pages/auth-pages/reset-password/reset-password';
 import { Home } from '@/pages/home/home';
 import { IngredientDetailsPage } from '@/pages/ingredient-details/ingredient-details-page';
-import { NotFoundPage } from '@/pages/not-found/not-found.jsx';
-import { ProfileOrders } from '@/pages/profile/profile-orders/profile-orders.jsx';
-import { ProfilePage } from '@/pages/profile/profile-page.jsx';
-import { Profile } from '@/pages/profile/profile/profile.jsx';
+import { NotFoundPage } from '@/pages/not-found/not-found.tsx';
+import { ProfileOrders } from '@/pages/profile/profile-orders/profile-orders.tsx';
+import { ProfilePage } from '@/pages/profile/profile-page.tsx';
+import { Profile } from '@/pages/profile/profile/profile.tsx';
 import { AppHeader } from '@components/app-header/app-header';
-import { ProtectedRoute } from '@components/protected-route/protected-route.jsx';
+import { ProtectedRoute } from '@components/protected-route/protected-route.tsx';
+import { useAppDispatch } from '@hooks/hooks';
 import { checkUserAuth } from '@services/user/actions.js';
 
-import { useGetIngredientsQuery } from '../../services/api';
-import IngredientDetails from '../burger-ingredients/ingredient-details/ingredient-details.jsx';
-import Modal from '../modal/modal.jsx';
+import { useGetIngredientsQuery } from '../../services/api.js';
+import IngredientDetails from '../burger-ingredients/ingredient-details/ingredient-details.js';
+import Modal from '../modal/modal.js';
 
-export const App = () => {
+import type { JSX } from 'react';
+
+export const App = (): JSX.Element => {
   // Сразу стартуем загрузку данных ингредиентов
   useGetIngredientsQuery();
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   useEffect(() => {
     dispatch(checkUserAuth());
     console.log('Called checkUserAuth');
@@ -35,7 +37,7 @@ export const App = () => {
 
   const navigate = useNavigate();
 
-  function handleCloseModal() {
+  function handleCloseModal(): void {
     navigate(-1);
   }
 

@@ -1,12 +1,5 @@
-import { EmailInput, Input, Button } from '@krgaa/react-developer-burger-ui-components';
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { Input, Button } from '@krgaa/react-developer-burger-ui-components';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { useSetUserMutation } from '@services/api';
@@ -14,20 +7,26 @@ import { selectUser } from '@services/user/userSlice.js';
 
 import { getValidators } from '../../../utils/validators';
 
+import type { JSX } from 'react';
+
 import styles from './profile.module.css';
 
-export const Profile = () => {
-  const inputRef = useRef(null);
+interface IValues {
+  name: string;
+  email: string;
+  password: string;
+}
 
+export const Profile = (): JSX.Element => {
   const user = useSelector(selectUser);
 
   const [setUser, { isLoading: isUpdatingUser, error: errorUpdatingUser }] =
     useSetUserMutation();
 
   const validators = getValidators(true);
-  const [values, setValues] = useState({
-    name: '',
-    email: '',
+  const [values, setValues] = useState<IValues>({
+    name: user?.name || '',
+    email: user?.email || '',
     password: '',
   });
 
@@ -47,13 +46,11 @@ export const Profile = () => {
   // Информационное сообщение о статусе процесса
   const [footerMessage, setFooterMessage] = useState('');
 
-  useLayoutEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, []);
-
-  const [initialValues, setInitialValues] = useState(null);
+  const [initialValues, setInitialValues] = useState({
+    name: '',
+    email: '',
+    password: '',
+  });
 
   useEffect(() => {
     if (user && !initialValues) {
@@ -89,13 +86,13 @@ export const Profile = () => {
     setFooterMessage('Изменения отменены');
   }, [initialValues, setValues]);
 
-  function handleChange(event) {
+  function handleChange(event: React.ChangeEvent<HTMLInputElement>): void {
     const { name, value } = event.target;
     setValues((prev) => ({ ...prev, [name]: value }));
     setFooterMessage('');
   }
 
-  async function handleSubmit(event) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
     await setUser(values).unwrap();
     values.password = '';
@@ -118,7 +115,6 @@ export const Profile = () => {
             <div className="mb-6">
               <Input
                 id="name"
-                ref={inputRef}
                 name="name"
                 placeholder="Имя"
                 value={values.name || ''}
@@ -126,10 +122,11 @@ export const Profile = () => {
                 icon={isNameEditing ? undefined : 'EditIcon'}
                 onIconClick={() => setIsNameEditing((prev) => !prev)}
                 disabled={!isNameEditing}
+                autoFocus
               />
             </div>
             <div className="mb-6">
-              <EmailInput
+              <Input
                 id="email"
                 name="email"
                 placeholder="Логин"
