@@ -1,8 +1,8 @@
 import { CurrencyIcon, Counter } from '@krgaa/react-developer-burger-ui-components';
 import { useDrag } from 'react-dnd';
-import { useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 
+import { useAppSelector } from '@hooks/hooks';
 import { selectIngredientCount } from '@services/burgerConstructorSlice';
 import { DndItemTypes } from '@utils/appConstants';
 
@@ -17,7 +17,7 @@ interface IIngredientBoxProps {
 }
 
 function IngredientBox({ ingredient }: IIngredientBoxProps): JSX.Element {
-  const ingredientCount = useSelector((state) =>
+  const ingredientCount = useAppSelector((state) =>
     selectIngredientCount(state, ingredient)
   );
 

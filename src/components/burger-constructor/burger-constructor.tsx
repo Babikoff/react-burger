@@ -6,10 +6,9 @@ import {
 } from '@krgaa/react-developer-burger-ui-components';
 import { useCallback, useMemo, useState, type JSX } from 'react';
 import { useDrop } from 'react-dnd';
-import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import { useAppSelector } from '@hooks/hooks';
+import { useAppDispatch, useAppSelector } from '@hooks/hooks';
 import { useCreateOrderMutation } from '@services/api';
 import {
   setBun,
@@ -32,7 +31,7 @@ import type { Ingredient } from '@services/api_types';
 import styles from './burger-constructor.module.css';
 
 export const BurgerConstructor = (): JSX.Element => {
-  const user = useSelector(selectUser);
+  const user = useAppSelector(selectUser);
   const navigate = useNavigate();
   const [orderNumber, setOrderNumber] = useState('');
   const [isOrderCardOpen, setIsOrderCardOpen] = useState(false);
@@ -47,9 +46,9 @@ export const BurgerConstructor = (): JSX.Element => {
   );
 
   // Мемоизированный селектор для TotalPrice
-  const totalPrice = useSelector(selectTotalPrice);
+  const totalPrice = useAppSelector(selectTotalPrice);
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const [{ isDraggingNewIngredient, draggingIngredientType }, dropTargetRef] = useDrop<
     {

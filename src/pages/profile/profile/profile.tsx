@@ -47,8 +47,8 @@ export const Profile = (): JSX.Element => {
   const [footerMessage, setFooterMessage] = useState('');
 
   const [initialValues, setInitialValues] = useState({
-    name: '',
-    email: '',
+    name: user?.name || '',
+    email: user?.email || '',
     password: '',
   });
 
@@ -175,7 +175,7 @@ export const Profile = (): JSX.Element => {
           {errorUpdatingUser && (
             <span
               className={`${styles.error} text_type_main-default mt-1`}
-            >{`Ошибка: ${errorUpdatingUser.message}`}</span>
+            >{`Ошибка: ${'message' in errorUpdatingUser ? errorUpdatingUser.message : JSON.stringify(errorUpdatingUser)}`}</span>
           )}
           {footerMessage && errorUpdatingUser === undefined && (
             <span className="text_type_main-default  mt-3">{footerMessage}</span>
