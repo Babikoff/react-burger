@@ -66,8 +66,8 @@ interface IBaseQueryArgs {
 // BaseQueryFn — это тип из RTK Query, описывающий функцию базового запроса.
 // Он принимает три дженерик аргумента:
 //   1) Тип аргументов запроса (BaseQueryArgs) — содержит url, method, body.
-//   2) Тип успешного ответа (AuthResponse) — что возвращается при успехе.
-//   3) Тип ошибки (unknown) — произвольная структура ошибки.
+//   2) Тип успешного ответа (NonAuthResponse) — что возвращается при успехе.
+//   3) Тип ошибки (ISerializableRestApiError).
 // Функция должна вернуть объект с полем `data` (успех) или `error` (ошибка).
 const baseNonAuthQuery: BaseQueryFn<
   IBaseQueryArgs,
@@ -109,7 +109,7 @@ const baseNonAuthQuery: BaseQueryFn<
 // Он принимает три дженерик аргумента:
 //   1) Тип аргументов запроса (BaseQueryArgs) — содержит url, method, body.
 //   2) Тип успешного ответа (AuthResponse) — что возвращается при успехе.
-//   3) Тип ошибки (unknown) — произвольная структура ошибки.
+//   3) Тип ошибки (ISerializableRestApiError).
 // Функция должна вернуть объект с полем `data` (успех) или `error` (ошибка).
 const baseQueryWithTokenRefresh: BaseQueryFn<
   IBaseQueryArgs,
