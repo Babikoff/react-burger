@@ -38,7 +38,7 @@ export const LoginPage = () => {
 
     if (result.error) {
       console.log(
-        `Login failed. Error: ${result.error.data?.message || result.error.message}`
+        `Login failed. ${JSON.stringify(result)} Error: ${result.error.statusText || result.error.data?.message || result.error.message}`
       );
     } else {
       const { from } = location.state || { from: { pathname: '/' } };

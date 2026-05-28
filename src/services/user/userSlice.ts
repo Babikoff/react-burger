@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { authApi } from '@services/api';
+import { authApi, nonAuthApi } from '@services/api';
 
 import type { PayloadAction } from '@reduxjs/toolkit';
 
@@ -40,14 +40,14 @@ export const userSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addMatcher(
-        authApi.endpoints.login.matchFulfilled,
+        nonAuthApi.endpoints.login.matchFulfilled,
         (state, action: PayloadAction<User>) => {
           state.user = action.payload;
           state.isAuthChecked = true;
         }
       )
       .addMatcher(
-        authApi.endpoints.register.matchFulfilled,
+        nonAuthApi.endpoints.register.matchFulfilled,
         (state, action: PayloadAction<User>) => {
           state.user = action.payload;
           state.isAuthChecked = true;

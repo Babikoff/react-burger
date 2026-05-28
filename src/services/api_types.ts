@@ -16,6 +16,24 @@ export class ServerError extends Error {
   }
 }
 
+// Responses
+
+export interface RestApiError {
+  status?: number;
+  statusText?: string;
+  body?: string;
+}
+
+// Response запросов без аутентификации
+export interface NonAuthResponse {
+  success: boolean;
+  message?: string;
+  error?: RestApiError;
+  accessToken?: string;
+  refreshToken?: string;
+  user?: User;
+}
+
 // Аутентификация
 export interface ResponseWithTokens {
   success: boolean;

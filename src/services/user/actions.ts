@@ -17,7 +17,7 @@ export const checkUserAuth = createAsyncThunk(
         console.log(
           response.data
             ? `Loaded user: ${response.data?.name}/${response.data?.email}.`
-            : `Could not load user info/ Error: ${response.error}`
+            : `Could not load user info/ Error: ${JSON.stringify(response.error)}.`
         );
       } else {
         console.log('No token.');

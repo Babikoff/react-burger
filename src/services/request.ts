@@ -4,13 +4,16 @@ import { type AuthResponse, type RequestOptions, ServerError } from './api_types
 
 // Функция проверки ответа от сервера
 export async function checkResponse(response: Response): Promise<AuthResponse> {
-  const res = await response.json();
-
-  if (response.ok) {
-    return res;
+  if (!response.ok) {
+    const errorBody = await response.text();
+    throw new ServerError(
+      errorBody || `Request failed with status ${response.status}`,
+      response.status
+    );
   }
 
-  throw new ServerError(res.message, response.status);
+  const res = await response.json();
+  return res;
 }
 
 // Функция отправки запроса
