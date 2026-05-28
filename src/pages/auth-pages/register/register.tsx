@@ -4,7 +4,6 @@ import {
   PasswordInput,
   Button,
 } from '@krgaa/react-developer-burger-ui-components';
-import { useLayoutEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { useRegisterMutation } from '@services/api';
@@ -12,36 +11,36 @@ import { useRegisterMutation } from '@services/api';
 import { useFormWithValidation } from '../../../hooks/use-form-with-validation';
 import { getValidators } from '../../../utils/validators';
 
+import type { JSX } from 'react';
+
 import globalStyles from '../../../global.module.css';
 import commonAuthStyles from '../auth-pages-common.module.css';
 
-export const RegisterPage = () => {
-  const inputRef = useRef(null);
+export const RegisterPage = (): JSX.Element => {
   const [register, { isLoading, error }] = useRegisterMutation();
 
   const validators = getValidators(false);
   const navigate = useNavigate();
 
-  useLayoutEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, []);
+  const { values, handleChange, errors, isValid } = useFormWithValidation(
+    {
+      name: '',
+      email: '',
+      password: '',
+    },
+    false
+  );
 
-  const { values, handleChange, errors, isValid } = useFormWithValidation({
-    name: '',
-    email: '',
-    password: '',
-  });
-
-  async function handleSubmit(event) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
-    const result = await register(values);
+    const result = await register({
+      name: values.name ?? '',
+      email: values.email ?? '',
+      password: values.password ?? '',
+    });
 
     if (result.error) {
-      console.log(
-        `Registration failed. Error: ${result.error.data?.message || result.error.message}`
-      );
+      console.log(`Registration failed. Error: ${result.error.message}`);
     } else {
       console.log('Navigate to /');
       navigate('/');
@@ -57,19 +56,18 @@ export const RegisterPage = () => {
             <div className="mb-6">
               <Input
                 id="name"
-                ref={inputRef}
                 type="text"
                 name="name"
                 placeholder="Имя"
                 value={values.name || ''}
                 onChange={handleChange}
                 aria-invalid={!!errors.name}
+                autoFocus
               />
             </div>
             <div className="mb-6">
               <EmailInput
                 id="email"
-                type="email"
                 name="email"
                 placeholder="Email"
                 value={values.email || ''}
@@ -80,7 +78,6 @@ export const RegisterPage = () => {
             </div>
             <div className="mb-6">
               <PasswordInput
-                type="password"
                 name="password"
                 id="password"
                 placeholder="Пароль"
@@ -90,7 +87,7 @@ export const RegisterPage = () => {
                 aria-invalid={!!errors.password}
               />
             </div>
-            <Button disabled={isLoading || !isValid}>
+            <Button htmlType="submit" disabled={isLoading || !isValid}>
               {isLoading ? 'Регистрация...' : 'Зарегистрироваться'}
             </Button>
           </form>

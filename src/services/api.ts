@@ -214,7 +214,7 @@ export const nonAuthApi = createApi({
       },
     }),
 
-    setNewPassword: builder.mutation({
+    setNewPassword: builder.mutation<string, { token: string; password: string }>({
       query: (newPasswordCredentials) => ({
         url: 'password-reset/reset',
         method: 'POST',
@@ -222,9 +222,9 @@ export const nonAuthApi = createApi({
       }),
       transformResponse: (response) => {
         console.log(
-          `password-reset success: ${response.success} message: ${response.message}`
+          `password-reset success: ${response.success} message: ${response.message ?? ''}`
         );
-        return response.message;
+        return response.message ?? '';
       },
     }),
   }),
