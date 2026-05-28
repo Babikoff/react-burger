@@ -14,7 +14,7 @@ export const checkUserAuth = createAsyncThunk(
         const response = await dispatch(
           authApi.endpoints.getUser.initiate(undefined, { forceRefetch: true })
         );
-        console.log(`Loaded user ${response.data.user}`);
+        console.log(`Loaded user: ${JSON.stringify(response.data)}.`);
       } else {
         console.log('No token.');
       }

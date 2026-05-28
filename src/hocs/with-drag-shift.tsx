@@ -1,11 +1,43 @@
-import { useRef } from 'react';
+import { useRef, type JSX } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 
-function withDragShift(Component, dragItemTypeId, handleItemMove) {
-  return function ComponentWithSwing(props) {
+interface IComponentWithSwingProps {
+  itemId: string;
+  itemIndex: number;
+  internalItemProps: object;
+}
+
+interface IDragItem {
+  itemId: string;
+  itemIndex: number;
+}
+
+// interface IDragSourceMonitor {
+//   itemId: string;
+//   itemIndex: number;
+//   isDragging: () => void;
+// }
+
+// interface IDraggingItem {
+//   isDragging: boolean;
+// }
+
+// interface IDraggable
+// {
+//   type: string;
+//   item: IDragSourceMonitor;
+//   collect: (monitor: IDragSourceMonitor) => IDraggingItem;
+// }
+
+function withDragShift(
+  Component: React.ComponentType<object>,
+  dragItemTypeId: string,
+  handleItemMove: (draggingItemIndex: number, nextIndex: number) => void
+) {
+  return function ComponentWithSwing(props: IComponentWithSwingProps): JSX.Element {
     const { itemId, itemIndex, ...internalItemProps } = props;
 
-    const ref = useRef(null);
+    const ref = useRef<HTMLDivElement>(null);
 
     const [, dragRef] = useDrag({
       type: dragItemTypeId,
@@ -15,7 +47,7 @@ function withDragShift(Component, dragItemTypeId, handleItemMove) {
       }),
     });
 
-    const [, dropRef] = useDrop({
+    const [, dropRef] = useDrop<IDragItem, void, unknown>({
       accept: dragItemTypeId,
       hover: (item, monitor) => {
         if (!ref.current) {
@@ -34,7 +66,7 @@ function withDragShift(Component, dragItemTypeId, handleItemMove) {
         const thisItemRect = ref.current.getBoundingClientRect();
 
         // и координаты перетаскиваемого
-        const draggingItemRect = monitor.getSourceClientOffset();
+        const draggingItemRect = monitor.getSourceClientOffset()!;
 
         // Определим направление движения и пересечение середины текущего элемента.
         // При пересечении середины будем считать что требуется перемещение.
