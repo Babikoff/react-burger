@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { useSetUserMutation } from '@services/api';
-import { selectUser } from '@services/user/userSlice.js';
+import { selectUser } from '@services/user/userSlice';
 
 import { getValidators } from '../../../utils/validators';
 

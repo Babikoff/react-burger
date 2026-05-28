@@ -14,11 +14,11 @@ import { Profile } from '@/pages/profile/profile/profile.tsx';
 import { AppHeader } from '@components/app-header/app-header';
 import { ProtectedRoute } from '@components/protected-route/protected-route.tsx';
 import { useAppDispatch } from '@hooks/hooks';
-import { checkUserAuth } from '@services/user/actions.js';
+import { checkUserAuth } from '@services/user/actions';
 
-import { useGetIngredientsQuery } from '../../services/api.js';
-import IngredientDetails from '../burger-ingredients/ingredient-details/ingredient-details.js';
-import Modal from '../modal/modal.js';
+import { useGetIngredientsQuery } from '../../services/api';
+import IngredientDetails from '../burger-ingredients/ingredient-details/ingredient-details';
+import Modal from '../modal/modal';
 
 import type { JSX } from 'react';
 

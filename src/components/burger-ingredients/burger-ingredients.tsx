@@ -2,8 +2,8 @@ import { Tab } from '@krgaa/react-developer-burger-ui-components';
 import { useMemo, useState, useRef, type JSX } from 'react';
 import { useSelector } from 'react-redux';
 
-import { selectIngredientsData } from '../../services/ingredientsSlice.js';
-import IngredientsGroup from './ingredients-group/ingredients-group.jsx';
+import { selectIngredientsData } from '../../services/ingredientsSlice';
+import IngredientsGroup from './ingredients-group/ingredients-group.tsx';
 
 import styles from './burger-ingredients.module.css';
 

@@ -1,7 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 
 import { RestApiError } from './api_types';
-import { request } from './request.js';
+import { request } from './request.ts';
 
 import type { BaseQueryFn } from '@reduxjs/toolkit/query';
 
@@ -11,6 +11,7 @@ import type {
   Ingredient,
   ISerializableRestApiError,
   RefreshTokenResponse,
+  ResponseWithTokens,
   RequestOptions,
   User,
 } from './api_types';
@@ -268,7 +269,7 @@ export const authApi = createApi({
     }),
 
     // Получение ингредиентов
-    getIngredients: builder.query<Ingredient[], void>({
+    getIngredients: builder.query<{ data: Ingredient[] }, void>({
       query: () => ({
         url: 'ingredients',
       }),
@@ -283,7 +284,7 @@ export const authApi = createApi({
           ingredients: orderIngredientsIds,
         }),
       }),
-      transformResponse(response: AuthResponse) {
+      transformResponse(response: ResponseWithTokens) {
         const result = response as unknown as { order: { number: number } };
         return result.order.number.toString();
       },
