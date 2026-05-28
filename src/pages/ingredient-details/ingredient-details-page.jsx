@@ -1,4 +1,4 @@
-import IngredientDetails from '@components/burger-ingredients/ingredient-details/ingredient-details';
+import IngredientDetails from '../../components/burger-ingredients/ingredient-details/ingredient-details';
 
 import styles from './ingredient-details-page.module.css';
 
