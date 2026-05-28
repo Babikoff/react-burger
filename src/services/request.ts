@@ -1,11 +1,9 @@
 import { defaultRequestOptions, host } from '@/services/apiConstants';
 
-import { ServerError } from './api_types';
-
-import type { RequestOptions, ResponseWithTokens } from './api_types';
+import { type AuthResponse, type RequestOptions, ServerError } from './api_types';
 
 // Функция проверки ответа от сервера
-export async function checkResponse(response: Response): Promise<ResponseWithTokens> {
+export async function checkResponse(response: Response): Promise<AuthResponse> {
   const res = await response.json();
 
   if (response.ok) {
@@ -19,7 +17,7 @@ export async function checkResponse(response: Response): Promise<ResponseWithTok
 export async function request(
   endpoint: string,
   options: RequestOptions
-): Promise<ResponseWithTokens> {
+): Promise<AuthResponse> {
   const response: Response = await fetch(`${host}/api/${endpoint}`, {
     ...defaultRequestOptions,
     ...options,

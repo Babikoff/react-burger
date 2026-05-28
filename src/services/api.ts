@@ -6,9 +6,11 @@ import { request } from './request.js';
 import type { BaseQueryFn } from '@reduxjs/toolkit/query';
 
 import type {
-  ResponseWithTokens,
+  AuthResponse,
+  Ingredient,
   RefreshTokenResponse,
   RequestOptions,
+  User,
 } from './api_types';
 
 export async function refreshToken(): Promise<RefreshTokenResponse> {
@@ -25,7 +27,7 @@ export async function refreshToken(): Promise<RefreshTokenResponse> {
 export async function fetchWithRefresh(
   endpoint: string,
   options: RequestOptions
-): Promise<ResponseWithTokens> {
+): Promise<AuthResponse> {
   try {
     return await request(endpoint, options);
   } catch (error: unknown) {
@@ -60,14 +62,12 @@ interface IBaseQueryArgs {
 // BaseQueryFn — это тип из RTK Query, описывающий функцию базового запроса.
 // Он принимает три дженерика:
 //   1) Тип аргументов запроса (BaseQueryArgs) — содержит url, method, body.
-//   2) Тип успешного ответа (ResponseWithTokens) — что возвращается при успехе.
+//   2) Тип успешного ответа (AuthResponse) — что возвращается при успехе.
 //   3) Тип ошибки (unknown) — произвольная структура ошибки.
 // Функция должна вернуть объект с полем `data` (успех) или `error` (ошибка).
-const baseQueryWithRefresh: BaseQueryFn<
-  IBaseQueryArgs,
-  ResponseWithTokens,
-  unknown
-> = async (args) => {
+const baseQueryWithRefresh: BaseQueryFn<IBaseQueryArgs, AuthResponse, unknown> = async (
+  args
+) => {
   const { url, method = 'GET', body } = args;
   const token = localStorage.getItem('accessToken');
 
@@ -96,7 +96,7 @@ export const authApi = createApi({
   baseQuery: baseQueryWithRefresh,
   endpoints: (builder) => ({
     // Методы аутентификациии и обмена данными пользователя
-    login: builder.mutation({
+    login: builder.mutation<User, { email: string; password: string }>({
       query: (credentials) => ({
         url: 'auth/login',
         method: 'POST',
@@ -108,7 +108,7 @@ export const authApi = createApi({
         return response.user;
       },
     }),
-    register: builder.mutation({
+    register: builder.mutation<User, { name: string; email: string; password: string }>({
       query: (credentials) => ({
         url: 'auth/register',
         method: 'POST',
@@ -122,14 +122,14 @@ export const authApi = createApi({
         return response.user;
       },
     }),
-    getUser: builder.query({
+    getUser: builder.query<User, void>({
       query: () => ({
         url: 'auth/user',
         method: 'GET',
       }),
       transformResponse: (response) => response.user,
     }),
-    setUser: builder.mutation({
+    setUser: builder.mutation<User, { name: string; email: string; password: string }>({
       query: (user) => ({
         url: 'auth/user',
         method: 'PATCH',
@@ -137,7 +137,7 @@ export const authApi = createApi({
       }),
       transformResponse: (response) => response.user,
     }),
-    logout: builder.mutation({
+    logout: builder.mutation<null, void>({
       query: () => ({
         url: 'auth/logout',
         method: 'POST',
@@ -177,14 +177,13 @@ export const authApi = createApi({
       },
     }),
     // Получение ингредиентов
-    //getIngredients: builder.query<{ success: boolean; data: Ingredient[] }, void>({
-    getIngredients: builder.query({
+    getIngredients: builder.query<Ingredient[], void>({
       query: () => ({
         url: 'ingredients',
       }),
     }),
     // Создание заказа
-    createOrder: builder.mutation({
+    createOrder: builder.mutation<string, string[]>({
       query: (orderIngredientsIds) => ({
         url: 'orders',
         method: 'POST',

@@ -1,9 +1,9 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
-import { authApi } from '@services/api.js';
-import { isTokenExists } from '@services/tokens.js';
+import { authApi } from '@services/api';
+import { isTokenExists } from '@services/tokens';
 
-import { setIsAuthChecked } from './userSlice.js';
+import { setIsAuthChecked } from './userSlice';
 
 export const checkUserAuth = createAsyncThunk(
   'user/checkUserAuth',
@@ -14,7 +14,11 @@ export const checkUserAuth = createAsyncThunk(
         const response = await dispatch(
           authApi.endpoints.getUser.initiate(undefined, { forceRefetch: true })
         );
-        console.log(`Loaded user: ${JSON.stringify(response.data)}.`);
+        console.log(
+          response.data
+            ? `Loaded user: ${response.data?.name}/${response.data?.email}.`
+            : `Could not load user info/ Error: ${response.error}`
+        );
       } else {
         console.log('No token.');
       }
