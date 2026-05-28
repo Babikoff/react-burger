@@ -3,7 +3,6 @@ import {
   PasswordInput,
   Button,
 } from '@krgaa/react-developer-burger-ui-components';
-import { useLayoutEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 import { useLoginMutation } from '@services/api';
@@ -11,34 +10,36 @@ import { useLoginMutation } from '@services/api';
 import { useFormWithValidation } from '../../../hooks/use-form-with-validation';
 import { getValidators } from '../../../utils/validators';
 
+import type { JSX } from 'react';
+
 import globalStyles from '../../../global.module.css';
 import commonAuthStyles from '../auth-pages-common.module.css';
 
-export const LoginPage = () => {
-  const inputRef = useRef(null);
+export const LoginPage = (): JSX.Element => {
   const [login, { isLoading, error }] = useLoginMutation();
 
   const location = useLocation();
   const validators = getValidators(false);
 
-  useLayoutEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, []);
-
   const navigate = useNavigate();
-  const { values, handleChange, errors, isValid } = useFormWithValidation({
-    email: '',
-  });
+  const { values, handleChange, errors, isValid } = useFormWithValidation(
+    {
+      email: '',
+      password: '',
+    },
+    false
+  );
 
-  async function handleSubmit(event) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
-    const result = await login(values);
+    const result = await login({
+      email: values.email ?? '',
+      password: values.password ?? '',
+    });
 
     if (result.error) {
       console.log(
-        `Login failed. ${JSON.stringify(result)} Error: ${result.error.statusText || result.error.data?.message || result.error.message}`
+        `Login failed. ${JSON.stringify(result)} Error: ${result.error.message}`
       );
     } else {
       const { from } = location.state || { from: { pathname: '/' } };
@@ -56,19 +57,17 @@ export const LoginPage = () => {
             <div className="mb-6">
               <EmailInput
                 id="email"
-                ref={inputRef}
-                type="email"
                 name="email"
                 placeholder="Email"
                 value={values.email || ''}
                 errorText={validators.email.message}
                 onChange={handleChange}
                 aria-invalid={!!errors.email}
+                autoFocus
               />
             </div>
             <div className="mb-6">
               <PasswordInput
-                type="password"
                 name="password"
                 id="password"
                 placeholder="Пароль"
@@ -78,7 +77,7 @@ export const LoginPage = () => {
                 aria-invalid={!!errors.password}
               />
             </div>
-            <Button disabled={isLoading || !isValid}>
+            <Button htmlType="submit" disabled={isLoading || !isValid}>
               {isLoading ? 'Вход...' : 'Войти'}
             </Button>
           </form>

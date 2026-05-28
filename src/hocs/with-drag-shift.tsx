@@ -4,7 +4,6 @@ import { useDrag, useDrop } from 'react-dnd';
 interface IComponentWithSwingProps {
   itemId: string;
   itemIndex: number;
-  // internalItemProps: object;
 }
 
 interface IDragItem {
