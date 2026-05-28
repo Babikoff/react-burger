@@ -1,14 +1,15 @@
 import { defaultRequestOptions, host } from '@/services/apiConstants';
 
-import { type AuthResponse, type RequestOptions, ServerError } from './api_types';
+import { type AuthResponse, type RequestOptions, RestApiError } from './api_types';
 
 // Функция проверки ответа от сервера
 export async function checkResponse(response: Response): Promise<AuthResponse> {
   if (!response.ok) {
     const errorBody = await response.text();
-    throw new ServerError(
-      errorBody || `Request failed with status ${response.status}`,
-      response.status
+    throw new RestApiError(
+      response.status,
+      `Request failed with status ${response.status}`,
+      errorBody
     );
   }
 

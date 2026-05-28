@@ -1,6 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 
-import { ServerError } from './api_types';
+import { RestApiError } from './api_types';
 import { request } from './request.js';
 
 import type { BaseQueryFn } from '@reduxjs/toolkit/query';
@@ -9,6 +9,7 @@ import type {
   AuthResponse,
   NonAuthResponse,
   Ingredient,
+  ISerializableRestApiError,
   RefreshTokenResponse,
   RequestOptions,
   User,
@@ -33,13 +34,13 @@ export async function fetchWithRefresh(
     return await request(endpoint, options);
   } catch (error: unknown) {
     if (
-      error instanceof ServerError &&
-      (error.statusCode === 401 || error.statusCode === 403) &&
+      error instanceof RestApiError &&
+      (error.status === 401 || error.status === 403) &&
       localStorage.getItem('refreshToken')
     ) {
       console.log('We need to refresh token');
       const refreshData = await refreshToken();
-      console.log('Token refreshed. New access token: ', refreshData.accessToken);
+      console.log('Token refreshed.');
 
       return await request(endpoint, {
         ...options,
@@ -67,9 +68,11 @@ interface IBaseQueryArgs {
 //   2) Тип успешного ответа (AuthResponse) — что возвращается при успехе.
 //   3) Тип ошибки (unknown) — произвольная структура ошибки.
 // Функция должна вернуть объект с полем `data` (успех) или `error` (ошибка).
-const baseNonAuthQuery: BaseQueryFn<IBaseQueryArgs, NonAuthResponse, unknown> = async (
-  args
-) => {
+const baseNonAuthQuery: BaseQueryFn<
+  IBaseQueryArgs,
+  NonAuthResponse,
+  ISerializableRestApiError
+> = async (args) => {
   const { url, method = 'GET', body } = args;
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -85,7 +88,18 @@ const baseNonAuthQuery: BaseQueryFn<IBaseQueryArgs, NonAuthResponse, unknown> = 
     const data = await request(url, options);
     return { data };
   } catch (err) {
-    return { error: err };
+    console.error(`Error in baseNonAuthQuery: ${err}`);
+    if (err instanceof RestApiError) {
+      return {
+        error: {
+          status: err.status,
+          statusText: err.statusText,
+          body: err.body,
+          message: err.message,
+        },
+      };
+    }
+    return { error: { message: String(err) } };
   }
 };
 
@@ -99,7 +113,7 @@ const baseNonAuthQuery: BaseQueryFn<IBaseQueryArgs, NonAuthResponse, unknown> = 
 const baseQueryWithTokenRefresh: BaseQueryFn<
   IBaseQueryArgs,
   AuthResponse,
-  unknown
+  ISerializableRestApiError
 > = async (args) => {
   const { url, method = 'GET', body } = args;
   const headers: Record<string, string> = {
@@ -108,7 +122,7 @@ const baseQueryWithTokenRefresh: BaseQueryFn<
 
   const token = localStorage.getItem('accessToken');
   if (token) {
-    console.log('sending accessToken', token);
+    console.log('sending accessToken');
     headers.authorization = token;
   } else {
     console.log('no accessToken', token);
@@ -124,7 +138,17 @@ const baseQueryWithTokenRefresh: BaseQueryFn<
     const data = await fetchWithRefresh(url, options);
     return { data };
   } catch (err) {
-    return { error: err };
+    if (err instanceof RestApiError) {
+      return {
+        error: {
+          status: err.status,
+          statusText: err.statusText,
+          body: err.body,
+          message: err.message,
+        },
+      };
+    }
+    return { error: { message: String(err) } };
   }
 };
 

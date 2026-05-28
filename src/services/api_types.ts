@@ -17,18 +17,31 @@ export class ServerError extends Error {
 }
 
 // Responses
-
-export interface RestApiError {
+export interface ISerializableRestApiError {
   status?: number;
   statusText?: string;
   body?: string;
+  message?: string;
+}
+
+export class RestApiError extends Error implements ISerializableRestApiError {
+  status?: number;
+  statusText?: string;
+  body?: string;
+  constructor(status: number, statusText?: string, body?: string) {
+    super(statusText);
+    this.name = 'RestApiError';
+    this.status = status;
+    this.statusText = statusText;
+    this.body = body;
+  }
 }
 
 // Response запросов без аутентификации
 export interface NonAuthResponse {
   success: boolean;
   message?: string;
-  error?: RestApiError;
+  error?: ISerializableRestApiError;
   accessToken?: string;
   refreshToken?: string;
   user?: User;
