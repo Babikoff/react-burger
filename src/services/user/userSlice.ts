@@ -4,7 +4,7 @@ import { authApi, nonAuthApi } from '@services/api';
 
 import type { PayloadAction } from '@reduxjs/toolkit';
 
-import type { User } from '@services/api_types';
+import type { User } from '@/services/api-types';
 
 interface IUserSliceState {
   user?: User;

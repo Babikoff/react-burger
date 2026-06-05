@@ -2,13 +2,13 @@ import { CurrencyIcon, Counter } from '@krgaa/react-developer-burger-ui-componen
 import { useDrag } from 'react-dnd';
 import { Link, useLocation } from 'react-router-dom';
 
+import { DndItemTypes } from '@/utils/app-constants';
 import { useAppSelector } from '@hooks/hooks';
 import { selectIngredientCount } from '@services/burgerConstructorSlice';
-import { DndItemTypes } from '@utils/appConstants';
 
 import type { JSX } from 'react';
 
-import type { Ingredient } from '@services/api_types';
+import type { Ingredient } from '@/services/api-types';
 
 import styles from './ingredient-box.module.css';
 

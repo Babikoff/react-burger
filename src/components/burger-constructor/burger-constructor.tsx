@@ -21,12 +21,12 @@ import {
 import { selectUser } from '@services/user/userSlice';
 
 import withDragShift from '../../hocs/with-drag-shift';
-import { DndItemTypes } from '../../utils/appConstants';
+import { DndItemTypes } from '../../utils/app-constants';
 import Modal from '../modal/modal';
 import DragHowerIndicator from './drag-hower-indicator/drag-hower-indicator';
 import OrderDetails from './order-details/order-details';
 
-import type { Ingredient } from '@services/api_types';
+import type { Ingredient } from '@/services/api-types';
 
 import styles from './burger-constructor.module.css';
 

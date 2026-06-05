@@ -1,6 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 
-import { RestApiError } from './api_types';
+import { refreshToken } from './api-common.ts';
+import { RestApiError } from './api-types.ts';
 import { request } from './request.ts';
 
 import type { BaseQueryFn } from '@reduxjs/toolkit/query';
@@ -10,22 +11,10 @@ import type {
   NonAuthResponse,
   Ingredient,
   ISerializableRestApiError,
-  RefreshTokenResponse,
   ResponseWithTokens,
   RequestOptions,
   User,
-} from './api_types';
-
-export async function refreshToken(): Promise<RefreshTokenResponse> {
-  const response = await request('auth/token', {
-    method: 'POST',
-    body: JSON.stringify({ token: localStorage.getItem('refreshToken') }),
-  });
-  console.log('refreshToken: token refreshed');
-  localStorage.setItem('accessToken', response.accessToken);
-  localStorage.setItem('refreshToken', response.refreshToken);
-  return response;
-}
+} from './api-types.ts';
 
 export async function fetchWithRefresh(
   endpoint: string,

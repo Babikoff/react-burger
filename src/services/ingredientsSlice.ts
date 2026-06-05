@@ -6,7 +6,7 @@ import { authApi } from './api';
 
 import type { PayloadAction } from '@reduxjs/toolkit';
 
-import type { Ingredient } from './api_types';
+import type { Ingredient } from './api-types';
 
 // Внутренний селектор загрузки ингредиентов
 const selectIngredientsRaw = authApi.endpoints.getIngredients.select(undefined);

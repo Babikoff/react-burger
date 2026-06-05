@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 
 import { useGetIngredientsQuery } from '../../../services/api';
 
-import type { Ingredient } from '@/services/api_types';
+import type { Ingredient } from '@/services/api-types';
 
 import styles from './ingredient-details.module.css';
 
