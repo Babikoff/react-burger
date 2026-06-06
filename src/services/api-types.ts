@@ -99,3 +99,32 @@ export interface ForgotPassword {
 export interface OrderBurgerRequest {
   ingredients: string[];
 }
+
+// Типы WebSocket API (для работы с Orders)
+
+export interface IWsApiError {
+  status?: number;
+  statusText?: string;
+  body?: string;
+  message?: string;
+}
+
+export type TOrderStatus = 'created' | 'pending' | 'cancelled' | 'done';
+
+export interface IOrderDetails {
+  _id: string;
+  ingredients: string[];
+  status: TOrderStatus;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+  number: number;
+}
+
+export interface IWsMessage {
+  success: boolean;
+  orders: IOrderDetails[];
+  total: number;
+  totalToday: number;
+  message?: string; // Для ошибок типа: 'Invalid or missing token'
+}

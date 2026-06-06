@@ -1,24 +1,31 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi, type BaseQueryFn } from '@reduxjs/toolkit/query/react';
 
 import { wsHost } from '@/services/api-constants.ts';
 
 import { refreshToken } from './api-common.ts';
 
+import type { IWsMessage } from './api-types.ts';
+
 //type wsEventListener = (this: WebSocket, ev: MessageEvent<string>) => void;
+
+const wsBaseQuery: BaseQueryFn = async () => {
+  return { data: { success: false, orders: [], total: 0, totalToday: 0 } as IWsMessage };
+};
 
 // Переменная хранит активное соединение
 // и доступна всем эндпоинтам в этом файле
 let socket: WebSocket;
 
-export const chatApi = createApi({
-  reducerPath: 'ordersApi',
-  baseQuery: fetchBaseQuery({ baseUrl: '/api' }),
+export const wsApi = createApi({
+  reducerPath: 'wsApi',
+
+  baseQuery: wsBaseQuery,
+
   endpoints: (builder) => ({
     // 1. Эндпойнт приёма сообщений
-    getMessages: builder.query({
+    getAllOrders: builder.query({
       // HTTP-запрос начальных данных
-      query: () => 'messages',
-
+      query: () => 'orders/all',
       async onCacheEntryAdded(
         arg,
         { updateCachedData, cacheDataLoaded, cacheEntryRemoved }
@@ -43,12 +50,15 @@ export const chatApi = createApi({
 
           // 1. Создаём соединение.
           // Получаем актуальный токен при каждом подключении
-          const token = localStorage.getItem('accessToken');
-          socket = new WebSocket(wsHost + `?token=${token}`);
+          const accessToken = localStorage.getItem('accessToken');
+          const token = accessToken?.replace('Bearer ', '');
+          socket = new WebSocket(wsHost + '/orders/all' + `?token=${token}`);
 
           try {
             // 2. Ждём загрузки начальных данных.
+            console.log('before cacheDataLoaded');
             await cacheDataLoaded;
+            console.log('after cacheDataLoaded');
 
             // 3. Слушаем входящие сообщения.
             // const listener: wsEventListener = (event): void => {
@@ -63,7 +73,10 @@ export const chatApi = createApi({
 
             // 1. Слушатель входящих сообщений (обновление кеша).
             socket.onmessage = async (event): Promise<void> => {
-              const data = JSON.parse(event.data);
+              console.log('onmessage event', event);
+
+              const data: IWsMessage = JSON.parse(event.data);
+              console.log('onmessage event.data', data);
 
               // Проверяем, не истёк ли токен
               if (data.message === 'Invalid or missing token') {
@@ -84,7 +97,8 @@ export const chatApi = createApi({
               }
 
               updateCachedData((draft) => {
-                draft.push(data);
+                console.log('updateCachedData draft:', draft);
+                Object.assign(draft, data);
               });
             };
 
@@ -104,9 +118,10 @@ export const chatApi = createApi({
             socket.onerror = (error): void => {
               console.error('Ошибка WebSocket:', error);
             };
-          } catch {
+          } catch (error: unknown) {
             // Если cacheDataLoaded реджектится —
             // значит, компонент отписался до загрузки данных
+            console.log('Error in cacheDataLoaded: ' + error);
           }
         };
 
@@ -149,4 +164,4 @@ export const chatApi = createApi({
   }),
 });
 
-export const { useGetMessagesQuery, useSendMessageMutation } = chatApi;
+export const { useGetAllOrdersQuery, useSendMessageMutation } = wsApi;

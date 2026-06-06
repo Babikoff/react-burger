@@ -1,6 +1,6 @@
 export const host = 'https://new-stellarburgers.education-services.ru';
 export const ingredientsApiUrl = host + '/api/ingredients';
-export const wsHost = 'https://new-stellarburgers.education-services.ru';
+export const wsHost = 'wss://new-stellarburgers.education-services.ru';
 
 export const defaultRequestOptions = {
   method: 'POST',
