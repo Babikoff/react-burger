@@ -109,6 +109,10 @@ export interface IWsApiError {
   message?: string;
 }
 
+export const TApiErrorStatus = {
+  CUSTOM_ERROR: 'CUSTOM_ERROR',
+} as const;
+
 export type TOrderStatus = 'created' | 'pending' | 'cancelled' | 'done';
 
 export interface IOrderDetails {
@@ -128,3 +132,5 @@ export interface IWsMessage {
   totalToday: number;
   message?: string; // Для ошибок типа: 'Invalid or missing token'
 }
+
+export type TApiErrorStatus = (typeof TApiErrorStatus)[keyof typeof TApiErrorStatus];

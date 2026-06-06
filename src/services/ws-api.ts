@@ -3,8 +3,7 @@ import { createApi, type BaseQueryFn } from '@reduxjs/toolkit/query/react';
 import { wsHost } from '@/services/api-constants.ts';
 
 import { refreshToken } from './api-common.ts';
-
-import type { IWsMessage } from './api-types.ts';
+import { TApiErrorStatus, type IWsMessage } from './api-types.ts';
 
 const wsBaseQuery: BaseQueryFn = async () => {
   return { data: { success: false, orders: [], total: 0, totalToday: 0 } as IWsMessage };
@@ -21,7 +20,7 @@ export const wsApi = createApi({
 
   endpoints: (builder) => ({
     // 1. Эндпойнт приёма сообщений
-    getAllOrders: builder.query({
+    getAllOrders: builder.query<IWsMessage, void>({
       // queryFn выполняет произвольную логику и возвращает { data } или { error }
       queryFn: () => {
         return new Promise((resolve) => {
@@ -55,7 +54,7 @@ export const wsApi = createApi({
 
               resolve({
                 error: {
-                  status: 'CUSTOM_ERROR',
+                  status: TApiErrorStatus.CUSTOM_ERROR,
                   error: errorMessage,
                   data: errorMessage,
                 },
@@ -65,7 +64,7 @@ export const wsApi = createApi({
             console.error(`Connection error: ${error}`);
             resolve({
               error: {
-                status: 'CUSTOM_ERROR',
+                status: TApiErrorStatus.CUSTOM_ERROR,
                 error: String(error),
                 data: 'Не удалось создать WebSocket соединение.',
               },
