@@ -46,10 +46,13 @@ export const wsApi = createApi({
             // Соединение не удалось — возвращаем ошибку,
             // которая установит isError в true в компоненте
             socket.onerror = (event: Event): void => {
+              console.error(`Connection error: ${event}`);
+
               const errorMessage =
                 event instanceof ErrorEvent
                   ? event.message
                   : 'Произошла ошибка WebSocket соединения.';
+
               resolve({
                 error: {
                   status: 'CUSTOM_ERROR',
@@ -58,11 +61,12 @@ export const wsApi = createApi({
                 },
               });
             };
-          } catch (e) {
+          } catch (error) {
+            console.error(`Connection error: ${error}`);
             resolve({
               error: {
                 status: 'CUSTOM_ERROR',
-                error: String(e),
+                error: String(error),
                 data: 'Не удалось создать WebSocket соединение.',
               },
             });
@@ -109,9 +113,8 @@ export const wsApi = createApi({
 
           // Логика переподключения при закрытии
           socket.onclose = (): void => {
-            console.log(
-              'Соединение разорвано. Проверка необходимости переподключения...'
-            );
+            console.log('Connection closed. Checking if it needs to be restored...');
+
             // Если isUnsubscribed === false, то компонент всё ещё ждёт данные
             if (!isUnsubscribed) {
               // Запускаем таймер и через 3 секунды пробуем снова

@@ -14,15 +14,17 @@ export const ProfileOrders = (): JSX.Element => {
     isError,
     isFetching,
     isSuccess,
+    status,
   } = useGetAllOrdersQuery(undefined);
 
   console.log(
-    'isUninitialized, isLoading, isError, isFetching, isSuccess',
+    'isUninitialized, isLoading, isError, isFetching, isSuccess,  status',
     isUninitialized,
     isLoading,
     isError,
     isFetching,
-    isSuccess
+    isSuccess,
+    status
   );
 
   console.log('orders', data, currentData);
