@@ -26,7 +26,17 @@ export const ProfileOrders = (): JSX.Element => {
   );
 
   console.log('orders', data, currentData);
-  console.log('error', error);
+
+  if (error) console.log('error', error);
+
+  if (isError)
+    return (
+      <main className={styles.container}>
+        <h2 className={`${styles.error_message} text text_type_main-default`}>
+          Произошла ошибка загрузки данных.
+        </h2>
+      </main>
+    );
 
   return (
     <main className={styles.container}>

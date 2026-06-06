@@ -4,3 +4,9 @@
   align-items: flex-start;
   height: 100vh;
 }
+
+.error_message {
+  position: relative;
+  top: 10vh;
+  text-align: center;
+}
