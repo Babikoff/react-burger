@@ -1,5 +1,6 @@
 import { Preloader } from '@krgaa/react-developer-burger-ui-components';
 
+import OrderList from '@/components/order/order-list/order-list';
 import { useGetAllOrdersQuery } from '@/services/ws-api';
 
 import type { JSX } from 'react';
@@ -35,7 +36,9 @@ export const ProfileOrders = (): JSX.Element => {
   if (isUninitialized || isLoading || isFetching)
     return (
       <main className={styles.container}>
-        <Preloader />
+        <div>
+          <Preloader />
+        </div>
       </main>
     );
 
@@ -49,20 +52,18 @@ export const ProfileOrders = (): JSX.Element => {
     );
 
   if (isSuccess) {
-    if (!data.orders || data.orders.length === 0) {
+    if (data.orders && data.orders.length > 0) {
       return (
         <main className={styles.container}>
-          <p className="text_type_main-default mt-2">Нет заказов</p>
+          <div className={styles.orders_list}>
+            <OrderList orders={data.orders} />
+          </div>
         </main>
       );
     } else {
       return (
         <main className={styles.container}>
-          <ul>
-            {data.orders.map((order) => (
-              <li key={order._id}>{order.number}</li>
-            ))}
-          </ul>
+          <p className="text_type_main-default mt-2">Нет заказов</p>
         </main>
       );
     }

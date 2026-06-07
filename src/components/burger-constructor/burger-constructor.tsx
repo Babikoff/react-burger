@@ -8,6 +8,7 @@ import { useCallback, useMemo, useState, type JSX } from 'react';
 import { useDrop } from 'react-dnd';
 import { useNavigate } from 'react-router-dom';
 
+import OrderDetails from '@/components/order/order-details/order-details';
 import { useAppDispatch, useAppSelector } from '@hooks/hooks';
 import { useCreateOrderMutation } from '@services/api';
 import {
@@ -24,7 +25,6 @@ import withDragShift from '../../hocs/with-drag-shift';
 import { DndItemTypes } from '../../utils/app-constants';
 import Modal from '../modal/modal';
 import DragHowerIndicator from './drag-hower-indicator/drag-hower-indicator';
-import OrderDetails from './order-details/order-details';
 
 import type { Ingredient } from '@/services/api-types';
 

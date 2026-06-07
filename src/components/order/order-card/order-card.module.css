@@ -1,0 +1,13 @@
+.order_card {
+  display: flex;
+  flex-direction: column;
+  background: #1c1c21;
+  border-radius: 40px;
+}
+
+.order_card_header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: baseline;
+}

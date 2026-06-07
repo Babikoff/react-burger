@@ -10,3 +10,12 @@
   top: 10vh;
   text-align: center;
 }
+
+.orders_list {
+  display: flex;
+  flex-direction: column;
+  max-width: 600px;
+  max-height: 80%;
+  overflow-y: auto;
+  color: var(--text-primary-color);
+}
