@@ -1,7 +1,3 @@
-//import { useSelector } from 'react-redux';
-
-//import { selectIngredientsData } from '@/services/ingredientsSlice';
-
 import type { JSX } from 'react';
 
 import styles from './order-ingredients.module.css';
@@ -26,7 +22,7 @@ function OrderIngredients(props: IOrderIngredientsProps): JSX.Element {
           key={index}
           className={styles.ingredient_circle}
           style={{
-            left: `${-20 * index}px`,
+            left: `${-10 * index}px`,
             zIndex: 6 - index,
           }}
         >

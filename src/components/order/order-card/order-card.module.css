@@ -11,3 +11,16 @@
   justify-content: space-between;
   align-items: baseline;
 }
+
+.order_card_footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.total_price {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
