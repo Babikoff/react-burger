@@ -18,10 +18,11 @@ type BuilderType = EndpointBuilder<BaseQueryFn, never, 'wsApi'>;
 
 /**
  * Фабрика для создания эндпоинта, получающего заказы через WebSocket.
- * @param wsPath — путь WebSocket (например, "/orders/all" или "/orders")
+ * @param subPath — путь внутри хоста WebSocket к нужному сервису
+ * (например, "/orders/all" или "/orders").
  */
 function createWsEndpoint(
-  wsPath: string
+  subPath: string
 ): (
   builder: BuilderType
 ) => QueryDefinition<void, BaseQueryFn, never, IWsMessage, 'wsApi'> {
@@ -30,57 +31,99 @@ function createWsEndpoint(
 
   return (builder: BuilderType) =>
     builder.query<IWsMessage, void>({
-      // queryFn выполняет произвольную логику и возвращает { data } или { error }
+      // queryFn создаёт WebSocket и резолвится только при первом реальном сообщении.
+      // Пока ни одного реального сообщения по WebSocket не получено,
+      // статус isLoading должен быть true, чтобы можно было отображать на экране состояние
+      // ожидания.
       queryFn: () => {
         return new Promise((resolve) => {
-          const accessToken = localStorage.getItem('accessToken');
-          const token = accessToken?.replace('Bearer ', '');
-          const placeholder: IWsMessage = {
-            success: false,
-            orders: [],
-            total: 0,
-            totalToday: 0,
-          };
+          let token = localStorage.getItem('accessToken')?.replace('Bearer ', '');
 
-          try {
-            socket = new WebSocket(`${wsHost}${wsPath}?token=${token}`);
+          // Внутренняя функция подключения
+          const connect = (): void => {
+            try {
+              socket = new WebSocket(`${wsHost}${subPath}?token=${token}`);
 
-            // Соединение установлено — возвращаем заглушку,
-            // настоящие данные придут через onmessage в onCacheEntryAdded
-            socket.onopen = (): void => {
-              resolve({ data: placeholder });
-            };
+              // Первое полученное сообщение — вызовем resolve с полученным сообщением.
+              // Хандлер для остальных сообщений создадим позже в onCacheEntryAdded.
+              socket.onmessage = (event: MessageEvent): void => {
+                const data: IWsMessage = JSON.parse(event.data);
 
-            // Соединение не удалось — возвращаем ошибку,
-            // которая установит isError в true в компоненте
-            socket.onerror = (event: Event): void => {
-              console.error(`Connection error: ${event}`);
+                // Если при первом подключении сразу обнаружили, что токен старый —
+                // обновляем его и переподключаемся внутри queryFn,
+                // не вызывая resoleve (чтобы сохранить статус ожидания isLoading).
+                if (data.message === 'Invalid or missing token') {
+                  refreshToken()
+                    .then(() => {
+                      socket.close();
+                      token = localStorage
+                        .getItem('accessToken')
+                        ?.replace('Bearer ', '');
+                      connect();
+                    })
+                    .catch((error) => {
+                      console.error('Could not update token:', error);
+                      resolve({
+                        error: {
+                          status: TApiErrorStatus.CUSTOM_ERROR,
+                          error: String(error),
+                          data: 'Не удалось обновить токен.',
+                        },
+                      });
+                    });
+                  return;
+                }
 
-              const errorMessage =
-                event instanceof ErrorEvent
-                  ? event.message
-                  : 'Произошла ошибка WebSocket соединения.';
+                // Возвращаем первую процию данных
+                resolve({ data });
+              };
 
+              socket.onerror = (event: Event): void => {
+                console.error(`Connection error: ${event}`);
+
+                const errorMessage =
+                  event instanceof ErrorEvent
+                    ? event.message
+                    : 'Произошла ошибка WebSocket соединения.';
+
+                // Возвращаем ошибку, случившееся прямо на старте получения данных
+                resolve({
+                  error: {
+                    status: TApiErrorStatus.CUSTOM_ERROR,
+                    error: errorMessage,
+                    data: errorMessage,
+                  },
+                });
+              };
+
+              socket.onclose = (): void => {
+                console.error('WebSocket closed before receiving any data.');
+                resolve({
+                  error: {
+                    status: TApiErrorStatus.CUSTOM_ERROR,
+                    error: 'WebSocket closed before receiving data',
+                    data: 'Соединение было закрыто до получения данных.',
+                  },
+                });
+              };
+            } catch (error) {
+              console.error(`Connection error: ${error}`);
+              // Возвращаем события закрытия соединения, случившееся прямо на старте получения данных
               resolve({
                 error: {
                   status: TApiErrorStatus.CUSTOM_ERROR,
-                  error: errorMessage,
-                  data: errorMessage,
+                  error: String(error),
+                  data: 'Не удалось создать WebSocket соединение.',
                 },
               });
-            };
-          } catch (error) {
-            console.error(`Connection error: ${error}`);
-            resolve({
-              error: {
-                status: TApiErrorStatus.CUSTOM_ERROR,
-                error: String(error),
-                data: 'Не удалось создать WebSocket соединение.',
-              },
-            });
-          }
+            }
+          };
+
+          connect();
         });
       },
+
+      // Регулярная логика (после начальной инициализации) получения данных и актуализации токенов
       async onCacheEntryAdded(
         _arg: void,
         { updateCachedData, cacheDataLoaded, cacheEntryRemoved }
@@ -146,7 +189,7 @@ function createWsEndpoint(
           // Получаем актуальный токен при каждом подключении
           const accessToken = localStorage.getItem('accessToken');
           const token = accessToken?.replace('Bearer ', '');
-          socket = new WebSocket(`${wsHost}${wsPath}?token=${token}`);
+          socket = new WebSocket(`${wsHost}${subPath}?token=${token}`);
 
           // Навешиваем обработчики на новый сокет
           setupSocketHandlers();
