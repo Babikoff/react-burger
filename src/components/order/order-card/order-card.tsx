@@ -33,9 +33,13 @@ function OrderCard({ order }: IOrderCardProps): JSX.Element {
       ingredientImagesInfos.push({ _id: ing._id, imageUrl: ing.image_mobile });
   });
 
-  const totalPrice = ingredients
-    .map((ing) => ing.price)
-    .reduce((totalPrice, ingPrice) => totalPrice + ingPrice);
+  let totalPrice = 0;
+
+  if (ingredients.length > 0) {
+    totalPrice = ingredients
+      .map((ing) => ing.price)
+      .reduce((totalPrice, ingPrice) => totalPrice + ingPrice);
+  }
 
   const maxImagesToShow = 6;
   const cutItems: number = ingredientImagesInfos.length - maxImagesToShow;

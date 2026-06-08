@@ -18,4 +18,20 @@
   max-height: 80%;
   overflow-y: auto;
   color: var(--text-primary-color);
+  list-style-type: none;
+}
+
+.preloader_container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: center;
+  height: 20vh;
+  margin: auto;
+}
+
+.preloader {
+  width: 100px;
+  height: 100px;
+  margin: auto;
 }

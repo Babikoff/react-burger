@@ -5,6 +5,7 @@ import { ForgotPasswordPage } from '@/pages/auth-pages/forgot-password/forgot-pa
 import { LoginPage } from '@/pages/auth-pages/login/login';
 import { RegisterPage } from '@/pages/auth-pages/register/register';
 import { ResetPasswordPage } from '@/pages/auth-pages/reset-password/reset-password';
+import { FeedPage } from '@/pages/feed/feed';
 import { Home } from '@/pages/home/home';
 import { IngredientDetailsPage } from '@/pages/ingredient-details/ingredient-details-page';
 import { NotFoundPage } from '@/pages/not-found/not-found.tsx';
@@ -62,6 +63,7 @@ export const App = (): JSX.Element => {
           path="/reset-password"
           element={<ProtectedRoute onlyUnAuth component={<ResetPasswordPage />} />}
         />
+        <Route path="/feed" element={<FeedPage />} />
 
         <Route path="/profile" element={<ProtectedRoute component={<ProfilePage />} />}>
           <Route index element={<Profile />} />

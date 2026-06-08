@@ -125,12 +125,24 @@ export interface IOrderDetails {
   number: number;
 }
 
-export interface IWsMessage {
+export interface IFeedStat {
   success: boolean;
-  orders: IOrderDetails[];
   total: number;
   totalToday: number;
   message?: string; // Для ошибок типа: 'Invalid or missing token'
 }
 
+export interface IWsMessage extends IFeedStat {
+  orders: IOrderDetails[];
+}
+
 export type TApiErrorStatus = (typeof TApiErrorStatus)[keyof typeof TApiErrorStatus];
+
+export interface IOrdersData {
+  data?: IWsMessage;
+  error?: unknown;
+  isUninitialized: boolean;
+  isLoading: boolean;
+  isError: boolean;
+  isSuccess: boolean;
+}
