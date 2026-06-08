@@ -1,4 +1,9 @@
-import { createApi, type BaseQueryFn } from '@reduxjs/toolkit/query/react';
+import {
+  createApi,
+  type BaseQueryFn,
+  type EndpointBuilder,
+  type QueryDefinition,
+} from '@reduxjs/toolkit/query/react';
 
 import { wsHost } from '@/services/api-constants.ts';
 
@@ -9,18 +14,22 @@ const wsBaseQuery: BaseQueryFn = async () => {
   return { data: { success: false, orders: [], total: 0, totalToday: 0 } as IWsMessage };
 };
 
-// Переменная хранит активное соединение
-// и доступна всем эндпоинтам в этом файле
-let socket: WebSocket;
+type BuilderType = EndpointBuilder<BaseQueryFn, never, 'wsApi'>;
 
-export const wsApi = createApi({
-  reducerPath: 'wsApi',
+/**
+ * Фабрика для создания эндпоинта, получающего заказы через WebSocket.
+ * @param wsPath — путь WebSocket (например, "/orders/all" или "/orders")
+ */
+function createWsEndpoint(
+  wsPath: string
+): (
+  builder: BuilderType
+) => QueryDefinition<void, BaseQueryFn, never, IWsMessage, 'wsApi'> {
+  // Каждый эндпоинт хранит своё собственное соединение в замыкании socket внутри createWsEndpoint
+  let socket: WebSocket;
 
-  baseQuery: wsBaseQuery,
-
-  endpoints: (builder) => ({
-    // 1. Эндпойнт приёма сообщений
-    getAllOrders: builder.query<IWsMessage, void>({
+  return (builder: BuilderType) =>
+    builder.query<IWsMessage, void>({
       // queryFn выполняет произвольную логику и возвращает { data } или { error }
       queryFn: () => {
         return new Promise((resolve) => {
@@ -34,7 +43,7 @@ export const wsApi = createApi({
           };
 
           try {
-            socket = new WebSocket(`${wsHost}/orders/all?token=${token}`);
+            socket = new WebSocket(`${wsHost}${wsPath}?token=${token}`);
 
             // Соединение установлено — возвращаем заглушку,
             // настоящие данные придут через onmessage в onCacheEntryAdded
@@ -73,7 +82,7 @@ export const wsApi = createApi({
         });
       },
       async onCacheEntryAdded(
-        arg,
+        _arg: void,
         { updateCachedData, cacheDataLoaded, cacheEntryRemoved }
       ) {
         const RECONNECT_PERIOD = 3000; // Пауза 3 секунды
@@ -83,7 +92,7 @@ export const wsApi = createApi({
 
         // Навешивает обработчики на текущий socket
         const setupSocketHandlers = (): void => {
-          socket.onmessage = async (event): Promise<void> => {
+          socket.onmessage = async (event: MessageEvent): Promise<void> => {
             const data: IWsMessage = JSON.parse(event.data);
             console.log('onmessage event.data', data);
 
@@ -105,7 +114,7 @@ export const wsApi = createApi({
               return;
             }
 
-            updateCachedData((draft) => {
+            updateCachedData((draft: IWsMessage) => {
               Object.assign(draft, data);
             });
           };
@@ -121,7 +130,7 @@ export const wsApi = createApi({
             }
           };
 
-          socket.onerror = (error): void => {
+          socket.onerror = (error: Event): void => {
             console.error('Ошибка WebSocket:', error);
           };
         };
@@ -137,7 +146,7 @@ export const wsApi = createApi({
           // Получаем актуальный токен при каждом подключении
           const accessToken = localStorage.getItem('accessToken');
           const token = accessToken?.replace('Bearer ', '');
-          socket = new WebSocket(`${wsHost}/orders/all?token=${token}`);
+          socket = new WebSocket(`${wsHost}${wsPath}?token=${token}`);
 
           // Навешиваем обработчики на новый сокет
           setupSocketHandlers();
@@ -168,27 +177,22 @@ export const wsApi = createApi({
         // 3. Закрываем соединение.
         socket.close();
       },
-    }),
+    });
+}
 
-    // 2. Эндпоинт для отправки сообщений.
-    sendMessage: builder.mutation({
-      // queryFn позволяет обойти стандартный HTTP-запрос и выполнить произвольный код
-      queryFn: (messageContent) => {
-        // Проверяем, что сокет существует и открыт
-        if (socket && socket.readyState === WebSocket.OPEN) {
-          const message = { text: messageContent, id: Date.now() };
+// Создание главного API
+export const wsApi = createApi({
+  reducerPath: 'wsApi',
 
-          // Отправляем данные в сокет
-          socket.send(JSON.stringify(message));
+  baseQuery: wsBaseQuery,
 
-          // Возвращаем результат, как будто сервер ответил успешно
-          return { data: message };
-        }
+  endpoints: (builder) => ({
+    // 1. Endpoint получения всех заказов (в Ленте)
+    getAllOrders: createWsEndpoint('/orders/all')(builder),
 
-        return { error: { status: 500, data: 'WebSocket is not connected' } };
-      },
-    }),
+    // 2. Endpoint получения заказов пользователя (История Заказов в Профиле)
+    getUserOrders: createWsEndpoint('/orders')(builder),
   }),
 });
 
-export const { useGetAllOrdersQuery, useSendMessageMutation } = wsApi;
+export const { useGetAllOrdersQuery, useGetUserOrdersQuery } = wsApi;
