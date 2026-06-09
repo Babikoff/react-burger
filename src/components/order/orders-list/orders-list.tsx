@@ -5,11 +5,13 @@ import OrderCard from '@/components/order/order-card/order-card';
 import type { JSX } from 'react';
 
 import type { IOrdersData } from '@/services/api-types';
+import type { IOrderListOptions } from '@/services/ui-types';
 
 import styles from './orders-list.module.css';
 
 interface IOrdersListProps {
   ordersData: IOrdersData;
+  orderListOptions: IOrderListOptions;
 }
 
 export const OrdersList = (props: IOrdersListProps): JSX.Element => {
@@ -44,7 +46,10 @@ export const OrdersList = (props: IOrdersListProps): JSX.Element => {
             <ul className={`${styles.orders_list} custom-scroll`}>
               {data.orders.map((order) => (
                 <li key={order._id}>
-                  <OrderCard order={order} />
+                  <OrderCard
+                    order={order}
+                    orderCardOptions={props.orderListOptions.orderCardOptions}
+                  />
                 </li>
               ))}
             </ul>

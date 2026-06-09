@@ -18,7 +18,10 @@ export const FeedPage = (): JSX.Element => {
           Лента заказов
         </h1>
         <main className={`${styles.main} pl-5 pr-5`}>
-          <OrdersList ordersData={allOrders} />
+          <OrdersList
+            ordersData={allOrders}
+            orderListOptions={{ orderCardOptions: { showOrderStatus: false } }}
+          />
           <FeedStat feedStat={allOrders.data} />
         </main>
       </div>

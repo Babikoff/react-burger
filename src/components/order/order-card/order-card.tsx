@@ -11,14 +11,16 @@ import type { JSX } from 'react';
 
 import type { IImageInfo } from '@/components/order/order-ingredients/order-ingredients';
 import type { Ingredient, IOrderDetails, TOrderStatus } from '@/services/api-types';
+import type { IOrderCardOptions } from '@/services/ui-types';
 
 import styles from './order-card.module.css';
 
 interface IOrderCardProps {
   order: IOrderDetails;
+  orderCardOptions: IOrderCardOptions;
 }
 
-function OrderCard({ order }: IOrderCardProps): JSX.Element {
+function OrderCard({ order, orderCardOptions }: IOrderCardProps): JSX.Element {
   const allPossibleIngredients = useSelector(selectIngredientsData);
 
   const ingredients: Ingredient[] = order.ingredients
@@ -58,12 +60,14 @@ function OrderCard({ order }: IOrderCardProps): JSX.Element {
         </div>
       </div>
       <div className="text text_type_main-medium mt-6">{order.name}</div>
-      <div
-        className="text text_type_main-default mt-2"
-        style={{ color: getStatusTextColor(order.status) }}
-      >
-        {getStatusText(order.status)}
-      </div>
+      {orderCardOptions?.showOrderStatus && (
+        <div
+          className="text text_type_main-default mt-2"
+          style={{ color: getStatusTextColor(order.status) }}
+        >
+          {getStatusText(order.status)}
+        </div>
+      )}
       <div className={`${styles.order_card_footer} mt-6 mb-6`}>
         <OrderIngredients
           imageInfos={ingredientImagesInfos}

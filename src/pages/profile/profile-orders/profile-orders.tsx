@@ -24,5 +24,10 @@ export const ProfileOrders = (): JSX.Element => {
     };
   }, [orders]);
 
-  return <OrdersList ordersData={sortedOrdersData} />;
+  return (
+    <OrdersList
+      ordersData={sortedOrdersData}
+      orderListOptions={{ orderCardOptions: { showOrderStatus: true } }}
+    />
+  );
 };
