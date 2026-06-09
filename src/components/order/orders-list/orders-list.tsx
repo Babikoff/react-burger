@@ -16,15 +16,6 @@ export const OrdersList = (props: IOrdersListProps): JSX.Element => {
   const { data, error, isUninitialized, isLoading, isError, isSuccess } =
     props.ordersData;
 
-  console.log(
-    'isUninitialized, isLoading, isError, isSuccess',
-    isUninitialized,
-    isLoading,
-    isError,
-    isSuccess
-  );
-
-  console.log('orders', data);
   if (error) console.log('error', error);
 
   if (isUninitialized || isLoading)

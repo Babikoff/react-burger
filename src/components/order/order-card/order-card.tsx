@@ -102,7 +102,7 @@ function getStatusTextColor(status: TOrderStatus): string {
     case 'cancelled':
       return 'red';
     case 'done':
-      return 'aqua';
+      return '#0cc';
     default:
       return '#f2f2f3';
   }

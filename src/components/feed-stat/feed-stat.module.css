@@ -1,9 +1,29 @@
-.orders_list {
+.feed_stat {
   display: flex;
   flex-direction: column;
-  max-width: 600px;
-  max-height: 80%;
-  overflow-y: auto;
-  color: var(--text-primary-color);
-  list-style-type: none;
+  width: 100%;
+}
+
+.orders_main_section {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
+.orders_section {
+  flex: 1;
+}
+
+.order_section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.ready_order_section {
+  color: #0cc;
+}
+
+.totals_section {
+  display: flex;
+  flex-direction: column;
 }
