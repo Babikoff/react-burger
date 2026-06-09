@@ -4,13 +4,14 @@ import {
 } from '@krgaa/react-developer-burger-ui-components';
 import { useSelector } from 'react-redux';
 
+import { getStatusText, getStatusTextColor } from '@/components/order/order-info-helper';
 import OrderIngredients from '@/components/order/order-ingredients/order-ingredients';
 import { selectIngredientsData } from '@/services/ingredientsSlice';
 
 import type { JSX } from 'react';
 
 import type { IImageInfo } from '@/components/order/order-ingredients/order-ingredients';
-import type { Ingredient, IOrderDetails, TOrderStatus } from '@/services/api-types';
+import type { Ingredient, IOrderDetails } from '@/services/api-types';
 import type { IOrderCardOptions } from '@/services/ui-types';
 
 import styles from './order-card.module.css';
@@ -71,7 +72,7 @@ function OrderCard({ order, orderCardOptions }: IOrderCardProps): JSX.Element {
       <div className={`${styles.order_card_footer} mt-6 mb-6`}>
         <OrderIngredients
           imageInfos={ingredientImagesInfos}
-          lastItageOverlayText={lastItageOverlayText}
+          lastImageOverlayText={lastItageOverlayText}
         />
         <div className={styles.total_price}>
           <span className="text text_type_digits-default mr-2">{totalPrice}</span>
@@ -80,36 +81,6 @@ function OrderCard({ order, orderCardOptions }: IOrderCardProps): JSX.Element {
       </div>
     </section>
   );
-}
-
-function getStatusText(status: TOrderStatus): string {
-  switch (status) {
-    case 'created':
-      return 'Создан';
-    case 'pending':
-      return 'Готовится';
-    case 'cancelled':
-      return 'Отменён';
-    case 'done':
-      return 'Выполнен';
-    default:
-      return status;
-  }
-}
-
-function getStatusTextColor(status: TOrderStatus): string {
-  switch (status) {
-    case 'created':
-      return '#f2f2f3';
-    case 'pending':
-      return 'lightgreen';
-    case 'cancelled':
-      return 'red';
-    case 'done':
-      return '#0cc';
-    default:
-      return '#f2f2f3';
-  }
 }
 
 export default OrderCard;

@@ -1,0 +1,66 @@
+.order_full_info {
+  display: flex;
+  flex-direction: column;
+}
+
+.order_header {
+  display: flex;
+  flex-direction: column;
+}
+
+.order_number {
+  text-align: center;
+}
+
+.main_section {
+  display: flex;
+  flex-direction: column;
+}
+
+.order_footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.total_price {
+  display: flex;
+  flex-direction: row;
+}
+
+.ingredients_list {
+  padding: 0;
+}
+
+.list_line {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ingredient_item {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ingredient_circle {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 64px;
+  height: 64px;
+  background-color: black;
+  border: 3px solid #4c4cff;
+  border-radius: 100%;
+}
+
+.ingredient_image {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+}

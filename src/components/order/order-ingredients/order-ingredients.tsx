@@ -9,7 +9,7 @@ export interface IImageInfo {
 
 interface IOrderIngredientsProps {
   imageInfos: IImageInfo[];
-  lastItageOverlayText: string | undefined;
+  lastImageOverlayText: string | undefined;
 }
 
 function OrderIngredients(props: IOrderIngredientsProps): JSX.Element {
@@ -30,12 +30,12 @@ function OrderIngredients(props: IOrderIngredientsProps): JSX.Element {
             src={imageInfo.imageUrl}
             className={styles.ingredient_image}
             style={{
-              opacity: index === lastIndex && !!props.lastItageOverlayText ? 0.5 : 1,
+              opacity: index === lastIndex && !!props.lastImageOverlayText ? 0.5 : 1,
             }}
           />
-          {index === lastIndex && !!props.lastItageOverlayText && (
+          {index === lastIndex && !!props.lastImageOverlayText && (
             <span className={`${styles.last_image_label} text text_type_digits-default`}>
-              {props.lastItageOverlayText}
+              {props.lastImageOverlayText}
             </span>
           )}
         </div>
