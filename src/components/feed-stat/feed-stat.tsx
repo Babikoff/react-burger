@@ -41,11 +41,15 @@ function FeedStat({ feedStat }: IFeedStatProps): JSX.Element {
       </section>
       <section className={`${styles.totals_section} mb-15`}>
         <header className="text text_type_main-medium">Выполнено за всё время:</header>
-        <section className="text text_type_digits-large">{feedStat?.total}</section>
+        <section className={`${styles.text_with_shadow} text text_type_digits-large`}>
+          {feedStat?.total}
+        </section>
       </section>
       <section className={styles.totals_section}>
         <header className="text text_type_main-medium">Выполнено за сегодня:</header>
-        <section className="text text_type_digits-large">{feedStat?.totalToday}</section>
+        <section className={`${styles.text_with_shadow} text text_type_digits-large`}>
+          {feedStat?.totalToday}
+        </section>
       </section>
     </main>
   );
