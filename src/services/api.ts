@@ -10,6 +10,7 @@ import type {
   AuthResponse,
   NonAuthResponse,
   Ingredient,
+  IOrderDetails,
   ISerializableRestApiError,
   ResponseWithTokens,
   RequestOptions,
@@ -217,6 +218,18 @@ export const nonAuthApi = createApi({
         return response.message ?? '';
       },
     }),
+
+    // Получение информации о заказе по id
+    getOrder: builder.query<IOrderDetails, string>({
+      query: (id: string) => ({
+        url: `orders/${id}`,
+        method: 'GET',
+      }),
+      transformResponse(response) {
+        const result = response as unknown as { order: IOrderDetails };
+        return result.order;
+      },
+    }),
   }),
 });
 
@@ -294,4 +307,5 @@ export const {
   useRegisterMutation,
   usePasswordResetMutation,
   useSetNewPasswordMutation,
+  useGetOrderQuery,
 } = nonAuthApi;

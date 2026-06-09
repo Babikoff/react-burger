@@ -1,37 +1,39 @@
 import {
   CurrencyIcon,
   FormattedDate,
+  Preloader,
 } from '@krgaa/react-developer-burger-ui-components';
 import { useSelector } from 'react-redux';
 
 import { getStatusText, getStatusTextColor } from '@/components/order/order-info-helper';
+import { useGetOrderQuery } from '@/services/api';
 import { selectIngredientsData } from '@/services/ingredientsSlice';
 
 import type { JSX } from 'react';
 
-import type { Ingredient, IOrderDetails } from '@/services/api-types';
+import type { Ingredient } from '@/services/api-types';
 
 import styles from './order-full-info.module.css';
 
 function OrderFullInfo(): JSX.Element {
-  const order: IOrderDetails = {
-    _id: '111',
-    number: 222,
-    name: 'My name name name name name name name',
-    status: 'done',
-    createdAt: '2002-01-01',
-    updatedAt: '2002-01-01',
-    ingredients: [
-      '692889f16bf770001bfeb4cc',
-      '692889f16bf770001bfeb4d6',
-      '692889f16bf770001bfeb4cc',
-    ],
-  };
+  const {
+    data: order,
+    isLoading,
+    isFetching,
+  } = useGetOrderQuery('6a16e58a41cff5001b6e32d0', undefined);
+
   const allPossibleIngredients = useSelector(selectIngredientsData);
 
-  const ingredients: Ingredient[] = order.ingredients
-    .map((ingId) => allPossibleIngredients.find((ing) => ing._id === ingId))
-    .filter((item): item is Ingredient => item != null);
+  if (!order || isLoading || isFetching) return <Preloader />;
+
+  const ingredients: Ingredient[] = [];
+
+  if (order.ingredients) {
+    order.ingredients.forEach((ingId) => {
+      const fullIngInfo = allPossibleIngredients.find((ing) => ing._id === ingId);
+      if (fullIngInfo) ingredients.push(fullIngInfo);
+    });
+  }
 
   let totalPrice = 0;
 
@@ -63,11 +65,15 @@ function OrderFullInfo(): JSX.Element {
               <li key={index} className={`${styles.list_line} mt-2 mb-2`}>
                 <div className={styles.ingredient_item}>
                   <div className={styles.ingredient_circle}>
-                    <img src={ing.image_mobile} className={styles.ingredient_image} />
+                    <img
+                      src={ing.image_mobile}
+                      alt={ing.name}
+                      className={styles.ingredient_image}
+                    />
                   </div>
                   <div className="text text_type_main-default ml-4">{ing.name}</div>
                 </div>
-                <div className={styles.total_price}>
+                <div className={`${styles.total_price} ml-3`}>
                   <span className="text text_type_digits-default mr-2">{ing.price}</span>
                   <CurrencyIcon type="primary" />
                 </div>
