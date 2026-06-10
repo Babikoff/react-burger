@@ -4,6 +4,7 @@ import {
   Preloader,
 } from '@krgaa/react-developer-burger-ui-components';
 import { useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
 
 import { getStatusText, getStatusTextColor } from '@/components/order/order-info-helper';
 import { useGetOrderQuery } from '@/services/api';
@@ -16,13 +17,15 @@ import type { Ingredient } from '@/services/api-types';
 import styles from './order-full-info.module.css';
 
 function OrderFullInfo(): JSX.Element {
+  const params = useParams<{ id: string }>();
+
+  const allPossibleIngredients = useSelector(selectIngredientsData);
+
   const {
     data: order,
     isLoading,
     isFetching,
-  } = useGetOrderQuery('6a16e58a41cff5001b6e32d0', undefined);
-
-  const allPossibleIngredients = useSelector(selectIngredientsData);
+  } = useGetOrderQuery(params.id ?? '', undefined);
 
   if (!order || isLoading || isFetching) return <Preloader />;
 
@@ -44,7 +47,7 @@ function OrderFullInfo(): JSX.Element {
   }
 
   return (
-    <section className={`${styles.order_full_info}`}>
+    <section className={`${styles.order_full_info} mt-10`}>
       <header className={`${styles.order_header}`}>
         <div className={`${styles.order_number}`}>
           <div className={`text text_type_digits-default mb-6`}>#{order.number}</div>

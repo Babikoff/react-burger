@@ -27,7 +27,9 @@ export const ProfileOrders = (): JSX.Element => {
   return (
     <OrdersList
       ordersData={sortedOrdersData}
-      orderListOptions={{ orderCardOptions: { showOrderStatus: true } }}
+      orderListOptions={{
+        orderCardOptions: { showOrderStatus: true, linkToUrl: '/profile/orders' },
+      }}
     />
   );
 };

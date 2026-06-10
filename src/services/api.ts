@@ -31,7 +31,7 @@ export async function fetchWithRefresh(
     ) {
       console.log('We need to refresh token');
       const refreshData = await refreshToken();
-      console.log('Token refreshed.');
+      console.log('Token refreshed.', new Date());
 
       return await request(endpoint, {
         ...options,

@@ -7,7 +7,7 @@ export async function refreshToken(): Promise<RefreshTokenResponse> {
     method: 'POST',
     body: JSON.stringify({ token: localStorage.getItem('refreshToken') }),
   });
-  console.log('refreshToken: token refreshed');
+  console.log('refreshToken: token refreshed', new Date());
   localStorage.setItem('accessToken', response.accessToken);
   localStorage.setItem('refreshToken', response.refreshToken);
   return response;

@@ -20,7 +20,9 @@ export const FeedPage = (): JSX.Element => {
         <main className={`${styles.main} pl-5 pr-5`}>
           <OrdersList
             ordersData={allOrders}
-            orderListOptions={{ orderCardOptions: { showOrderStatus: false } }}
+            orderListOptions={{
+              orderCardOptions: { showOrderStatus: false, linkToUrl: '/feed' },
+            }}
           />
           <FeedStat feedStat={allOrders.data} />
         </main>
