@@ -2,7 +2,8 @@ import { useEffect } from 'react';
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 
 import IngredientDetails from '@/components/burger-ingredients/ingredient-details/ingredient-details';
-import OrderFullInfo from '@/components/order/order-full-info/order-full-info';
+import OrderFullInfo from '@/components/order/order-full-info-card/order-full-info';
+import { ProfileOrders } from '@/components/order/profile-orders/profile-orders';
 import { ForgotPasswordPage } from '@/pages/auth-pages/forgot-password/forgot-password';
 import { LoginPage } from '@/pages/auth-pages/login/login';
 import { RegisterPage } from '@/pages/auth-pages/register/register';
@@ -12,7 +13,6 @@ import { Home } from '@/pages/home/home';
 import { IngredientDetailsPage } from '@/pages/ingredient-details/ingredient-details-page';
 import { NotFoundPage } from '@/pages/not-found/not-found.tsx';
 import { OrderFullInfoPage } from '@/pages/order-full-info/order-full-info-page';
-import { ProfileOrders } from '@/pages/profile/profile-orders/profile-orders.tsx';
 import { ProfilePage } from '@/pages/profile/profile-page.tsx';
 import { Profile } from '@/pages/profile/profile/profile.tsx';
 import { useGetIngredientsQuery } from '@/services/api';

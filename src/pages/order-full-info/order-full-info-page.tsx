@@ -1,4 +1,4 @@
-import OrderFullInfo from '@/components/order/order-full-info/order-full-info';
+import OrderFullInfo from '@/components/order/order-full-info-card/order-full-info';
 
 import type { JSX } from 'react';
 

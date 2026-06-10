@@ -15,14 +15,14 @@ import type { IImageInfo } from '@/components/order/order-ingredients/order-ingr
 import type { Ingredient, IOrderDetails } from '@/services/api-types';
 import type { IOrderCardOptions } from '@/services/ui-types';
 
-import styles from './order-card.module.css';
+import styles from './order-box.module.css';
 
-interface IOrderCardProps {
+interface IOrderBoxProps {
   order: IOrderDetails;
   orderCardOptions: IOrderCardOptions;
 }
 
-function OrderCard({ order, orderCardOptions }: IOrderCardProps): JSX.Element {
+function OrderBox({ order, orderCardOptions }: IOrderBoxProps): JSX.Element {
   const location = useLocation();
 
   const allPossibleIngredients = useSelector(selectIngredientsData);
@@ -91,4 +91,4 @@ function OrderCard({ order, orderCardOptions }: IOrderCardProps): JSX.Element {
   );
 }
 
-export default OrderCard;
+export default OrderBox;

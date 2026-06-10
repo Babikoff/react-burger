@@ -8,7 +8,7 @@ import { useCallback, useMemo, useState, type JSX } from 'react';
 import { useDrop } from 'react-dnd';
 import { useNavigate } from 'react-router-dom';
 
-import OrderDetails from '@/components/order/order-details/order-details';
+import NewOrderDetails from '@/components/order/new-order-details-card/new-order-details';
 import { useAppDispatch, useAppSelector } from '@hooks/hooks';
 import { useCreateOrderMutation } from '@services/api';
 import {
@@ -239,7 +239,7 @@ export const BurgerConstructor = (): JSX.Element => {
       </section>
       {isOrderCardOpen && (
         <Modal header="" closeModal={handleCloseModal}>
-          <OrderDetails orderNumber={orderNumber} />
+          <NewOrderDetails orderNumber={orderNumber} />
         </Modal>
       )}
       {isErrorMessageOpen && (

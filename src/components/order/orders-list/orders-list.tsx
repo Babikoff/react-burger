@@ -1,6 +1,6 @@
 import { Preloader } from '@krgaa/react-developer-burger-ui-components';
 
-import OrderCard from '@/components/order/order-card/order-card';
+import OrderBox from '@/components/order/order-box/order-box';
 
 import type { JSX } from 'react';
 
@@ -46,7 +46,7 @@ export const OrdersList = (props: IOrdersListProps): JSX.Element => {
             <ul className={`${styles.orders_list} custom-scroll`}>
               {data.orders.map((order) => (
                 <li key={order._id}>
-                  <OrderCard
+                  <OrderBox
                     order={order}
                     orderCardOptions={props.orderListOptions.orderCardOptions}
                   />
