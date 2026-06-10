@@ -1,7 +1,6 @@
 .container {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
   height: 100vh;
 }
 
@@ -16,6 +15,8 @@
   flex-direction: column;
   max-width: 600px;
   max-height: 80%;
+  margin: 0;
+  padding: 0;
   overflow-y: auto;
   color: var(--text-primary-color);
   list-style-type: none;

@@ -22,7 +22,7 @@ export const Home = (): JSX.Element => {
   const hasError = useSelector(selectHasError);
 
   return (
-    <div className={styles.home}>
+    <div className={styles.home_page}>
       {!isLoading && !hasError && (
         <DndProvider backend={HTML5Backend}>
           <h1 className={`${styles.title} text text_type_main-large mt-10 mb-5 pl-5`}>
