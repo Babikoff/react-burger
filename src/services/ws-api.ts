@@ -8,13 +8,17 @@ import {
 import { wsHost } from '@/services/api-constants.ts';
 
 import { refreshToken } from './api-common.ts';
-import { TApiErrorStatus, type IWsMessage } from './api-types.ts';
+import { TApiErrorStatus, type IOrdersMessage } from './api-types.ts';
 
 const wsBaseQuery: BaseQueryFn = async () => {
-  return { data: { success: false, orders: [], total: 0, totalToday: 0 } as IWsMessage };
+  return {
+    data: { success: false, orders: [], total: 0, totalToday: 0 } as IOrdersMessage,
+  };
 };
 
 type BuilderType = EndpointBuilder<BaseQueryFn, never, 'wsApi'>;
+
+let socket: WebSocket;
 
 /**
  * Фабрика для создания эндпоинта, получающего заказы через WebSocket.
@@ -25,89 +29,115 @@ function createWsEndpoint(
   subPath: string
 ): (
   builder: BuilderType
-) => QueryDefinition<void, BaseQueryFn, never, IWsMessage, 'wsApi'> {
+) => QueryDefinition<void, BaseQueryFn, never, IOrdersMessage, 'wsApi'> {
+  // TODO: попробовать использовать общую переменную socket для всех соединений
   // Каждый эндпоинт хранит своё собственное соединение в замыкании socket внутри createWsEndpoint
-  let socket: WebSocket;
+
+  //  let socket: WebSocket;
+
+  // Флаг, который показывает, что компонент больше не ждёт данных
+  let isUnsubscribed = false;
+  const RECONNECT_PERIOD = 3000; // Пауза 3 секунды
+  let reconnectTimerId: NodeJS.Timeout | string | number | undefined = undefined;
 
   return (builder: BuilderType) =>
-    builder.query<IWsMessage, void>({
+    builder.query<IOrdersMessage, void>({
       // queryFn создаёт WebSocket и резолвится только при первом реальном сообщении.
       // Пока ни одного реального сообщения по WebSocket не получено,
       // статус isLoading должен быть true, чтобы можно было отображать на экране состояние
       // ожидания.
       queryFn: () => {
         return new Promise((resolve) => {
-          let token = localStorage.getItem('accessToken')?.replace('Bearer ', '');
-
-          // Внутренняя функция подключения
-          const connect = (): void => {
+          //TODO: объединить 2 функции firstConnect и connect в одну
+          // Внутренняя функция для первого подключения
+          const firstConnect = (): void => {
+            console.log('Running firstConnect', new Date());
             try {
+              // Получаем актуальный токен при каждом подключении
+              const accessToken = localStorage.getItem('accessToken');
+              const token = accessToken?.replace('Bearer ', '');
               socket = new WebSocket(`${wsHost}${subPath}?token=${token}`);
 
               // Первое полученное сообщение — вызовем resolve с полученным сообщением.
               // Хандлер для остальных сообщений создадим позже в onCacheEntryAdded.
               socket.onmessage = (event: MessageEvent): void => {
-                const data: IWsMessage = JSON.parse(event.data);
+                const data: IOrdersMessage = JSON.parse(event.data);
 
                 // Если при первом подключении сразу обнаружили, что токен старый —
                 // обновляем его и переподключаемся внутри queryFn,
-                // не вызывая resoleve (чтобы сохранить статус ожидания isLoading).
+                // не вызывая resolve (чтобы сохранить статус ожидания isLoading).
                 if (data.message === 'Invalid or missing token') {
                   refreshToken()
                     .then(() => {
+                      socket.onclose = null;
                       socket.close();
-                      token = localStorage
-                        .getItem('accessToken')
-                        ?.replace('Bearer ', '');
-                      connect();
+                      // token = localStorage
+                      //   .getItem('accessToken')
+                      //   ?.replace('Bearer ', '');
+                      firstConnect();
                     })
                     .catch((error) => {
-                      console.error('Could not update token:', error);
+                      console.error('Could not update token:', new Date(), error);
                       resolve({
                         error: {
                           status: TApiErrorStatus.CUSTOM_ERROR,
                           error: String(error),
-                          data: 'Не удалось обновить токен.',
+                          data: `Не удалось обновить токен. ${new Date()}`,
                         },
                       });
                     });
                   return;
                 }
 
-                // Возвращаем первую процию данных
+                // Возвращаем первую порцию данных
                 resolve({ data });
               };
 
               socket.onerror = (event: Event): void => {
-                console.error(`Connection error: ${event}`);
+                console.error(`Connection error: ${event} ${new Date()}`);
 
                 const errorMessage =
                   event instanceof ErrorEvent
                     ? event.message
                     : 'Произошла ошибка WebSocket соединения.';
 
-                // Возвращаем ошибку, случившееся прямо на старте получения данных
-                resolve({
-                  error: {
-                    status: TApiErrorStatus.CUSTOM_ERROR,
-                    error: errorMessage,
-                    data: errorMessage,
-                  },
-                });
+                if (!socket.OPEN) {
+                  // Возвращаем ошибку, случившееся прямо на старте получения данных
+                  resolve({
+                    error: {
+                      status: TApiErrorStatus.CUSTOM_ERROR,
+                      error: errorMessage,
+                      data: errorMessage,
+                    },
+                  });
+                }
               };
 
               socket.onclose = (): void => {
-                console.error('WebSocket closed before receiving any data.');
-                resolve({
-                  error: {
-                    status: TApiErrorStatus.CUSTOM_ERROR,
-                    error: 'WebSocket closed before receiving data',
-                    data: 'Соединение было закрыто до получения данных.',
-                  },
-                });
+                // // Попробуем восстановить разорванное соединение
+                // firstConnect();
+                // console.error('WebSocket closed before receiving any data.', new Date());
+                // resolve({
+                //   error: {
+                //     status: TApiErrorStatus.CUSTOM_ERROR,
+                //     error: 'WebSocket closed before receiving data',
+                //     data: 'Соединение было закрыто до получения данных.',
+                //   },
+                // });
+                console.log(
+                  'Connection closed (0). Checking if it needs to be restored...',
+                  new Date()
+                );
+
+                // Если isUnsubscribed === false, то компонент всё ещё ждёт данные
+                if (!isUnsubscribed) {
+                  // Запускаем таймер и через 3 секунды пробуем снова
+                  console.log('Starting reconnect timer.', new Date());
+                  reconnectTimerId = setTimeout(firstConnect, RECONNECT_PERIOD);
+                }
               };
             } catch (error) {
-              console.error(`Connection error: ${error}`);
+              console.error(`Connection error: ${error} ${new Date()}`);
               // Возвращаем события закрытия соединения, случившееся прямо на старте получения данных
               resolve({
                 error: {
@@ -119,7 +149,7 @@ function createWsEndpoint(
             }
           };
 
-          connect();
+          firstConnect();
         });
       },
 
@@ -128,58 +158,62 @@ function createWsEndpoint(
         _arg: void,
         { updateCachedData, cacheDataLoaded, cacheEntryRemoved }
       ) {
-        const RECONNECT_PERIOD = 3000; // Пауза 3 секунды
-        let reconnectTimerId: NodeJS.Timeout | string | number | undefined = undefined;
-        // Флаг, который показывает, что компонент больше не ждёт данных
-        let isUnsubscribed = false;
+        const restoreSocketConnection = async (): Promise<void> => {
+          console.log('Restoring WebSocket connection.', new Date());
+          try {
+            // 1. Получаем новую пару токенов.
+            await refreshToken();
+
+            // 2. Закрываем текущее соединение.
+            socket.close();
+
+            // 3. Открываем новое с актуальным токеном.
+            await connect();
+          } catch (error) {
+            console.error('Could not update tokens:', error, new Date());
+          }
+        };
 
         // Навешивает обработчики на текущий socket
         const setupSocketHandlers = (): void => {
           socket.onmessage = async (event: MessageEvent): Promise<void> => {
-            const data: IWsMessage = JSON.parse(event.data);
+            const data: IOrdersMessage = JSON.parse(event.data);
             console.log('onmessage event.data', data);
 
             // Проверяем, не истёк ли токен
             if (data.message === 'Invalid or missing token') {
-              try {
-                // 1. Получаем новую пару токенов.
-                await refreshToken();
-
-                // 2. Закрываем текущее соединение.
-                socket.close();
-
-                // 3. Открываем новое с актуальным токеном.
-                await connect();
-              } catch (error) {
-                console.error('Не удалось обновить токен:', error);
-              }
-
+              await restoreSocketConnection();
               return;
             }
 
-            updateCachedData((draft: IWsMessage) => {
+            updateCachedData((draft: IOrdersMessage) => {
               Object.assign(draft, data);
             });
           };
 
           // Логика переподключения при закрытии
           socket.onclose = (): void => {
-            console.log('Connection closed. Checking if it needs to be restored...');
+            console.log(
+              'Connection closed. Checking if it needs to be restored...',
+              new Date()
+            );
 
             // Если isUnsubscribed === false, то компонент всё ещё ждёт данные
             if (!isUnsubscribed) {
               // Запускаем таймер и через 3 секунды пробуем снова
+              console.log('Starting reconnect timer.', new Date());
               reconnectTimerId = setTimeout(connect, RECONNECT_PERIOD);
             }
           };
 
           socket.onerror = (error: Event): void => {
-            console.error('Ошибка WebSocket:', error);
+            console.error('WebSocket connection error:', error, new Date());
           };
         };
 
         // 1. Создаём функцию для установки соединения (используется переподключением).
         const connect = async (): Promise<void> => {
+          console.log('Running connect.', new Date());
           // Очищаем предыдущий таймер перед попыткой подключения
           if (reconnectTimerId) {
             clearTimeout(reconnectTimerId);
@@ -189,11 +223,16 @@ function createWsEndpoint(
           // Получаем актуальный токен при каждом подключении
           const accessToken = localStorage.getItem('accessToken');
           const token = accessToken?.replace('Bearer ', '');
-          socket = new WebSocket(`${wsHost}${subPath}?token=${token}`);
 
+          try {
+            socket = new WebSocket(`${wsHost}${subPath}?token=${token}`);
+          } catch (error) {
+            console.error('Ошибка WebSocket:', error, new Date());
+            await restoreSocketConnection();
+          }
           // Навешиваем обработчики на новый сокет
           setupSocketHandlers();
-        };
+        }; // конец connect
 
         try {
           // 2. Ждём загрузки начальных данных (из queryFn выше).
@@ -204,7 +243,7 @@ function createWsEndpoint(
         } catch (error: unknown) {
           // Если cacheDataLoaded реджектится —
           // значит, компонент отписался до загрузки данных
-          console.log('Error in cacheDataLoaded: ' + error);
+          console.log('Error in cacheDataLoaded: ' + error, new Date());
         }
 
         // 4. Ждём удаления записи из кеша.
