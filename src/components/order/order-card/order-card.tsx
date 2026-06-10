@@ -20,7 +20,6 @@ import styles from './order-card.module.css';
 interface IOrderCardProps {
   order: IOrderDetails;
   orderCardOptions: IOrderCardOptions;
-  linkToUrl: string;
 }
 
 function OrderCard({ order, orderCardOptions }: IOrderCardProps): JSX.Element {

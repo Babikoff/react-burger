@@ -16,6 +16,11 @@ import type { Ingredient } from '@/services/api-types';
 
 import styles from './order-full-info.module.css';
 
+interface IIngredientWithCount {
+  ingredient: Ingredient;
+  count: number;
+}
+
 function OrderFullInfo(): JSX.Element {
   const params = useParams<{ id: string }>();
 
@@ -37,6 +42,18 @@ function OrderFullInfo(): JSX.Element {
       if (fullIngInfo) ingredients.push(fullIngInfo);
     });
   }
+
+  const ingredientsWithCounts: IIngredientWithCount[] = ingredients.reduce<
+    IIngredientWithCount[]
+  >((acc, ing) => {
+    const addedIng = acc.find((item) => item.ingredient._id === ing._id);
+    if (addedIng) {
+      addedIng.count += 1;
+    } else {
+      acc.push({ ingredient: ing, count: 1 });
+    }
+    return acc;
+  }, []);
 
   let totalPrice = 0;
 
@@ -64,20 +81,24 @@ function OrderFullInfo(): JSX.Element {
         <header className="text text_type_main-medium">Состав:</header>
         <section className="mt-6 mr-6">
           <ul className={styles.ingredients_list}>
-            {ingredients.map((ing, index) => (
+            {ingredientsWithCounts.map((ing, index) => (
               <li key={index} className={`${styles.list_line} mt-2 mb-2`}>
                 <div className={styles.ingredient_item}>
                   <div className={styles.ingredient_circle}>
                     <img
-                      src={ing.image_mobile}
-                      alt={ing.name}
+                      src={ing.ingredient.image_mobile}
+                      alt={ing.ingredient.name}
                       className={styles.ingredient_image}
                     />
                   </div>
-                  <div className="text text_type_main-default ml-4">{ing.name}</div>
+                  <div className="text text_type_main-default ml-4">
+                    {ing.ingredient.name}
+                  </div>
                 </div>
                 <div className={`${styles.total_price} ml-3`}>
-                  <span className="text text_type_digits-default mr-2">{ing.price}</span>
+                  <span className="text text_type_digits-default mr-2">
+                    {ing.count} x {ing.ingredient.price}
+                  </span>
                   <CurrencyIcon type="primary" />
                 </div>
               </li>
