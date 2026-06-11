@@ -2,12 +2,12 @@ import {
   CurrencyIcon,
   FormattedDate,
 } from '@krgaa/react-developer-burger-ui-components';
-import { useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 
 import { getStatusText, getStatusTextColor } from '@/components/order/order-info-helper';
 import OrderIngredientIcons from '@/components/order/order-ingredient-icons/order-ingredient-icons';
 import { selectIngredientsData } from '@/services/ingredientsSlice';
+import { useAppSelector } from '@hooks/hooks';
 
 import type { JSX } from 'react';
 
@@ -25,7 +25,7 @@ interface IOrderBoxProps {
 function OrderBox({ order, orderCardOptions }: IOrderBoxProps): JSX.Element {
   const location = useLocation();
 
-  const allPossibleIngredients = useSelector(selectIngredientsData);
+  const allPossibleIngredients = useAppSelector(selectIngredientsData);
   const ingredients: Ingredient[] = order.ingredients
     .map((ingId) => allPossibleIngredients.find((ing) => ing._id === ingId))
     .filter((item): item is Ingredient => item != null);

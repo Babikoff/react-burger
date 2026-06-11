@@ -4,13 +4,13 @@ import {
   Preloader,
 } from '@krgaa/react-developer-burger-ui-components';
 import { useEffect, useRef } from 'react';
-import { useSelector } from 'react-redux';
 import { useLocation, useMatch, useParams } from 'react-router-dom';
 
 import { getStatusText, getStatusTextColor } from '@/components/order/order-info-helper';
 import { useLazyGetOrderQuery } from '@/services/api';
 import { selectIngredientsData } from '@/services/ingredientsSlice';
 import { useGetAllOrdersQuery, useGetUserOrdersQuery } from '@/services/ws-api';
+import { useAppSelector } from '@hooks/hooks';
 
 import type { JSX } from 'react';
 
@@ -109,7 +109,7 @@ function OrderFullInfo(): JSX.Element {
 
   const order = cachedOrderDetails ?? restOrder;
 
-  const allPossibleIngredients = useSelector(selectIngredientsData);
+  const allPossibleIngredients = useAppSelector(selectIngredientsData);
 
   // Показываем прелоадер, если нет данных и какой-то из запросов всё ещё выполняется
   if (!order || (!cachedOrderDetails && (anyWsLoading || restLoading || restFetching)))
