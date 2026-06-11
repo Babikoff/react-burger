@@ -313,4 +313,5 @@ export const {
   usePasswordResetMutation,
   useSetNewPasswordMutation,
   useGetOrderQuery,
+  useLazyGetOrderQuery,
 } = nonAuthApi;

@@ -3,11 +3,12 @@ import {
   FormattedDate,
   Preloader,
 } from '@krgaa/react-developer-burger-ui-components';
+import { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import { useMatch, useParams } from 'react-router-dom';
+import { useLocation, useMatch, useParams } from 'react-router-dom';
 
 import { getStatusText, getStatusTextColor } from '@/components/order/order-info-helper';
-import { useGetOrderQuery } from '@/services/api';
+import { useLazyGetOrderQuery } from '@/services/api';
 import { selectIngredientsData } from '@/services/ingredientsSlice';
 import { useGetAllOrdersQuery, useGetUserOrdersQuery } from '@/services/ws-api';
 
@@ -27,23 +28,33 @@ function OrderFullInfo(): JSX.Element {
 
   const userProfileRouteIsActive = !!useMatch('/profile/orders/:id');
   const feedPageRouteIsActive = !!useMatch('/feed/:id');
+  const location = useLocation();
+  const isModalView = !!location.state?.backgroundLocation;
+  console.log('isModalView', isModalView);
 
   let cachedOrderDetails: IOrderDetails | undefined = undefined;
 
   const userOrders: IOrdersData = useGetUserOrdersQuery(undefined, {
-    skip: !userProfileRouteIsActive,
+    skip: !isModalView || !userProfileRouteIsActive,
   });
 
-  if (userOrders && userOrders.data && userOrders.data.orders.length > 0 && params.id) {
+  if (
+    isModalView &&
+    userOrders &&
+    userOrders.data &&
+    userOrders.data.orders.length > 0 &&
+    params.id
+  ) {
     cachedOrderDetails = userOrders.data.orders.find((ord) => ord._id === params.id);
     if (cachedOrderDetails) console.log('Using cached order info from user history.');
   }
 
   const allOrders: IOrdersData = useGetAllOrdersQuery(undefined, {
-    skip: !feedPageRouteIsActive || !!cachedOrderDetails,
+    skip: !isModalView || !feedPageRouteIsActive || !!cachedOrderDetails,
   });
 
   if (
+    isModalView &&
     !cachedOrderDetails &&
     allOrders &&
     allOrders.data &&
@@ -51,28 +62,51 @@ function OrderFullInfo(): JSX.Element {
     params.id
   ) {
     cachedOrderDetails = allOrders.data.orders.find((ord) => ord._id === params.id);
-    if (cachedOrderDetails)
-      console.log('Using cached order info from feed', cachedOrderDetails);
+    if (cachedOrderDetails) console.log('Using cached order info from feed.');
   }
 
-  const { data, isLoading, isFetching } = useGetOrderQuery(params.id ?? '', {
-    skip: !!cachedOrderDetails,
-  });
+  const [
+    triggerGetOrder,
+    { data: restOrder, isLoading: restLoading, isFetching: restFetching },
+  ] = useLazyGetOrderQuery();
 
-  if (data) {
-    console.log('Using order info loaded by REST', data);
+  if (restOrder) {
+    console.log('Using order info loaded by REST');
   }
 
-  const order = cachedOrderDetails ?? data;
+  // Определяем, получены ли уже данные из кэша WebSocket API
+  const anyWsLoading =
+    (userProfileRouteIsActive && userOrders.isLoading) ||
+    (feedPageRouteIsActive && allOrders.isLoading);
+
+  // Запоминаем, что REST уже был вызван
+  // (чтобы не вызвать повторно при перерендерах на старте)
+  const restTriggeredRef = useRef(false);
+
+  // Ждём завершения обращения к WebSocket, и только
+  // если не нашли там заказ — вызываем поиск через REST
+  useEffect(() => {
+    if (!params.id) return;
+    if (cachedOrderDetails) return; // уже нашли в кеше WebSocket API
+    if (anyWsLoading) return; // WS ещё грузятся, ждём
+    if (restTriggeredRef.current) return; // REST уже вызван
+
+    restTriggeredRef.current = true;
+    triggerGetOrder(params.id);
+  }, [params.id, cachedOrderDetails, anyWsLoading, triggerGetOrder]);
+
+  const order = cachedOrderDetails ?? restOrder;
 
   const allPossibleIngredients = useSelector(selectIngredientsData);
 
-  if (!order || isLoading || isFetching) return <Preloader />;
+  // Показываем прелоадер, если нет данных и какой-то из запросов всё ещё выполняется
+  if (!order || (!cachedOrderDetails && (anyWsLoading || restLoading || restFetching)))
+    return <Preloader />;
 
   const ingredients: Ingredient[] = [];
 
   if (order.ingredients) {
-    order.ingredients.forEach((ingId) => {
+    order.ingredients.forEach((ingId: string) => {
       const fullIngInfo = allPossibleIngredients.find((ing) => ing._id === ingId);
       if (fullIngInfo) ingredients.push(fullIngInfo);
     });
