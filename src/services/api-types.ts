@@ -113,7 +113,7 @@ export const TApiErrorStatus = {
   CUSTOM_ERROR: 'CUSTOM_ERROR',
 } as const;
 
-export type TOrderStatus = 'created' | 'pending' | 'cancelled' | 'done';
+export type TOrderStatus = 'created' | 'pending' | 'done';
 
 export interface IOrderDetails {
   _id: string;

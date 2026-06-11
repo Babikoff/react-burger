@@ -143,7 +143,9 @@ const baseQueryWithTokenRefresh: BaseQueryFn<
   }
 };
 
-// API для запросов, которые делаются без accessToken и refreshToken
+/**
+ * API для запросов, которые делаются (без accessToken и refreshToken)
+ */
 export const nonAuthApi = createApi({
   reducerPath: 'nonAuthApi',
   baseQuery: baseNonAuthQuery,
@@ -233,6 +235,9 @@ export const nonAuthApi = createApi({
   }),
 });
 
+/**
+ * Создание API для аутентифицированных запросов (с accessToken)
+ */
 export const authApi = createApi({
   reducerPath: 'authApi',
   baseQuery: baseQueryWithTokenRefresh,

@@ -6,8 +6,6 @@ export function getStatusText(status: TOrderStatus): string {
       return 'Создан';
     case 'pending':
       return 'Готовится';
-    case 'cancelled':
-      return 'Отменён';
     case 'done':
       return 'Выполнен';
     default:
@@ -21,8 +19,6 @@ export function getStatusTextColor(status: TOrderStatus): string {
       return '#f2f2f3';
     case 'pending':
       return 'lightgreen';
-    case 'cancelled':
-      return 'red';
     case 'done':
       return '#0cc';
     default:
