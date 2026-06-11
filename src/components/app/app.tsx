@@ -72,7 +72,10 @@ export const App = (): JSX.Element => {
           <Route index element={<Profile />} />
           <Route path="orders" element={<ProfileOrders />} />
         </Route>
-        <Route path="/profile/orders/:id" element={<OrderFullInfoPage />} />
+        <Route
+          path="/profile/orders/:id"
+          element={<ProtectedRoute component={<OrderFullInfoPage />} />}
+        />
 
         <Route path="/ingredients/:ingredientId" element={<IngredientDetailsPage />} />
         <Route path="*" element={<NotFoundPage />} />
