@@ -30,7 +30,6 @@ function OrderFullInfo(): JSX.Element {
   const feedPageRouteIsActive = !!useMatch('/feed/:id');
   const location = useLocation();
   const isModalView = !!location.state?.backgroundLocation;
-  console.log('isModalView', isModalView);
 
   let cachedOrderDetails: IOrderDetails | undefined = undefined;
 

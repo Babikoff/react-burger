@@ -135,6 +135,7 @@ export class WebSocketClient {
 
   /** Закрывает текущее соединение без переподключения. */
   disconnect(): void {
+    console.log('Disconnecting WebSocket.', new Date());
     this.cleanupReconnectTimer();
     this.socket?.close();
     this.socket = null;

@@ -47,6 +47,9 @@ function createWsEndpoint(
 
   return (builder: BuilderType) =>
     builder.query<IOrdersMessage, void>({
+      // задержка перед очисткой неиспользуемого соединения
+      keepUnusedDataFor: 1, //секунд
+
       // queryFn создаёт WebSocketClient и резолвится только при первом реальном сообщении
       // (иначе мы получим, что по всем статусам данные загруженны, но список - пуст
       // и не возможно определить придут ли в него данные позже или их нет совсем).
