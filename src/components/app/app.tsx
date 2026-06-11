@@ -102,9 +102,13 @@ export const App = (): JSX.Element => {
           <Route
             path="/profile/orders/:id"
             element={
-              <Modal header="Информация о заказе" closeModal={handleCloseModal}>
-                <OrderFullInfo />
-              </Modal>
+              <ProtectedRoute
+                component={
+                  <Modal header="Информация о заказе" closeModal={handleCloseModal}>
+                    <OrderFullInfo />
+                  </Modal>
+                }
+              />
             }
           />
         </Routes>
