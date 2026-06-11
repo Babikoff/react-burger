@@ -6,12 +6,12 @@ import { useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 
 import { getStatusText, getStatusTextColor } from '@/components/order/order-info-helper';
-import OrderIngredients from '@/components/order/order-ingredients/order-ingredients';
+import OrderIngredientIcons from '@/components/order/order-ingredient-icons/order-ingredient-icons';
 import { selectIngredientsData } from '@/services/ingredientsSlice';
 
 import type { JSX } from 'react';
 
-import type { IImageInfo } from '@/components/order/order-ingredients/order-ingredients';
+import type { IImageInfo } from '@/components/order/order-ingredient-icons/order-ingredient-icons';
 import type { Ingredient, IOrderDetails } from '@/services/api-types';
 import type { IOrderCardOptions } from '@/services/ui-types';
 
@@ -77,7 +77,7 @@ function OrderBox({ order, orderCardOptions }: IOrderBoxProps): JSX.Element {
           </div>
         )}
         <div className={`${styles.order_card_footer} mt-6 mb-6`}>
-          <OrderIngredients
+          <OrderIngredientIcons
             imageInfos={ingredientImagesInfos}
             lastImageOverlayText={lastItageOverlayText}
           />

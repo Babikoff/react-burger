@@ -1,6 +1,6 @@
 import type { JSX } from 'react';
 
-import styles from './order-ingredients.module.css';
+import styles from './order-ingredient-icons.module.css';
 
 export interface IImageInfo {
   _id: string;
@@ -12,7 +12,7 @@ interface IOrderIngredientsProps {
   lastImageOverlayText: string | undefined;
 }
 
-function OrderIngredients(props: IOrderIngredientsProps): JSX.Element {
+function OrderIngredientIcons(props: IOrderIngredientsProps): JSX.Element {
   const lastIndex = props.imageInfos.length - 1;
 
   return (
@@ -44,4 +44,4 @@ function OrderIngredients(props: IOrderIngredientsProps): JSX.Element {
   );
 }
 
-export default OrderIngredients;
+export default OrderIngredientIcons;

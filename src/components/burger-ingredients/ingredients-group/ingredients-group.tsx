@@ -1,4 +1,4 @@
-import IngedientBox from '../ingredient/ingredient-box';
+import IngedientBox from '../ingredient-box/ingredient-box';
 
 import type { JSX } from 'react';
 

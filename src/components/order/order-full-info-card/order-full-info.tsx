@@ -4,15 +4,16 @@ import {
   Preloader,
 } from '@krgaa/react-developer-burger-ui-components';
 import { useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useMatch, useParams } from 'react-router-dom';
 
 import { getStatusText, getStatusTextColor } from '@/components/order/order-info-helper';
 import { useGetOrderQuery } from '@/services/api';
 import { selectIngredientsData } from '@/services/ingredientsSlice';
+import { useGetAllOrdersQuery, useGetUserOrdersQuery } from '@/services/ws-api';
 
 import type { JSX } from 'react';
 
-import type { Ingredient } from '@/services/api-types';
+import type { Ingredient, IOrdersData, IOrderDetails } from '@/services/api-types';
 
 import styles from './order-full-info.module.css';
 
@@ -24,13 +25,47 @@ interface IIngredientWithCount {
 function OrderFullInfo(): JSX.Element {
   const params = useParams<{ id: string }>();
 
-  const allPossibleIngredients = useSelector(selectIngredientsData);
+  const userProfileRouteIsActive = !!useMatch('/profile/orders/:id');
+  const feedPageRouteIsActive = !!useMatch('/feed/:id');
 
-  const {
-    data: order,
-    isLoading,
-    isFetching,
-  } = useGetOrderQuery(params.id ?? '', undefined);
+  let cachedOrderDetails: IOrderDetails | undefined = undefined;
+
+  const userOrders: IOrdersData = useGetUserOrdersQuery(undefined, {
+    skip: !userProfileRouteIsActive,
+  });
+
+  if (userOrders && userOrders.data && userOrders.data.orders.length > 0 && params.id) {
+    cachedOrderDetails = userOrders.data.orders.find((ord) => ord._id === params.id);
+    if (cachedOrderDetails) console.log('Using cached order info from user history.');
+  }
+
+  const allOrders: IOrdersData = useGetAllOrdersQuery(undefined, {
+    skip: !feedPageRouteIsActive || !!cachedOrderDetails,
+  });
+
+  if (
+    !cachedOrderDetails &&
+    allOrders &&
+    allOrders.data &&
+    allOrders.data.orders.length > 0 &&
+    params.id
+  ) {
+    cachedOrderDetails = allOrders.data.orders.find((ord) => ord._id === params.id);
+    if (cachedOrderDetails)
+      console.log('Using cached order info from feed', cachedOrderDetails);
+  }
+
+  const { data, isLoading, isFetching } = useGetOrderQuery(params.id ?? '', {
+    skip: !!cachedOrderDetails,
+  });
+
+  if (data) {
+    console.log('Using order info loaded by REST', data);
+  }
+
+  const order = cachedOrderDetails ?? data;
+
+  const allPossibleIngredients = useSelector(selectIngredientsData);
 
   if (!order || isLoading || isFetching) return <Preloader />;
 
