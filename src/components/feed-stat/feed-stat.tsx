@@ -11,11 +11,11 @@ interface IFeedStatProps {
 function FeedStat({ feedStat }: IFeedStatProps): JSX.Element {
   const doneOrders = feedStat?.orders
     .filter((order) => order.status === 'done')
-    .slice(0, 10);
+    .slice(0, 20);
 
   const pendingOrders = feedStat?.orders
     .filter((order) => order.status === 'pending')
-    .slice(0, 10);
+    .slice(0, 20);
 
   return (
     <main className={`${styles.feed_stat} pl-15`}>
