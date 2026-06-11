@@ -26,13 +26,23 @@ interface IIngredientWithCount {
 function OrderFullInfo(): JSX.Element {
   const params = useParams<{ id: string }>();
 
+  // Определяем путь, по которому был открыт компонент.
+  // В зависимости от того, какой был путь будем искать заказ либо в общем списке,
+  // либо в списке истории заказов пользователя.
   const userProfileRouteIsActive = !!useMatch('/profile/orders/:id');
   const feedPageRouteIsActive = !!useMatch('/feed/:id');
+
   const location = useLocation();
+
+  // Определяем, находится ли компонент в модальном окне (поверх всего приложения).
+  // Если компонент в модальном окне, то будем пытаться извлечь данные о заказе из
+  // селекторов RTK Query (в таком случае данные должны быть в кеше RTK Query).
   const isModalView = !!location.state?.backgroundLocation;
 
   let cachedOrderDetails: IOrderDetails | undefined = undefined;
 
+  // Если модальное окно и оно открыто из профиля пользователя,
+  // то ищем заказ в истории заказов пользователя.
   const userOrders: IOrdersData = useGetUserOrdersQuery(undefined, {
     skip: !isModalView || !userProfileRouteIsActive,
   });
@@ -48,6 +58,9 @@ function OrderFullInfo(): JSX.Element {
     if (cachedOrderDetails) console.log('Using cached order info from user history.');
   }
 
+  // Если модальное окно, оно открыто из общей ленты
+  // и в списке заказов пользователя не было поиска (его не должно быть, но вдруг),
+  // то ищем заказ в глобальной ленте заказов.
   const allOrders: IOrdersData = useGetAllOrdersQuery(undefined, {
     skip: !isModalView || !feedPageRouteIsActive || !!cachedOrderDetails,
   });
@@ -82,14 +95,14 @@ function OrderFullInfo(): JSX.Element {
   // (чтобы не вызвать повторно при перерендерах на старте)
   const restTriggeredRef = useRef(false);
 
-  // Ждём завершения обращения к WebSocket, и только
-  // если не нашли там заказ — вызываем поиск через REST
+  // Ждём завершения обращений к WebSocket
   useEffect(() => {
     if (!params.id) return;
     if (cachedOrderDetails) return; // уже нашли в кеше WebSocket API
     if (anyWsLoading) return; // WS ещё грузятся, ждём
     if (restTriggeredRef.current) return; // REST уже вызван
 
+    // В WS ни чего не нашли и вызываем поиск через REST
     restTriggeredRef.current = true;
     triggerGetOrder(params.id);
   }, [params.id, cachedOrderDetails, anyWsLoading, triggerGetOrder]);
