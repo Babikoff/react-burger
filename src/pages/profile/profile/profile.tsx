@@ -1,7 +1,7 @@
 import { Input, Button } from '@krgaa/react-developer-burger-ui-components';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
 
+import { useAppSelector } from '@hooks/hooks';
 import { useSetUserMutation } from '@services/api';
 import { selectUser } from '@services/user/userSlice';
 
@@ -18,7 +18,7 @@ interface IValues {
 }
 
 export const Profile = (): JSX.Element => {
-  const user = useSelector(selectUser);
+  const user = useAppSelector(selectUser);
 
   const [setUser, { isLoading: isUpdatingUser, error: errorUpdatingUser }] =
     useSetUserMutation();

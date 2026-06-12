@@ -2,13 +2,13 @@ import done from '../../../images/done.svg';
 
 import type { JSX } from 'react';
 
-import styles from './order-details.module.css';
+import styles from './new-order-details.module.css';
 
-interface IOrderDetailsProps {
+interface INewOrderDetailsProps {
   orderNumber: string;
 }
 
-function OrderDetails({ orderNumber }: IOrderDetailsProps): JSX.Element {
+function NewOrderDetails({ orderNumber }: INewOrderDetailsProps): JSX.Element {
   return (
     <section className={styles.order_details}>
       <h1 className={`${styles.order_number} text text_type_digits-large`}>
@@ -26,4 +26,4 @@ function OrderDetails({ orderNumber }: IOrderDetailsProps): JSX.Element {
   );
 }
 
-export default OrderDetails;
+export default NewOrderDetails;

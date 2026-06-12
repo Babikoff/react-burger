@@ -8,6 +8,7 @@ import { useCallback, useMemo, useState, type JSX } from 'react';
 import { useDrop } from 'react-dnd';
 import { useNavigate } from 'react-router-dom';
 
+import NewOrderDetails from '@/components/order/new-order-details-card/new-order-details';
 import { useAppDispatch, useAppSelector } from '@hooks/hooks';
 import { useCreateOrderMutation } from '@services/api';
 import {
@@ -21,12 +22,11 @@ import {
 import { selectUser } from '@services/user/userSlice';
 
 import withDragShift from '../../hocs/with-drag-shift';
-import { DndItemTypes } from '../../utils/appConstants';
+import { DndItemTypes } from '../../utils/app-constants';
 import Modal from '../modal/modal';
 import DragHowerIndicator from './drag-hower-indicator/drag-hower-indicator';
-import OrderDetails from './order-details/order-details';
 
-import type { Ingredient } from '@services/api_types';
+import type { Ingredient } from '@/services/api-types';
 
 import styles from './burger-constructor.module.css';
 
@@ -239,7 +239,7 @@ export const BurgerConstructor = (): JSX.Element => {
       </section>
       {isOrderCardOpen && (
         <Modal header="" closeModal={handleCloseModal}>
-          <OrderDetails orderNumber={orderNumber} />
+          <NewOrderDetails orderNumber={orderNumber} />
         </Modal>
       )}
       {isErrorMessageOpen && (

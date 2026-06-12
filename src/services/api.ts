@@ -1,6 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 
-import { RestApiError } from './api_types';
+import { refreshToken } from './api-common.ts';
+import { RestApiError } from './api-types.ts';
 import { request } from './request.ts';
 
 import type { BaseQueryFn } from '@reduxjs/toolkit/query';
@@ -9,23 +10,12 @@ import type {
   AuthResponse,
   NonAuthResponse,
   Ingredient,
+  IOrderDetails,
   ISerializableRestApiError,
-  RefreshTokenResponse,
   ResponseWithTokens,
   RequestOptions,
   User,
-} from './api_types';
-
-export async function refreshToken(): Promise<RefreshTokenResponse> {
-  const response = await request('auth/token', {
-    method: 'POST',
-    body: JSON.stringify({ token: localStorage.getItem('refreshToken') }),
-  });
-  console.log('refreshToken: token refreshed');
-  localStorage.setItem('accessToken', response.accessToken);
-  localStorage.setItem('refreshToken', response.refreshToken);
-  return response;
-}
+} from './api-types.ts';
 
 export async function fetchWithRefresh(
   endpoint: string,
@@ -41,7 +31,7 @@ export async function fetchWithRefresh(
     ) {
       console.log('We need to refresh token');
       const refreshData = await refreshToken();
-      console.log('Token refreshed.');
+      console.log('Token refreshed.', new Date());
 
       return await request(endpoint, {
         ...options,
@@ -153,7 +143,9 @@ const baseQueryWithTokenRefresh: BaseQueryFn<
   }
 };
 
-// API для запросов, которые делаются без accessToken и refreshToken
+/**
+ * API для запросов, которые делаются (без accessToken и refreshToken)
+ */
 export const nonAuthApi = createApi({
   reducerPath: 'nonAuthApi',
   baseQuery: baseNonAuthQuery,
@@ -228,9 +220,24 @@ export const nonAuthApi = createApi({
         return response.message ?? '';
       },
     }),
+
+    // Получение информации о заказе по id
+    getOrder: builder.query<IOrderDetails, string>({
+      query: (id: string) => ({
+        url: `orders/${id}`,
+        method: 'GET',
+      }),
+      transformResponse(response) {
+        const result = response as unknown as { order: IOrderDetails };
+        return result.order;
+      },
+    }),
   }),
 });
 
+/**
+ * Создание API для аутентифицированных запросов (с accessToken)
+ */
 export const authApi = createApi({
   reducerPath: 'authApi',
   baseQuery: baseQueryWithTokenRefresh,
@@ -305,4 +312,6 @@ export const {
   useRegisterMutation,
   usePasswordResetMutation,
   useSetNewPasswordMutation,
+  useGetOrderQuery,
+  useLazyGetOrderQuery,
 } = nonAuthApi;

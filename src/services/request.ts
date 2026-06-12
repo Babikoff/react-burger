@@ -1,6 +1,6 @@
-import { defaultRequestOptions, host } from '@/services/apiConstants';
+import { defaultRequestOptions, host } from '@/services/api-constants';
 
-import { type AuthResponse, type RequestOptions, RestApiError } from './api_types';
+import { type AuthResponse, type RequestOptions, RestApiError } from './api-types';
 
 // Функция проверки ответа от сервера
 export async function checkResponse(response: Response): Promise<AuthResponse> {

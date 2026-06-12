@@ -1,9 +1,8 @@
-.home_page {
+.feed_page {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  color: var(--text-primary-color);
-  background-color: var(--background-alt);
+  justify-content: center;
+  align-items: center;
 }
 
 .title {
@@ -20,10 +19,4 @@
   height: 100%;
   margin: 0 auto;
   overflow: hidden;
-}
-
-.error_message {
-  position: relative;
-  top: 40vh;
-  text-align: center;
 }

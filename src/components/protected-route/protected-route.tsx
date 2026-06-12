@@ -1,6 +1,6 @@
-import { useSelector } from 'react-redux';
 import { Navigate, useLocation } from 'react-router-dom';
 
+import { useAppSelector } from '@hooks/hooks';
 import { selectIsAuthChecked, selectUser } from '@services/user/userSlice';
 
 interface IProtectedRouteProps {
@@ -12,8 +12,8 @@ export const ProtectedRoute = ({
   onlyUnAuth = false,
   component,
 }: IProtectedRouteProps): React.ReactNode => {
-  const isAuthChecked = useSelector(selectIsAuthChecked);
-  const user = useSelector(selectUser);
+  const isAuthChecked = useAppSelector(selectIsAuthChecked);
+  const user = useAppSelector(selectUser);
   const location = useLocation();
 
   if (!isAuthChecked) {

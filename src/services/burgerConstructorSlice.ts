@@ -3,7 +3,7 @@ import { createSelector } from 'reselect';
 
 import type { PayloadAction } from '@reduxjs/toolkit';
 
-import type { Ingredient } from './api_types';
+import type { Ingredient } from './api-types';
 
 // Интерфейс для начального состояния слайса
 export interface IBurgerConstructor {

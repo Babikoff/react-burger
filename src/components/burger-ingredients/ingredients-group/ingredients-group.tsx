@@ -1,8 +1,8 @@
-import IngedientBox from '../ingredient/ingredient-box';
+import IngedientBox from '../ingredient-box/ingredient-box';
 
 import type { JSX } from 'react';
 
-import type { Ingredient } from '@services/api_types';
+import type { Ingredient } from '@/services/api-types';
 
 import styles from './ingredients-group.module.css';
 

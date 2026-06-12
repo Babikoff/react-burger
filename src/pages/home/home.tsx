@@ -1,10 +1,10 @@
 import { Preloader } from '@krgaa/react-developer-burger-ui-components';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { useSelector } from 'react-redux';
 
 import { BurgerConstructor } from '@components/burger-constructor/burger-constructor';
 import { BurgerIngredients } from '@components/burger-ingredients/burger-ingredients';
+import { useAppSelector } from '@hooks/hooks';
 
 import {
   selectHasError,
@@ -17,12 +17,12 @@ import type { JSX } from 'react';
 import styles from './home.module.css';
 
 export const Home = (): JSX.Element => {
-  const isLoading = useSelector(selectIsLoading);
-  const isFetching = useSelector(selectIsFetching);
-  const hasError = useSelector(selectHasError);
+  const isLoading = useAppSelector(selectIsLoading);
+  const isFetching = useAppSelector(selectIsFetching);
+  const hasError = useAppSelector(selectHasError);
 
   return (
-    <div className={styles.home}>
+    <div className={styles.home_page}>
       {!isLoading && !hasError && (
         <DndProvider backend={HTML5Backend}>
           <h1 className={`${styles.title} text text_type_main-large mt-10 mb-5 pl-5`}>
