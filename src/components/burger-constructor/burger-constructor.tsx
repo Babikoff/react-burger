@@ -150,7 +150,10 @@ export const BurgerConstructor = (): JSX.Element => {
       }}
       className={styles.burger_constructor}
     >
-      <header className={`${styles.bun_block} pl-4 pr-2`}>
+      <header
+        className={`${styles.bun_block} pl-4 pr-2`}
+        data-testid="burger-constructor"
+      >
         {selectedBun ? (
           <ConstructorElement
             extraClass={styles.bun}
@@ -169,7 +172,10 @@ export const BurgerConstructor = (): JSX.Element => {
           </DragHowerIndicator>
         )}
       </header>
-      <ul className={`${styles.ingredients_list} pl-1 pr-8 custom-scroll`}>
+      <ul
+        className={`${styles.ingredients_list} pl-1 pr-8 custom-scroll`}
+        data-testid="constructor-ingredients-list"
+      >
         {
           // Вставляем заглушку "пустой ингредиент" во внутрь списка, чтобы не повторять его отступы
           !hasFillings() && (
@@ -187,6 +193,7 @@ export const BurgerConstructor = (): JSX.Element => {
           <li
             key={ingredient.key}
             className={`${styles.ingredient_item} mt-2 mb-2 pr-1`}
+            data-testid={`constructor-item-${index + 1}`}
           >
             <DragIcon type="primary" />
             <div className={styles.constructor_item}>
