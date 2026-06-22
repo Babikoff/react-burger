@@ -1,10 +1,54 @@
 import { test, expect } from '@playwright/test';
 
+import { testOrder, testUser1 } from '@/utils/tests/test-data';
+import { testIngredients } from '@/utils/tests/test-ingredients';
+
 const bunName = 'Краторная булка N-200i 1255';
 const ingredientName1 = 'Плоды Фалленианского дерева';
 const ingredientName2 = 'Мини-салат Экзо-Плантаго';
 
 test('Construct burger test', async ({ page }) => {
+  // Мокаем API с помощью встроенных механизмов Playwright
+  await page.route('**/api/ingredients', async (route) => {
+    const response = {
+      succes: true,
+      data: testIngredients,
+    };
+    await route.fulfill({ json: response });
+  });
+
+  await page.route('**/api/orders', async (route) => {
+    const response = {
+      success: true,
+      order: testOrder,
+    };
+    await route.fulfill({ json: response });
+  });
+
+  await page.route('**/auth/login', async (route) => {
+    const response = {
+      succes: true,
+      accessToken: 'Bearer accessToken',
+      refreshToken: 'refreshToken',
+      user: testUser1,
+    };
+    await route.fulfill({ json: response });
+  });
+
+  // Мокируем получение данных о пользователе и accessToken,
+  // чтобы избежать появления окна ввода логина и пароля
+  await page.route('**/auth/user', async (route) => {
+    const response = {
+      succes: true,
+      user: testUser1,
+    };
+    await route.fulfill({ json: response });
+  });
+  await page.addInitScript(() => {
+    localStorage.setItem('accessToken', 'Bearer test-token');
+  });
+
+  // Начало теста
   await page.goto('http://localhost:5173/');
   const bun = await page.getByRole('link', { name: bunName });
   const constructorDropTarget = page.getByTestId('burger-constructor');

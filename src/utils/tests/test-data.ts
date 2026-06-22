@@ -1,4 +1,4 @@
-import type { IIngredient, IUser } from '@/services/api-types';
+import type { IIngredient, IUser, IOrderDetails } from '@/services/api-types';
 
 export const testBun1: IIngredient = {
   _id: '60666c42cc7b410027a1a9b1',
@@ -64,4 +64,14 @@ export const testUser1: IUser = {
 export const testUser2: IUser = {
   name: 'tester2',
   email: 'tester2@testers.ru',
+};
+
+export const testOrder: IOrderDetails = {
+  _id: '6a396bd641cff5001b6e6b2b',
+  status: 'done',
+  name: 'Краторный минеральный бургер',
+  createdAt: '2026-06-22T17:07:34.651Z',
+  updatedAt: '2026-06-22T17:07:34.724Z',
+  number: 1751,
+  ingredients: [],
 };

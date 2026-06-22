@@ -24,8 +24,9 @@ export const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setUser: (state, action: PayloadAction<boolean>) => {
-      state.isAuthChecked = action.payload;
+    setUser: (state, action: PayloadAction<IUser>) => {
+      state.user = action.payload;
+      state.isAuthChecked = true;
     },
     setIsAuthChecked: (state, action: PayloadAction<boolean>) => {
       state.isAuthChecked = action.payload;

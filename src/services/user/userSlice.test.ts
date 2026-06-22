@@ -52,7 +52,7 @@ describe('userSlice', () => {
     });
 
     it('Вызов setUser устанавливает isAuthChecked = true', () => {
-      const action = setUser(true);
+      const action = setUser(testUser1);
       const result = userReducer({ ...initialState }, action);
 
       expect(result.isAuthChecked).toBe(true);

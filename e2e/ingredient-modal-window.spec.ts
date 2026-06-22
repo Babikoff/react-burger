@@ -1,6 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
 
-import { testIngredients } from '../src/utils/tests/test-ingredients';
+import { testIngredients } from '@/utils/tests/test-ingredients';
 
 const ingedentName = 'Соус с шипами Антарианского плоскоходца';
 
