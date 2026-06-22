@@ -13,7 +13,7 @@ interface IUserSliceState {
   isAuthChecked: boolean;
 }
 
-const initialState: IUserSliceState = {
+export const initialState: IUserSliceState = {
   user: undefined,
   isLoading: false,
   error: undefined,
@@ -68,3 +68,5 @@ export const userSlice = createSlice({
 export const { setUser, setIsAuthChecked } = userSlice.actions;
 export const { selectIsAuthChecked, selectIsLoading, selectError, selectUser } =
   userSlice.selectors;
+
+export const { reducer: userReducer } = userSlice;

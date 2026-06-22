@@ -1,4 +1,4 @@
-import type { IIngredient } from '@/services/api-types';
+import type { IIngredient, IUser } from '@/services/api-types';
 
 export const testBun1: IIngredient = {
   _id: '60666c42cc7b410027a1a9b1',
@@ -54,4 +54,14 @@ export const testBunFilling2: IIngredient = {
   image: 'https://code.s3.yandex.net/react/code/sauce-02.png',
   image_mobile: 'https://code.s3.yandex.net/react/code/sauce-02-mobile.png',
   image_large: 'https://code.s3.yandex.net/react/code/sauce-02-large.png',
+};
+
+export const testUser1: IUser = {
+  name: 'tester1',
+  email: 'tester1@testers.ru',
+};
+
+export const testUser2: IUser = {
+  name: 'tester2',
+  email: 'tester2@testers.ru',
 };

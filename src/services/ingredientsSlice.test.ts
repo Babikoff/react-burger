@@ -11,9 +11,11 @@ import {
   setSelectedIngredient,
 } from './ingredientsSlice';
 
-// "индивидуальный" тестовый мини store (только для authApi).
+// "индивидуальный" тестовый mocked store для ingredientsSlice
+// (на основе только authApi).
 function setupStore(): ReturnType<typeof configureStore> {
   return configureStore({
+    // Вместо rootReducer установим в store только редьюсер из authApi
     reducer: { [authApi.reducerPath]: authApi.reducer },
     // Эмитируем реальный Middleware, но только для authApi
     middleware: (getDefaultMiddleware) =>
