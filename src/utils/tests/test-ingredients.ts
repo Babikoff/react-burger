@@ -1,6 +1,6 @@
 import type { IIngredient } from '@/services/api-types';
 
-export const ingredients: IIngredient[] = [
+export const testIngredients: IIngredient[] = [
   {
     _id: '60666c42cc7b410027a1a9b1',
     name: 'Краторная булка N-200i',
