@@ -82,7 +82,10 @@ export const selectTotalPrice = createSelector(
   (fillingsTotalPrice, bunsPrice) => fillingsTotalPrice + bunsPrice
 );
 
-// Мемоизированный селектор для IngredientCount
+/**
+ * Мемоизированный селектор для IngredientCount.
+ * Возвращает для заданного ингредиента то, сколько раз он задействован в бургере.
+ * */
 export const selectIngredientCount = createSelector(
   [
     (state): IIngredient[] => state.burgerConstructorSlice.bunFillings,
