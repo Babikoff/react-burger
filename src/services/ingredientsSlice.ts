@@ -59,7 +59,7 @@ interface ISelectedIngredient {
 }
 
 // Начальное состояние слайса
-const initialState: ISelectedIngredient = { selectedIngredient: undefined };
+export const initialState: ISelectedIngredient = { selectedIngredient: undefined };
 
 // Слайс
 const ingredientsSlice = createSlice({
@@ -79,4 +79,5 @@ export const selectIngredientsData = createSelector(
 );
 
 export const { setSelectedIngredient } = ingredientsSlice.actions;
+export const { reducer: ingredientsReducer } = ingredientsSlice;
 export default ingredientsSlice;
