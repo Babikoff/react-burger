@@ -1,5 +1,5 @@
 // Типы REST API
-export interface RequestOptions {
+export interface IRequestOptions {
   method: string | undefined;
   headers?: HeadersInit | undefined;
   body?: string;
@@ -38,38 +38,40 @@ export class RestApiError extends Error implements ISerializableRestApiError {
 }
 
 // Response запросов без аутентификации
-export interface NonAuthResponse {
+export interface INonAuthResponse {
   success: boolean;
   message?: string;
   error?: ISerializableRestApiError;
   accessToken?: string;
   refreshToken?: string;
-  user?: User;
+  user?: IUser;
 }
 
 // Аутентификация
-export interface ResponseWithTokens {
+export interface IResponseWithTokens {
   success: boolean;
   refreshToken: string;
   accessToken: string;
 }
 
 export type AuthResponse = {
-  user: User;
-} & ResponseWithTokens;
+  user: IUser;
+} & IResponseWithTokens;
 
 export interface GetUserResponse {
   success: boolean;
-  user: User;
+  user: IUser;
 }
 
-export type RefreshTokenResponse = {} & ResponseWithTokens;
+export type RefreshTokenResponse = {} & IResponseWithTokens;
+
+export type IngredientType = 'bun' | 'main' | 'sauce';
 
 // Order API
-export interface Ingredient {
+export interface IIngredient {
   _id: string;
   name: string;
-  type: 'bun' | 'main' | 'sauce';
+  type: IngredientType;
   proteins: number;
   fat: number;
   carbohydrates: number;
@@ -82,21 +84,21 @@ export interface Ingredient {
 }
 
 // User API
-export interface User {
+export interface IUser {
   name: string;
   email: string;
 }
 
-export interface ResetPassword {
+export interface IResetPassword {
   password: string;
   token: string;
 }
 
-export interface ForgotPassword {
+export interface IForgotPassword {
   email: string;
 }
 
-export interface OrderBurgerRequest {
+export interface IOrderBurgerRequest {
   ingredients: string[];
 }
 

@@ -14,12 +14,12 @@ import { useAppSelector } from '@hooks/hooks';
 
 import type { JSX } from 'react';
 
-import type { Ingredient, IOrdersData, IOrderDetails } from '@/services/api-types';
+import type { IIngredient, IOrdersData, IOrderDetails } from '@/services/api-types';
 
 import styles from './order-full-info.module.css';
 
 interface IIngredientWithCount {
-  ingredient: Ingredient;
+  ingredient: IIngredient;
   count: number;
 }
 
@@ -115,7 +115,7 @@ function OrderFullInfo(): JSX.Element {
   if (!order || (!cachedOrderDetails && (anyWsLoading || restLoading || restFetching)))
     return <Preloader />;
 
-  const ingredients: Ingredient[] = [];
+  const ingredients: IIngredient[] = [];
 
   if (order.ingredients) {
     order.ingredients.forEach((ingId: string) => {

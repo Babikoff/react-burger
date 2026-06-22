@@ -12,7 +12,7 @@ import { useAppSelector } from '@hooks/hooks';
 import type { JSX } from 'react';
 
 import type { IImageInfo } from '@/components/order/order-ingredient-icons/order-ingredient-icons';
-import type { Ingredient, IOrderDetails } from '@/services/api-types';
+import type { IIngredient, IOrderDetails } from '@/services/api-types';
 import type { IOrderCardOptions } from '@/services/ui-types';
 
 import styles from './order-box.module.css';
@@ -26,9 +26,9 @@ function OrderBox({ order, orderCardOptions }: IOrderBoxProps): JSX.Element {
   const location = useLocation();
 
   const allPossibleIngredients = useAppSelector(selectIngredientsData);
-  const ingredients: Ingredient[] = order.ingredients
+  const ingredients: IIngredient[] = order.ingredients
     .map((ingId) => allPossibleIngredients.find((ing) => ing._id === ingId))
-    .filter((item): item is Ingredient => item != null);
+    .filter((item): item is IIngredient => item != null);
 
   let ingredientImagesInfos: IImageInfo[] = [];
   ingredients.forEach((ing) => {

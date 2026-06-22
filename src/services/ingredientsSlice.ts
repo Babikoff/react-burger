@@ -6,7 +6,7 @@ import { authApi } from './api';
 
 import type { PayloadAction } from '@reduxjs/toolkit';
 
-import type { Ingredient } from './api-types';
+import type { IIngredient } from './api-types';
 
 // Внутренний селектор загрузки ингредиентов
 const selectIngredientsRaw = authApi.endpoints.getIngredients.select(undefined);
@@ -41,7 +41,7 @@ export const selectIngredientsResult = createSelector(
       isSuccess: result.status === QueryStatus.fulfilled,
       status: result.status,
     } as {
-      data?: { success: boolean; data: Ingredient[] };
+      data?: { success: boolean; data: IIngredient[] };
       isLoading: boolean;
       isFetching: boolean;
       isError: boolean;
@@ -55,7 +55,7 @@ export const selectIngredientsResult = createSelector(
 
 // Интерфейс для начального состояния слайса
 interface ISelectedIngredient {
-  selectedIngredient?: Ingredient;
+  selectedIngredient?: IIngredient;
 }
 
 // Начальное состояние слайса
@@ -66,7 +66,7 @@ const ingredientsSlice = createSlice({
   name: 'ingredients',
   initialState,
   reducers: {
-    setSelectedIngredient: (state, action: PayloadAction<Ingredient>) => {
+    setSelectedIngredient: (state, action: PayloadAction<IIngredient>) => {
       state.selectedIngredient = action.payload;
     },
   },

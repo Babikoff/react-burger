@@ -4,10 +4,10 @@ import { authApi, nonAuthApi } from '@services/api';
 
 import type { PayloadAction } from '@reduxjs/toolkit';
 
-import type { User } from '@/services/api-types';
+import type { IUser } from '@/services/api-types';
 
 interface IUserSliceState {
-  user?: User;
+  user?: IUser;
   isLoading: boolean;
   error?: string;
   isAuthChecked: boolean;
@@ -41,21 +41,21 @@ export const userSlice = createSlice({
     builder
       .addMatcher(
         nonAuthApi.endpoints.login.matchFulfilled,
-        (state, action: PayloadAction<User>) => {
+        (state, action: PayloadAction<IUser>) => {
           state.user = action.payload;
           state.isAuthChecked = true;
         }
       )
       .addMatcher(
         nonAuthApi.endpoints.register.matchFulfilled,
-        (state, action: PayloadAction<User>) => {
+        (state, action: PayloadAction<IUser>) => {
           state.user = action.payload;
           state.isAuthChecked = true;
         }
       )
       .addMatcher(
         authApi.endpoints.getUser.matchFulfilled,
-        (state, action: PayloadAction<User>) => {
+        (state, action: PayloadAction<IUser>) => {
           state.user = action.payload;
         }
       )

@@ -1,6 +1,6 @@
 import { defaultRequestOptions, host } from '@/services/api-constants';
 
-import { type AuthResponse, type RequestOptions, RestApiError } from './api-types';
+import { type AuthResponse, type IRequestOptions, RestApiError } from './api-types';
 
 // Функция проверки ответа от сервера
 export async function checkResponse(response: Response): Promise<AuthResponse> {
@@ -20,7 +20,7 @@ export async function checkResponse(response: Response): Promise<AuthResponse> {
 // Функция отправки запроса
 export async function request(
   endpoint: string,
-  options: RequestOptions
+  options: IRequestOptions
 ): Promise<AuthResponse> {
   const response: Response = await fetch(`${host}/api/${endpoint}`, {
     ...defaultRequestOptions,

@@ -8,12 +8,12 @@ import { selectIngredientCount } from '@services/burgerConstructorSlice';
 
 import type { JSX } from 'react';
 
-import type { Ingredient } from '@/services/api-types';
+import type { IIngredient } from '@/services/api-types';
 
 import styles from './ingredient-box.module.css';
 
 interface IIngredientBoxProps {
-  ingredient: Ingredient;
+  ingredient: IIngredient;
 }
 
 function IngredientBox({ ingredient }: IIngredientBoxProps): JSX.Element {

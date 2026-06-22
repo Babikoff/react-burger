@@ -25,6 +25,7 @@ test('Construct burger test', async ({ page }) => {
 
   // Проверяем начальный порядок ингредиентов
   const items = list.locator('li');
+  expect(items).toHaveCount(3);
   await expect(items.nth(0)).toContainText(ingredientName1);
   await expect(items.nth(1)).toContainText(ingredientName2);
   await expect(items.nth(2)).toContainText(ingredientName2);

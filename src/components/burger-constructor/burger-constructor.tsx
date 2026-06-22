@@ -12,8 +12,7 @@ import NewOrderDetails from '@/components/order/new-order-details-card/new-order
 import { useAppDispatch, useAppSelector } from '@hooks/hooks';
 import { useCreateOrderMutation } from '@services/api';
 import {
-  setBun,
-  appendBunFilling,
+  addIngrediednt,
   removeBunFilling,
   clearAll,
   moveBunFilling,
@@ -26,7 +25,7 @@ import { DndItemTypes } from '../../utils/app-constants';
 import Modal from '../modal/modal';
 import DragHowerIndicator from './drag-hower-indicator/drag-hower-indicator';
 
-import type { Ingredient } from '@/services/api-types';
+import type { IIngredient } from '@/services/api-types';
 
 import styles from './burger-constructor.module.css';
 
@@ -52,7 +51,7 @@ export const BurgerConstructor = (): JSX.Element => {
 
   const [{ isDraggingNewIngredient, draggingIngredientType }, dropTargetRef] = useDrop<
     {
-      ingredient: Ingredient;
+      ingredient: IIngredient;
     },
     unknown,
     {
@@ -63,11 +62,7 @@ export const BurgerConstructor = (): JSX.Element => {
     accept: DndItemTypes.Ingredient,
     drop(item) {
       const { ingredient } = item;
-      if (ingredient.type === 'bun') {
-        dispatch(setBun(ingredient));
-      } else {
-        dispatch(appendBunFilling(ingredient));
-      }
+      dispatch(addIngrediednt(ingredient));
     },
     collect: (monitor) => ({
       isDraggingNewIngredient: monitor.isOver() && monitor.canDrop(),
@@ -115,7 +110,7 @@ export const BurgerConstructor = (): JSX.Element => {
     }
   }
 
-  function removeIngredient(ingredient: Ingredient): void {
+  function removeIngredient(ingredient: IIngredient): void {
     dispatch(removeBunFilling(ingredient));
   }
 
