@@ -6,7 +6,6 @@ import { testOrder, testUser1 } from '@/utils/tests/test-data.ts';
 import { nonAuthApi } from './api.ts';
 import * as requestModule from './request.ts';
 
-import type { AuthResponse } from './api-types.ts';
 import type { AppDispatch } from './store.ts';
 
 // "индивидуальный" тестовый store для nonAuthApi.
@@ -22,7 +21,8 @@ function setupStore(): ReturnType<typeof configureStore> {
 }
 
 /**
- * Тесты на основе мокирования функции отправки запросов через vi.spyOn(requestModule, 'request').
+ * Тесты для проверки nonAuthApi на основе мокирования функции отправки запросов
+ * через vi.spyOn(requestModule, 'requestWithNoAuth').
  */
 describe('Тесты nonAuthApi (вызовы без токенов)', () => {
   beforeEach(() => {
@@ -32,10 +32,10 @@ describe('Тесты nonAuthApi (вызовы без токенов)', () => {
 
   describe('getOrder', () => {
     it('Получение заказа по идентификатору', async () => {
-      const spy = vi.spyOn(requestModule, 'request').mockResolvedValue({
+      const spy = vi.spyOn(requestModule, 'requestWithNoAuth').mockResolvedValue({
         success: true,
         order: testOrder,
-      } as unknown as AuthResponse);
+      });
 
       const store = setupStore();
       const dispatch = store.dispatch as AppDispatch;
@@ -49,8 +49,8 @@ describe('Тесты nonAuthApi (вызовы без токенов)', () => {
 
   describe('Проверки /auth/login', () => {
     it('Успешный вызов /auth/login', async () => {
-      // Arrange: подменяем request() типовым ответом
-      const spy = vi.spyOn(requestModule, 'request').mockResolvedValue({
+      // Arrange: подменяем requestWithNoAuth() успешным ответом
+      const spy = vi.spyOn(requestModule, 'requestWithNoAuth').mockResolvedValue({
         success: true,
         accessToken: 'MyTestAccessToken',
         refreshToken: 'MyTestRefreshToken',
@@ -91,12 +91,12 @@ describe('Тесты nonAuthApi (вызовы без токенов)', () => {
 
     it('Проверка если в ответе на /auth/login нет поля user', async () => {
       // Arrange: ответ без поля user
-      vi.spyOn(requestModule, 'request').mockResolvedValue({
+      vi.spyOn(requestModule, 'requestWithNoAuth').mockResolvedValue({
         success: true,
         accessToken: 'MyTestAccessToken',
         refreshToken: 'MyTestRefreshToken',
-        // user отсутствует
-      } as unknown as AuthResponse);
+        // поле user на задаём
+      });
 
       const store = setupStore();
       const dispatch = store.dispatch as AppDispatch;
@@ -119,7 +119,7 @@ describe('Тесты nonAuthApi (вызовы без токенов)', () => {
     it('Проверка проброса ошибки при вызове /auth/login наверх', async () => {
       // Arrange: врнём request c ошибкой авторизации
       const { RestApiError } = await import('./api-types.ts');
-      vi.spyOn(requestModule, 'request').mockRejectedValue(
+      vi.spyOn(requestModule, 'requestWithNoAuth').mockRejectedValue(
         new RestApiError(401, 'Unauthorized', 'Invalid credentials')
       );
 

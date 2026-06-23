@@ -37,14 +37,16 @@ export class RestApiError extends Error implements ISerializableRestApiError {
   }
 }
 
-// Response запросов без аутентификации
-export interface INonAuthResponse {
+// Response запросов без аутентификации и авторизации
+// Может содержать разные варианты полей
+export interface NonAuthResponse {
   success: boolean;
   message?: string;
   error?: ISerializableRestApiError;
   accessToken?: string;
   refreshToken?: string;
   user?: IUser;
+  order?: IOrderDetails;
 }
 
 // Аутентификация

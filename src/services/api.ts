@@ -2,13 +2,13 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 
 import { refreshToken } from './api-common.ts';
 import { RestApiError } from './api-types.ts';
-import { request } from './request.ts';
+import { requestWithAuth, requestWithNoAuth } from './request.ts';
 
 import type { BaseQueryFn } from '@reduxjs/toolkit/query';
 
 import type {
   AuthResponse,
-  INonAuthResponse,
+  NonAuthResponse,
   IIngredient,
   IOrderDetails,
   ISerializableRestApiError,
@@ -22,7 +22,7 @@ export async function fetchWithRefresh(
   options: IRequestOptions
 ): Promise<AuthResponse> {
   try {
-    return await request(endpoint, options);
+    return await requestWithAuth(endpoint, options);
   } catch (error: unknown) {
     if (
       error instanceof RestApiError &&
@@ -33,7 +33,7 @@ export async function fetchWithRefresh(
       const refreshData = await refreshToken();
       console.log('Token refreshed.', new Date());
 
-      return await request(endpoint, {
+      return await requestWithAuth(endpoint, {
         ...options,
         headers: {
           ...options.headers,
@@ -61,7 +61,7 @@ interface IBaseQueryArgs {
 // Функция должна вернуть объект с полем `data` (успех) или `error` (ошибка).
 const baseNonAuthQuery: BaseQueryFn<
   IBaseQueryArgs,
-  INonAuthResponse,
+  NonAuthResponse,
   ISerializableRestApiError
 > = async (args) => {
   const { url, method = 'GET', body } = args;
@@ -76,7 +76,7 @@ const baseNonAuthQuery: BaseQueryFn<
   };
 
   try {
-    const data = await request(url, options);
+    const data = await requestWithNoAuth(url, options);
     return { data };
   } catch (err) {
     console.error(`Error in baseNonAuthQuery: ${err}`);
@@ -144,7 +144,7 @@ const baseQueryWithTokenRefresh: BaseQueryFn<
 };
 
 /**
- * API для запросов, которые делаются (без accessToken и refreshToken)
+ * API для запросов, которые делаются без аутентификации (без accessToken и refreshToken)
  */
 export const nonAuthApi = createApi({
   reducerPath: 'nonAuthApi',
