@@ -8,6 +8,9 @@ const ingredientName1 = 'Плоды Фалленианского дерева';
 const ingredientName2 = 'Мини-салат Экзо-Плантаго';
 
 test('Construct burger test', async ({ page }) => {
+  // Arrange
+  const expectedOrderNumber = String(testOrder.number);
+
   // Мокаем API с помощью встроенных механизмов Playwright
   await page.route('**/api/ingredients', async (route) => {
     const response = {
@@ -48,8 +51,8 @@ test('Construct burger test', async ({ page }) => {
     localStorage.setItem('accessToken', 'Bearer test-token');
   });
 
-  // Начало теста
-  await page.goto('http://localhost:5173/');
+  // Act: Начало теста
+  await page.goto('/');
   const bun = await page.getByRole('link', { name: bunName });
   const constructorDropTarget = page.getByTestId('burger-constructor');
   await bun.dragTo(constructorDropTarget);
@@ -111,6 +114,11 @@ test('Construct burger test', async ({ page }) => {
   // Проверим, что модальное окно открылось
   await expect(page.getByText('идентификатор заказа')).toBeVisible();
   await expect(page.locator('#modal')).toContainText('идентификатор заказа');
+
+  await expect(
+    page.locator('#modal').getByRole('heading', { level: 1, name: expectedOrderNumber })
+  ).toBeVisible();
+
   await page.locator('body').press('Escape');
 
   await expect(page.getByText('идентификатор заказа')).not.toBeVisible();

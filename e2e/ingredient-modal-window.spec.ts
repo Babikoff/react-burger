@@ -5,7 +5,7 @@ import { testIngredients } from '@/utils/tests/test-ingredients';
 const ingedentName = 'Соус с шипами Антарианского плоскоходца';
 
 test('Test ingredient modal window', async ({ page }) => {
-  // Мокаем API с помощью встроенных механизмов Playwright
+  // Arrange: мокаем API с помощью встроенных механизмов Playwright
   await page.route('**/api/ingredients', async (route) => {
     const response = {
       succes: true,
@@ -14,7 +14,8 @@ test('Test ingredient modal window', async ({ page }) => {
     await route.fulfill({ json: response });
   });
 
-  await page.goto('http://localhost:5173');
+  // Act
+  await page.goto('/');
   await expect(page.getByText('Соберите бургер')).toBeVisible();
 
   // Проверим, как работает перемещение по вкладкам типов ингредиентов
@@ -40,5 +41,5 @@ async function checkModalWindow(page: Page): Promise<void> {
   await page.locator('body').press('Escape');
 
   // Проверим, что модальное окно закрылось
-  await expect(modalWindow).not.toContainText('Детали ингредиента');
+  await expect(page.getByText('Детали ингредиента')).not.toBeVisible();
 }
