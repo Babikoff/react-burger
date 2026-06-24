@@ -5,6 +5,8 @@ import { HomePageObjectModel } from './pom-classes/home-page-object-model';
 const bunName = 'Краторная булка N-200i 1255';
 const ingredientName1 = 'Плоды Фалленианского дерева';
 const ingredientName2 = 'Мини-салат Экзо-Плантаго';
+const userEmail = 'autotest.xcv@c-loud.ru'; 
+const userPassword = '123456789'
 
 test('Construct burger test', async ({ page }, testInfo) => {
   // Arrange
@@ -84,7 +86,7 @@ test('Construct burger test', async ({ page }, testInfo) => {
   await pageModel.createOrder();
 
   if (page.url().endsWith('/login')) {
-    pageModel.login('autotest.xcv@c-loud.ru', '123456789');
+    pageModel.login(userEmail, userPassword);
   }
 
   // Проверка создания заказа и демонстрации созданного заказа в 

@@ -1,6 +1,8 @@
-import { test, expect, type Page } from '@playwright/test';
+import { test } from '@playwright/test';
 
-const ingedentName = 'Соус с шипами Антарианского плоскоходца';
+import { HomePageObjectModel } from './pom-classes/home-page-object-model';
+
+const ingredientName = 'Соус с шипами Антарианского плоскоходца';
 
 test('Test ingredient modal window', async ({ page }) => {
   // Arrange:
@@ -10,31 +12,18 @@ test('Test ingredient modal window', async ({ page }) => {
   });
 
   // Act
-  await page.goto('/');
-  await expect(page.getByText('Соберите бургер')).toBeVisible();
+  const pageModel = new HomePageObjectModel(page);
+  await pageModel.goto();
 
   // Проверим, как работает перемещение по вкладкам типов ингредиентов
-  await page.locator('span').filter({ hasText: 'Соусы' }).click();
-  const ingredient = await page.getByRole('link', { name: ingedentName });
-  await expect(ingredient).toBeVisible();
+  await pageModel.navigateToIngredientType('Соусы');
+  await pageModel.checkIngredientVisibility(ingredientName);
 
   // Проверим, что модальное окно ингредиента откроется по клику на ингредиенте
-  await ingredient.click();
-  await checkModalWindow(page);
+  await pageModel.openIngredientDetails(ingredientName, 'click');
+  await pageModel.checkIngredientDetailsWindow(ingredientName);
 
   // Проверим, что модальное окно ингредиента откроется по нажатию Enter
-  await ingredient.press('Enter');
-  await checkModalWindow(page);
+  await pageModel.openIngredientDetails(ingredientName, 'pressEnter');
+  await pageModel.checkIngredientDetailsWindow(ingredientName);
 });
-
-async function checkModalWindow(page: Page): Promise<void> {
-  const modalWindow = await page.locator('#modal');
-  await expect(page).toHaveURL(/\/ingredients\/[a-fA-F0-9]{24}$/);
-  await expect(modalWindow).toContainText('Детали ингредиента');
-  // Проверим, что модальное окно открылось с правильным ингредиентом
-  await expect(modalWindow).toContainText(ingedentName);
-  await page.locator('body').press('Escape');
-
-  // Проверим, что модальное окно закрылось
-  await expect(page.getByText('Детали ингредиента')).not.toBeVisible();
-}
