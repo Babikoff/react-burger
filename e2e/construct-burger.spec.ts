@@ -9,50 +9,68 @@ const ingredientName2 = 'Мини-салат Экзо-Плантаго';
 
 test('Construct burger test', async ({ page }) => {
   // Arrange
-  const expectedOrderNumber = String(testOrder.number);
+  const expectedOrderNumber = '1824';
 
-  // Мокаем API с помощью встроенных механизмов Playwright
-  await page.route('**/api/ingredients', async (route) => {
-    const response = {
-      succes: true,
-      data: testIngredients,
-    };
-    await route.fulfill({ json: response });
+  // Мокаем API с помощью HAR
+  // await page.route('**/api/ingredients', async (route) => {
+  //   const response = {
+  //     succes: true,
+  //     data: testIngredients,
+  //   };
+  //   await route.fulfill({ json: response });
+  // });
+  await page.routeFromHAR('./e2e/hars/ingredients.har', {
+    url: '**/api/ingredients',
+    update: false,
   });
 
-  await page.route('**/api/orders', async (route) => {
-    const response = {
-      success: true,
-      order: testOrder,
-    };
-    await route.fulfill({ json: response });
+  // await page.route('**/api/orders', async (route) => {
+  //   const response = {
+  //     success: true,
+  //     order: testOrder,
+  //   };
+  //   await route.fulfill({ json: response });
+  // });
+  await page.routeFromHAR('./e2e/hars/orders.har', {
+    url: '**/api/orders',
+    update: false,
   });
 
-  await page.route('**/auth/login', async (route) => {
-    const response = {
-      succes: true,
-      accessToken: 'Bearer accessToken',
-      refreshToken: 'refreshToken',
-      user: testUser1,
-    };
-    await route.fulfill({ json: response });
+  // await page.route('**/auth/login', async (route) => {
+  //   const response = {
+  //     succes: true,
+  //     accessToken: 'Bearer accessToken',
+  //     refreshToken: 'refreshToken',
+  //     user: testUser1,
+  //   };
+  //   await route.fulfill({ json: response });
+  // });
+  await page.routeFromHAR('./e2e/hars/login.har', {
+    url: '**/auth/login',
+    update: false,
   });
 
   // Мокируем получение данных о пользователе и accessToken,
   // чтобы избежать появления окна ввода логина и пароля
-  await page.route('**/auth/user', async (route) => {
-    const response = {
-      succes: true,
-      user: testUser1,
-    };
-    await route.fulfill({ json: response });
+  // await page.route('**/auth/user', async (route) => {
+  //   const response = {
+  //     succes: true,
+  //     user: testUser1,
+  //   };
+  //   await route.fulfill({ json: response });
+  // });
+  await page.routeFromHAR('./e2e/hars/user.har', {
+    url: '**/auth/user',
+    update: false,
   });
+
   await page.addInitScript(() => {
-    localStorage.setItem('accessToken', 'Bearer test-token');
+    localStorage.setItem('accessToken', 'Bearer my-accessToken');
   });
 
   // Act: Начало теста
   await page.goto('/');
+  await page.waitForLoadState('networkidle');
   const bun = await page.getByRole('link', { name: bunName });
   const constructorDropTarget = page.getByTestId('burger-constructor');
   await bun.dragTo(constructorDropTarget);

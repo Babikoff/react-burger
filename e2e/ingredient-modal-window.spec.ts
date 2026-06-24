@@ -1,17 +1,12 @@
 import { test, expect, type Page } from '@playwright/test';
 
-import { testIngredients } from '@/utils/tests/test-ingredients';
-
 const ingedentName = 'Соус с шипами Антарианского плоскоходца';
 
 test('Test ingredient modal window', async ({ page }) => {
-  // Arrange: мокаем API с помощью встроенных механизмов Playwright
-  await page.route('**/api/ingredients', async (route) => {
-    const response = {
-      succes: true,
-      data: testIngredients,
-    };
-    await route.fulfill({ json: response });
+  // Arrange:
+  await page.routeFromHAR('./e2e/hars/ingredients.har', {
+    url: '**/api/ingredients',
+    update: false,
   });
 
   // Act
