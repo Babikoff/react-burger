@@ -1,7 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-import { testOrder, testUser1 } from '@/utils/tests/test-data';
-import { testIngredients } from '@/utils/tests/test-ingredients';
+import { HomePageObjectModel } from './pom-classes/home-page-object-model';
 
 const bunName = 'Краторная булка N-200i 1255';
 const ingredientName1 = 'Плоды Фалленианского дерева';
@@ -48,27 +47,23 @@ test('Construct burger test', async ({ page }, testInfo) => {
   });
 
   // Act: Начало теста
-  await page.goto('/');
-  await page.waitForLoadState('networkidle');
-  const bun = await page.getByRole('link', { name: bunName });
-  const constructorDropTarget = page.getByTestId('burger-constructor');
-  await bun.dragTo(constructorDropTarget);
+  const pageModel = new HomePageObjectModel(page);
+  await pageModel.goto();
+
+  await pageModel.addBun(bunName);
 
   // Подмотаем список доступных ингредиентов на Начинки, чтобы прошёл drag and drop
-  await page.locator('span').filter({ hasText: 'Начинки' }).click();
+  await pageModel.navigateToIngredientType('Начинки');
+
   // Добавим первый игредиент
-  const ingredient = await page.getByRole('link', { name: ingredientName1 });
-  await ingredient.dragTo(constructorDropTarget); // 1
+  await pageModel.addBunFilling(ingredientName1); // 1
 
   // Добавим второй ингредиент два раза
-  const ingredient2 = await page.getByRole('link', { name: ingredientName2 });
-  await ingredient2.dragTo(constructorDropTarget); // 2
-  await ingredient2.dragTo(constructorDropTarget); // 3
-
-  const list = page.getByTestId('constructor-ingredients-list');
+  await pageModel.addBunFilling(ingredientName2); // 2
+  await pageModel.addBunFilling(ingredientName2); // 3
 
   // Проверяем начальный порядок ингредиентов
-  const items = list.locator('li');
+  const items = pageModel.getBunFillingsLocator();
   expect(items).toHaveCount(3);
   await expect(items.nth(0)).toContainText(ingredientName1);
   await expect(items.nth(1)).toContainText(ingredientName2);
@@ -77,17 +72,8 @@ test('Construct burger test', async ({ page }, testInfo) => {
   // В Firefox dragTo() не заработал для сортировки,
   // поэтому в Firefox проверять пересортировку в Firefox не будем
   if (!isFirefox) {
-    // Проверям сортировку списка ингредиентов в констуркторе
     // Переместим первый ингредиент в самый низ списка
-    const ingredientToMoveDown = page.getByTestId('constructor-item-1');
-    const ingredientToMoveUp = page.getByTestId('constructor-item-3');
-
-    await ingredientToMoveDown.dragTo(ingredientToMoveUp, {
-      force: true,
-      sourcePosition: { x: 50, y: 0 },
-      targetPosition: { x: 50, y: 50 },
-      steps: 100,
-    });
+    await pageModel.moveBunFilling(1, 3);
 
     // Проверим, что первый элемент переместился вниз списка
     await expect(items.nth(0)).toContainText(ingredientName2);
@@ -95,27 +81,13 @@ test('Construct burger test', async ({ page }, testInfo) => {
     await expect(items.nth(2)).toContainText(ingredientName1);
   }
 
-  await page.getByText('Оформить заказ').click();
+  await pageModel.createOrder();
 
   if (page.url().endsWith('/login')) {
-    await expect(page.locator('#email')).toBeVisible();
-    await page.locator('#email').click();
-    await page.locator('#email').fill('autotest.xcv@c-loud.ru');
-    await page.locator('#password').click();
-    await page.locator('#password').fill('123456789');
-    await page.getByRole('button', { name: 'Войти' }).click();
-    await page.getByText('Оформить заказ').click();
+    pageModel.login('autotest.xcv@c-loud.ru', '123456789');
   }
 
-  // Проверим, что модальное окно открылось
-  await expect(page.getByText('идентификатор заказа')).toBeVisible();
-  await expect(page.locator('#modal')).toContainText('идентификатор заказа');
-
-  await expect(
-    page.locator('#modal').getByRole('heading', { level: 1, name: expectedOrderNumber })
-  ).toBeVisible();
-
-  await page.locator('body').press('Escape');
-
-  await expect(page.getByText('идентификатор заказа')).not.toBeVisible();
+  // Проверка создания заказа и демонстрации созданного заказа в 
+  // модальном окне
+  await pageModel.checkOrderCreatedWindow(expectedOrderNumber);
 });
