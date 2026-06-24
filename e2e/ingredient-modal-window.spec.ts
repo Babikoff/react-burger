@@ -4,7 +4,7 @@ const ingedentName = 'Соус с шипами Антарианского пло
 
 test('Test ingredient modal window', async ({ page }) => {
   // Arrange:
-  await page.routeFromHAR('./e2e/hars/ingredients.har', {
+  await page.routeFromHAR('./e2e/hars/ingredients.default.har', {
     url: '**/api/ingredients',
     update: false,
   });

@@ -7,59 +7,38 @@ const bunName = 'Краторная булка N-200i 1255';
 const ingredientName1 = 'Плоды Фалленианского дерева';
 const ingredientName2 = 'Мини-салат Экзо-Плантаго';
 
-test('Construct burger test', async ({ page }) => {
+test('Construct burger test', async ({ page }, testInfo) => {
   // Arrange
-  const expectedOrderNumber = '1824';
+  const browserName = testInfo.project.name;
+  const isFirefox = browserName === 'firefox';
+
+  const expectedOrderNumber = '1827';
+
+  // В браузере Firefox отличается формат HAR-файлов, поэтому
+  // для Firefox отдельные HAR-файлы.
+  // Прим. реально отличия в форматах обнаружены только для файла orders,
+  // но для порядка разделим все файлы.
+  const harSuffix = browserName === 'firefox' ? 'firefox' : 'default';
 
   // Мокаем API с помощью HAR
-  // await page.route('**/api/ingredients', async (route) => {
-  //   const response = {
-  //     succes: true,
-  //     data: testIngredients,
-  //   };
-  //   await route.fulfill({ json: response });
-  // });
-  await page.routeFromHAR('./e2e/hars/ingredients.har', {
+  await page.routeFromHAR(`./e2e/hars/ingredients.${harSuffix}.har`, {
     url: '**/api/ingredients',
     update: false,
   });
 
-  // await page.route('**/api/orders', async (route) => {
-  //   const response = {
-  //     success: true,
-  //     order: testOrder,
-  //   };
-  //   await route.fulfill({ json: response });
-  // });
-  await page.routeFromHAR('./e2e/hars/orders.har', {
+  await page.routeFromHAR(`./e2e/hars/orders.${harSuffix}.har`, {
     url: '**/api/orders',
     update: false,
   });
 
-  // await page.route('**/auth/login', async (route) => {
-  //   const response = {
-  //     succes: true,
-  //     accessToken: 'Bearer accessToken',
-  //     refreshToken: 'refreshToken',
-  //     user: testUser1,
-  //   };
-  //   await route.fulfill({ json: response });
-  // });
-  await page.routeFromHAR('./e2e/hars/login.har', {
+  await page.routeFromHAR(`./e2e/hars/login.${harSuffix}.har`, {
     url: '**/auth/login',
     update: false,
   });
 
   // Мокируем получение данных о пользователе и accessToken,
   // чтобы избежать появления окна ввода логина и пароля
-  // await page.route('**/auth/user', async (route) => {
-  //   const response = {
-  //     succes: true,
-  //     user: testUser1,
-  //   };
-  //   await route.fulfill({ json: response });
-  // });
-  await page.routeFromHAR('./e2e/hars/user.har', {
+  await page.routeFromHAR(`./e2e/hars/user.${harSuffix}.har`, {
     url: '**/auth/user',
     update: false,
   });
@@ -95,7 +74,6 @@ test('Construct burger test', async ({ page }) => {
   await expect(items.nth(1)).toContainText(ingredientName2);
   await expect(items.nth(2)).toContainText(ingredientName2);
 
-  const isFirefox = await page.evaluate(() => navigator.userAgent.includes('Firefox'));
   // В Firefox dragTo() не заработал для сортировки,
   // поэтому в Firefox проверять пересортировку в Firefox не будем
   if (!isFirefox) {
