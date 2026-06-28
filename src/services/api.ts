@@ -2,27 +2,27 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 
 import { refreshToken } from './api-common.ts';
 import { RestApiError } from './api-types.ts';
-import { request } from './request.ts';
+import { requestWithAuth, requestWithNoAuth } from './request.ts';
 
 import type { BaseQueryFn } from '@reduxjs/toolkit/query';
 
 import type {
   AuthResponse,
   NonAuthResponse,
-  Ingredient,
+  IIngredient,
   IOrderDetails,
   ISerializableRestApiError,
-  ResponseWithTokens,
-  RequestOptions,
-  User,
+  IResponseWithTokens,
+  IRequestOptions,
+  IUser,
 } from './api-types.ts';
 
 export async function fetchWithRefresh(
   endpoint: string,
-  options: RequestOptions
+  options: IRequestOptions
 ): Promise<AuthResponse> {
   try {
-    return await request(endpoint, options);
+    return await requestWithAuth(endpoint, options);
   } catch (error: unknown) {
     if (
       error instanceof RestApiError &&
@@ -33,7 +33,7 @@ export async function fetchWithRefresh(
       const refreshData = await refreshToken();
       console.log('Token refreshed.', new Date());
 
-      return await request(endpoint, {
+      return await requestWithAuth(endpoint, {
         ...options,
         headers: {
           ...options.headers,
@@ -69,14 +69,14 @@ const baseNonAuthQuery: BaseQueryFn<
     'Content-Type': 'application/json',
   };
 
-  const options: RequestOptions = {
+  const options: IRequestOptions = {
     method,
     headers,
     body,
   };
 
   try {
-    const data = await request(url, options);
+    const data = await requestWithNoAuth(url, options);
     return { data };
   } catch (err) {
     console.error(`Error in baseNonAuthQuery: ${err}`);
@@ -119,7 +119,7 @@ const baseQueryWithTokenRefresh: BaseQueryFn<
     console.log('no accessToken', token);
   }
 
-  const options: RequestOptions = {
+  const options: IRequestOptions = {
     method,
     headers,
     body,
@@ -144,14 +144,14 @@ const baseQueryWithTokenRefresh: BaseQueryFn<
 };
 
 /**
- * API для запросов, которые делаются (без accessToken и refreshToken)
+ * API для запросов, которые делаются без аутентификации (без accessToken и refreshToken)
  */
 export const nonAuthApi = createApi({
   reducerPath: 'nonAuthApi',
   baseQuery: baseNonAuthQuery,
   endpoints: (builder) => ({
     // Методы аутентификации и работы с кредами
-    login: builder.mutation<User, { email: string; password: string }>({
+    login: builder.mutation<IUser, { email: string; password: string }>({
       query: (credentials) => ({
         url: 'auth/login',
         method: 'POST',
@@ -172,26 +172,28 @@ export const nonAuthApi = createApi({
       },
     }),
 
-    register: builder.mutation<User, { name: string; email: string; password: string }>({
-      query: (credentials) => ({
-        url: 'auth/register',
-        method: 'POST',
-        body: JSON.stringify(credentials),
-      }),
-      transformResponse: (response) => {
-        if (response.success && response.accessToken && response.refreshToken) {
-          localStorage.setItem('accessToken', response.accessToken);
-          localStorage.setItem('refreshToken', response.refreshToken);
-          console.log('Registered. Tokens were updated.');
-        }
-        if (!response.user) {
-          throw new Error(
-            `User data not found in response: ${JSON.stringify(response)}`
-          );
-        }
-        return response.user;
-      },
-    }),
+    register: builder.mutation<IUser, { name: string; email: string; password: string }>(
+      {
+        query: (credentials) => ({
+          url: 'auth/register',
+          method: 'POST',
+          body: JSON.stringify(credentials),
+        }),
+        transformResponse: (response) => {
+          if (response.success && response.accessToken && response.refreshToken) {
+            localStorage.setItem('accessToken', response.accessToken);
+            localStorage.setItem('refreshToken', response.refreshToken);
+            console.log('Registered. Tokens were updated.');
+          }
+          if (!response.user) {
+            throw new Error(
+              `User data not found in response: ${JSON.stringify(response)}`
+            );
+          }
+          return response.user;
+        },
+      }
+    ),
 
     passwordReset: builder.mutation<string, { email: string }>({
       query: (email) => ({
@@ -243,7 +245,7 @@ export const authApi = createApi({
   baseQuery: baseQueryWithTokenRefresh,
   endpoints: (builder) => ({
     // Методы обмена данными пользователя
-    getUser: builder.query<User, void>({
+    getUser: builder.query<IUser, void>({
       query: () => ({
         url: 'auth/user',
         method: 'GET',
@@ -251,7 +253,7 @@ export const authApi = createApi({
       transformResponse: (response) => response.user,
     }),
 
-    setUser: builder.mutation<User, { name: string; email: string; password: string }>({
+    setUser: builder.mutation<IUser, { name: string; email: string; password: string }>({
       query: (user) => ({
         url: 'auth/user',
         method: 'PATCH',
@@ -276,7 +278,7 @@ export const authApi = createApi({
     }),
 
     // Получение ингредиентов
-    getIngredients: builder.query<{ data: Ingredient[] }, void>({
+    getIngredients: builder.query<{ data: IIngredient[] }, void>({
       query: () => ({
         url: 'ingredients',
       }),
@@ -291,7 +293,7 @@ export const authApi = createApi({
           ingredients: orderIngredientsIds,
         }),
       }),
-      transformResponse(response: ResponseWithTokens) {
+      transformResponse(response: IResponseWithTokens) {
         const result = response as unknown as { order: { number: number } };
         return result.order.number.toString();
       },

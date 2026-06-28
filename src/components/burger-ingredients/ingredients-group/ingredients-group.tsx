@@ -2,13 +2,13 @@ import IngedientBox from '../ingredient-box/ingredient-box';
 
 import type { JSX } from 'react';
 
-import type { Ingredient } from '@/services/api-types';
+import type { IIngredient } from '@/services/api-types';
 
 import styles from './ingredients-group.module.css';
 
 interface IIngredientsGroupProps {
   title: string;
-  ingredients: Ingredient[];
+  ingredients: IIngredient[];
 }
 
 function IngredientsGroup({ title, ingredients }: IIngredientsGroupProps): JSX.Element {

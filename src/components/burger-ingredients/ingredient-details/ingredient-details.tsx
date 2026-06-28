@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 
 import { useGetIngredientsQuery } from '@/services/api';
 
-import type { Ingredient } from '@/services/api-types';
+import type { IIngredient } from '@/services/api-types';
 
 import styles from './ingredient-details.module.css';
 
@@ -14,7 +14,7 @@ function IngredientDetails(): JSX.Element {
   const [imageIsLoaded, setImageIsLoaded] = useState(false);
 
   const ingredient = useMemo(
-    () => data?.data?.find((item: Ingredient) => item._id === params.ingredientId),
+    () => data?.data?.find((item: IIngredient) => item._id === params.ingredientId),
     [data, params.ingredientId]
   );
 

@@ -3,12 +3,12 @@ import { createSelector } from 'reselect';
 
 import type { PayloadAction } from '@reduxjs/toolkit';
 
-import type { Ingredient } from './api-types';
+import type { IIngredient } from './api-types';
 
 // Интерфейс для начального состояния слайса
 export interface IBurgerConstructor {
-  bun?: Ingredient;
-  bunFillings: Ingredient[];
+  bun?: IIngredient;
+  bunFillings: IIngredient[];
   fillingsTotalPrice: number;
   bunsPrice: number;
 }
@@ -18,7 +18,7 @@ interface IMovingBunFilling {
   toIndex: number;
 }
 
-const initialState: IBurgerConstructor = {
+export const initialState: IBurgerConstructor = {
   bun: undefined,
   bunFillings: [],
   fillingsTotalPrice: 0,
@@ -29,20 +29,21 @@ const burgerConstructorSlice = createSlice({
   name: 'burgerConstructorSlice',
   initialState,
   reducers: {
-    setBun: (state, action: PayloadAction<Ingredient>) => {
-      state.bun = action.payload;
-      state.bunsPrice = action.payload.price * 2;
-    },
-    appendBunFilling: {
-      reducer: (state, action: PayloadAction<Ingredient>) => {
-        state.bunFillings.push(action.payload);
-        state.fillingsTotalPrice += action.payload.price;
+    addIngrediednt: {
+      reducer: (state, action: PayloadAction<IIngredient>) => {
+        if (action.payload.type === 'bun') {
+          state.bun = action.payload;
+          state.bunsPrice = action.payload.price * 2;
+        } else {
+          state.bunFillings.push(action.payload);
+          state.fillingsTotalPrice += action.payload.price;
+        }
       },
-      prepare: (item: Ingredient) => {
+      prepare: (item: IIngredient) => {
         return { payload: { ...item, key: nanoid() } };
       },
     },
-    removeBunFilling: (state, action: PayloadAction<Ingredient>) => {
+    removeBunFilling: (state, action: PayloadAction<IIngredient>) => {
       state.bunFillings = state.bunFillings.filter(
         (item) => item.key !== action.payload.key
       );
@@ -71,7 +72,7 @@ const burgerConstructorSlice = createSlice({
   },
 });
 
-export const { setBun, appendBunFilling, removeBunFilling, clearAll, moveBunFilling } =
+export const { addIngrediednt, removeBunFilling, clearAll, moveBunFilling } =
   burgerConstructorSlice.actions;
 
 // Мемоизированный селектор для TotalPrice
@@ -81,12 +82,15 @@ export const selectTotalPrice = createSelector(
   (fillingsTotalPrice, bunsPrice) => fillingsTotalPrice + bunsPrice
 );
 
-// Мемоизированный селектор для IngredientCount
+/**
+ * Мемоизированный селектор для IngredientCount.
+ * Возвращает для заданного ингредиента то, сколько раз он задействован в бургере.
+ * */
 export const selectIngredientCount = createSelector(
   [
-    (state): Ingredient[] => state.burgerConstructorSlice.bunFillings,
-    (state): Ingredient => state.burgerConstructorSlice.bun,
-    (state, ingredient: Ingredient): Ingredient => ingredient,
+    (state): IIngredient[] => state.burgerConstructorSlice.bunFillings,
+    (state): IIngredient => state.burgerConstructorSlice.bun,
+    (state, ingredient: IIngredient): IIngredient => ingredient,
   ],
   (items, bun, ingredient) => {
     switch (ingredient.type) {
@@ -98,4 +102,5 @@ export const selectIngredientCount = createSelector(
   }
 );
 
+export const { reducer: burgerConstructorReducer } = burgerConstructorSlice;
 export default burgerConstructorSlice;

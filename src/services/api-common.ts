@@ -1,9 +1,9 @@
-import { request } from './request.ts';
+import { requestWithAuth } from './request.ts';
 
 import type { RefreshTokenResponse } from './api-types.ts';
 
 export async function refreshToken(): Promise<RefreshTokenResponse> {
-  const response = await request('auth/token', {
+  const response = await requestWithAuth('auth/token', {
     method: 'POST',
     body: JSON.stringify({ token: localStorage.getItem('refreshToken') }),
   });

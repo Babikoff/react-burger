@@ -4,16 +4,16 @@ import { authApi, nonAuthApi } from '@services/api';
 
 import type { PayloadAction } from '@reduxjs/toolkit';
 
-import type { User } from '@/services/api-types';
+import type { IUser } from '@/services/api-types';
 
 interface IUserSliceState {
-  user?: User;
+  user?: IUser;
   isLoading: boolean;
   error?: string;
   isAuthChecked: boolean;
 }
 
-const initialState: IUserSliceState = {
+export const initialState: IUserSliceState = {
   user: undefined,
   isLoading: false,
   error: undefined,
@@ -24,8 +24,9 @@ export const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setUser: (state, action: PayloadAction<boolean>) => {
-      state.isAuthChecked = action.payload;
+    setUser: (state, action: PayloadAction<IUser>) => {
+      state.user = action.payload;
+      state.isAuthChecked = true;
     },
     setIsAuthChecked: (state, action: PayloadAction<boolean>) => {
       state.isAuthChecked = action.payload;
@@ -41,21 +42,21 @@ export const userSlice = createSlice({
     builder
       .addMatcher(
         nonAuthApi.endpoints.login.matchFulfilled,
-        (state, action: PayloadAction<User>) => {
+        (state, action: PayloadAction<IUser>) => {
           state.user = action.payload;
           state.isAuthChecked = true;
         }
       )
       .addMatcher(
         nonAuthApi.endpoints.register.matchFulfilled,
-        (state, action: PayloadAction<User>) => {
+        (state, action: PayloadAction<IUser>) => {
           state.user = action.payload;
           state.isAuthChecked = true;
         }
       )
       .addMatcher(
         authApi.endpoints.getUser.matchFulfilled,
-        (state, action: PayloadAction<User>) => {
+        (state, action: PayloadAction<IUser>) => {
           state.user = action.payload;
         }
       )
@@ -68,3 +69,5 @@ export const userSlice = createSlice({
 export const { setUser, setIsAuthChecked } = userSlice.actions;
 export const { selectIsAuthChecked, selectIsLoading, selectError, selectUser } =
   userSlice.selectors;
+
+export const { reducer: userReducer } = userSlice;

@@ -12,8 +12,7 @@ import NewOrderDetails from '@/components/order/new-order-details-card/new-order
 import { useAppDispatch, useAppSelector } from '@hooks/hooks';
 import { useCreateOrderMutation } from '@services/api';
 import {
-  setBun,
-  appendBunFilling,
+  addIngrediednt,
   removeBunFilling,
   clearAll,
   moveBunFilling,
@@ -26,7 +25,7 @@ import { DndItemTypes } from '../../utils/app-constants';
 import Modal from '../modal/modal';
 import DragHowerIndicator from './drag-hower-indicator/drag-hower-indicator';
 
-import type { Ingredient } from '@/services/api-types';
+import type { IIngredient } from '@/services/api-types';
 
 import styles from './burger-constructor.module.css';
 
@@ -52,7 +51,7 @@ export const BurgerConstructor = (): JSX.Element => {
 
   const [{ isDraggingNewIngredient, draggingIngredientType }, dropTargetRef] = useDrop<
     {
-      ingredient: Ingredient;
+      ingredient: IIngredient;
     },
     unknown,
     {
@@ -63,11 +62,7 @@ export const BurgerConstructor = (): JSX.Element => {
     accept: DndItemTypes.Ingredient,
     drop(item) {
       const { ingredient } = item;
-      if (ingredient.type === 'bun') {
-        dispatch(setBun(ingredient));
-      } else {
-        dispatch(appendBunFilling(ingredient));
-      }
+      dispatch(addIngrediednt(ingredient));
     },
     collect: (monitor) => ({
       isDraggingNewIngredient: monitor.isOver() && monitor.canDrop(),
@@ -115,7 +110,7 @@ export const BurgerConstructor = (): JSX.Element => {
     }
   }
 
-  function removeIngredient(ingredient: Ingredient): void {
+  function removeIngredient(ingredient: IIngredient): void {
     dispatch(removeBunFilling(ingredient));
   }
 
@@ -150,7 +145,10 @@ export const BurgerConstructor = (): JSX.Element => {
       }}
       className={styles.burger_constructor}
     >
-      <header className={`${styles.bun_block} pl-4 pr-2`}>
+      <header
+        className={`${styles.bun_block} pl-4 pr-2`}
+        data-testid="burger-constructor"
+      >
         {selectedBun ? (
           <ConstructorElement
             extraClass={styles.bun}
@@ -169,7 +167,10 @@ export const BurgerConstructor = (): JSX.Element => {
           </DragHowerIndicator>
         )}
       </header>
-      <ul className={`${styles.ingredients_list} pl-1 pr-8 custom-scroll`}>
+      <ul
+        className={`${styles.ingredients_list} pl-1 pr-8 custom-scroll`}
+        data-testid="constructor-ingredients-list"
+      >
         {
           // Вставляем заглушку "пустой ингредиент" во внутрь списка, чтобы не повторять его отступы
           !hasFillings() && (
@@ -187,6 +188,7 @@ export const BurgerConstructor = (): JSX.Element => {
           <li
             key={ingredient.key}
             className={`${styles.ingredient_item} mt-2 mb-2 pr-1`}
+            data-testid={`constructor-item-${index + 1}`}
           >
             <DragIcon type="primary" />
             <div className={styles.constructor_item}>
