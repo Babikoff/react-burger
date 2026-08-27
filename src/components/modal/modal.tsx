@@ -11,20 +11,26 @@ const modalRoot = document.getElementById('modal')!;
 interface IModalProps {
   header: string;
   closeModal: () => void;
+  isClosable?: boolean;
   children: React.ReactNode;
 }
 
-function Modal({ header, closeModal, children }: IModalProps): JSX.Element {
+function Modal({
+  header,
+  closeModal,
+  isClosable = true,
+  children,
+}: IModalProps): JSX.Element {
   useEffect(() => {
     document.addEventListener('keydown', handleEscKey);
     return (): void => {
       document.removeEventListener('keydown', handleEscKey);
     };
-  }, []);
+  }, [isClosable]);
 
   function handleEscKey(this: Document, event: KeyboardEvent): void {
     event.stopPropagation();
-    if (event.key === 'Escape') closeModal();
+    if (event.key === 'Escape' && isClosable) closeModal();
   }
 
   return ReactDOM.createPortal(
@@ -32,11 +38,11 @@ function Modal({ header, closeModal, children }: IModalProps): JSX.Element {
       <div className={styles.modal_window}>
         <div className={styles.header}>
           <h3 className={`${styles.header_text} text text_type_main-large`}>{header}</h3>
-          <CloseIcon onClick={closeModal} type="secondary" />
+          {isClosable && <CloseIcon onClick={closeModal} type="secondary" />}
         </div>
         <div className={styles.modal_content}>{children}</div>
       </div>
-      <ModalOverlay closeModal={closeModal} />
+      <ModalOverlay closeModal={isClosable ? closeModal : undefined} />
     </>,
     modalRoot
   );

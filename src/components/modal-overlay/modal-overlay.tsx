@@ -3,7 +3,7 @@ import type { JSX } from 'react';
 import styles from './modal-overlay.module.css';
 
 interface IModalOverlay {
-  closeModal: () => void;
+  closeModal?: () => void;
 }
 
 function ModalOverlay({ closeModal }: IModalOverlay): JSX.Element {

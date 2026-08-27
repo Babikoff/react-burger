@@ -125,10 +125,6 @@ export const BurgerConstructor = (): JSX.Element => {
     setIsOrderCardOpen(false);
   }
 
-  function handleCloseOrderCreationWaitingWindow(): void {
-    setIsWaitingOrderCreation(false);
-  }
-
   function handleCloseErrorMessage(): void {
     setIsErrorMessageOpen(false);
   }
@@ -255,10 +251,7 @@ export const BurgerConstructor = (): JSX.Element => {
         </Modal>
       )}
       {isWaitingOrderCreation && (
-        <Modal
-          header="Создание заказа"
-          closeModal={handleCloseOrderCreationWaitingWindow}
-        >
+        <Modal header="Создание заказа" isClosable={false}>
           <main className={`${styles.preloader_container}`}>
             <div className={`${styles.preloader}`}>
               <Preloader />
