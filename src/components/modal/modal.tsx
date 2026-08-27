@@ -31,7 +31,7 @@ function Modal({ header, closeModal, children }: IModalProps): JSX.Element {
     <>
       <div className={styles.modal_window}>
         <div className={styles.header}>
-          <h3 className={`text text_type_main-large`}>{header}</h3>
+          <h3 className={`${styles.header_text} text text_type_main-large`}>{header}</h3>
           <CloseIcon onClick={closeModal} type="secondary" />
         </div>
         <div className={styles.modal_content}>{children}</div>

@@ -18,6 +18,12 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: baseline;
+  width: 100%;
+}
+
+.header_text {
+  width: 100%;
+  text-align: center;
 }
 
 .modal_content {

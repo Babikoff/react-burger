@@ -3,6 +3,7 @@ import {
   ConstructorElement,
   CurrencyIcon,
   DragIcon,
+  Preloader,
 } from '@krgaa/react-developer-burger-ui-components';
 import { useCallback, useMemo, useState, type JSX } from 'react';
 import { useDrop } from 'react-dnd';
@@ -34,6 +35,7 @@ export const BurgerConstructor = (): JSX.Element => {
   const navigate = useNavigate();
   const [orderNumber, setOrderNumber] = useState('');
   const [isOrderCardOpen, setIsOrderCardOpen] = useState(false);
+  const [isWaitingOrderCreation, setIsWaitingOrderCreation] = useState(false);
   const [isErrorMessageOpen, setIsErrorMessageOpen] = useState(false);
 
   const [createOrderMutation] = useCreateOrderMutation();
@@ -94,19 +96,23 @@ export const BurgerConstructor = (): JSX.Element => {
       return;
     }
 
-    const response = await createOrderMutation([
-      selectedBun!._id,
-      ...selectedBunFillings.map((filling) => filling._id),
-      selectedBun!._id,
-    ]);
-
-    if (response.data) {
-      setOrderNumber(response.data);
-      setIsOrderCardOpen(true);
-    } else if (response.error) {
-      console.log('Order creation error:', response.error); // Log the whole object
-      console.log(`Error details: ${JSON.stringify(response.error)}`);
-      setIsErrorMessageOpen(true);
+    setIsWaitingOrderCreation(true);
+    try {
+      const response = await createOrderMutation([
+        selectedBun!._id,
+        ...selectedBunFillings.map((filling) => filling._id),
+        selectedBun!._id,
+      ]);
+      if (response.data) {
+        setOrderNumber(response.data);
+        setIsOrderCardOpen(true);
+      } else if (response.error) {
+        console.log('Order creation error:', response.error); // Log the whole object
+        console.log(`Error details: ${JSON.stringify(response.error)}`);
+        setIsErrorMessageOpen(true);
+      }
+    } finally {
+      setIsWaitingOrderCreation(false);
     }
   }
 
@@ -114,9 +120,13 @@ export const BurgerConstructor = (): JSX.Element => {
     dispatch(removeBunFilling(ingredient));
   }
 
-  function handleCloseModal(): void {
+  function handleCloseOrderModal(): void {
     dispatch(clearAll());
     setIsOrderCardOpen(false);
+  }
+
+  function handleCloseOrderCreationWaitingWindow(): void {
+    setIsWaitingOrderCreation(false);
   }
 
   function handleCloseErrorMessage(): void {
@@ -240,8 +250,20 @@ export const BurgerConstructor = (): JSX.Element => {
         </Button>
       </section>
       {isOrderCardOpen && (
-        <Modal header="" closeModal={handleCloseModal}>
+        <Modal header="" closeModal={handleCloseOrderModal}>
           <NewOrderDetails orderNumber={orderNumber} />
+        </Modal>
+      )}
+      {isWaitingOrderCreation && (
+        <Modal
+          header="Создание заказа"
+          closeModal={handleCloseOrderCreationWaitingWindow}
+        >
+          <main className={`${styles.preloader_container}`}>
+            <div className={`${styles.preloader}`}>
+              <Preloader />
+            </div>
+          </main>
         </Modal>
       )}
       {isErrorMessageOpen && (

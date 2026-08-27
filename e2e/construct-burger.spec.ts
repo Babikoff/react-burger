@@ -6,7 +6,7 @@ const bunName = 'Краторная булка N-200i 1255';
 const ingredientName1 = 'Плоды Фалленианского дерева';
 const ingredientName2 = 'Мини-салат Экзо-Плантаго';
 const userEmail = 'autotest.xcv@c-loud.ru'; 
-const userPassword = '123456789'
+const userPassword = '321321321'
 
 test('Construct burger test', async ({ page }, testInfo) => {
   // Arrange
