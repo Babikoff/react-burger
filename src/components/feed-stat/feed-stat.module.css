@@ -1,0 +1,35 @@
+.feed_stat {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.orders_main_section {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
+.orders_section {
+  flex: 1;
+}
+
+.order_section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.ready_order_section {
+  color: #0cc;
+}
+
+.totals_section {
+  display: flex;
+  flex-direction: column;
+}
+
+.text_with_shadow {
+  text-shadow:
+    0 0 10px rgb(120 120 255 / 90%),
+    0 10px 30px rgb(76 76 255 / 75%);
+}

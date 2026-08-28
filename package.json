@@ -20,7 +20,8 @@
     "preview": "vite preview",
     "stylelint": "stylelint \"./src/**/*.css\" --fix",
     "test": "vitest",
-    "test:ui": "vitest --ui"
+    "test:ui": "vitest --ui",
+    "coverage": "vitest --coverage"
   },
   "dependencies": {
     "@babel/runtime": "^7.28.4",
@@ -28,6 +29,7 @@
     "@reduxjs/toolkit": "^2.9.0",
     "core-js": "^3.45.1",
     "lodash-es": "^4.17.21",
+    "playwright": "^1.61.0",
     "react": "^19.1.1",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
@@ -38,7 +40,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",
-    "@playwright/test": "^1.57.0",
+    "@playwright/test": "^1.61.0",
     "@testing-library/jest-dom": "^6.9.0",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",

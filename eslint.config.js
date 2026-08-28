@@ -151,7 +151,7 @@ export default defineConfig([
       '@typescript-eslint': tseslint.plugin,
     },
     rules: {
-      '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
+      '@typescript-eslint/consistent-type-definitions': ['warn', 'interface'],
       '@typescript-eslint/consistent-type-imports': [
         'error',
         {

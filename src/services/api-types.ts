@@ -1,0 +1,152 @@
+// Типы REST API
+export interface IRequestOptions {
+  method: string | undefined;
+  headers?: HeadersInit | undefined;
+  body?: string;
+}
+
+// Кастомный класс для обработки ошибок ответа сервера
+export class ServerError extends Error {
+  name: string;
+  statusCode: number;
+  constructor(message: string, statusCode: number) {
+    super(message);
+    this.name = 'ServerError';
+    this.statusCode = statusCode;
+  }
+}
+
+// Responses
+export interface ISerializableRestApiError {
+  status?: number;
+  statusText?: string;
+  body?: string;
+  message?: string;
+}
+
+export class RestApiError extends Error implements ISerializableRestApiError {
+  status?: number;
+  statusText?: string;
+  body?: string;
+  constructor(status: number, statusText?: string, body?: string) {
+    super(statusText);
+    this.name = 'RestApiError';
+    this.status = status;
+    this.statusText = statusText;
+    this.body = body;
+  }
+}
+
+// Response запросов без аутентификации и авторизации
+// Может содержать разные варианты полей
+export interface NonAuthResponse {
+  success: boolean;
+  message?: string;
+  error?: ISerializableRestApiError;
+  accessToken?: string;
+  refreshToken?: string;
+  user?: IUser;
+  order?: IOrderDetails;
+}
+
+// Аутентификация
+export interface IResponseWithTokens {
+  success: boolean;
+  refreshToken: string;
+  accessToken: string;
+}
+
+export type AuthResponse = {
+  user: IUser;
+} & IResponseWithTokens;
+
+export interface GetUserResponse {
+  success: boolean;
+  user: IUser;
+}
+
+export type RefreshTokenResponse = {} & IResponseWithTokens;
+
+export type IngredientType = 'bun' | 'main' | 'sauce';
+
+// Order API
+export interface IIngredient {
+  _id: string;
+  name: string;
+  type: IngredientType;
+  proteins: number;
+  fat: number;
+  carbohydrates: number;
+  calories: number;
+  price: number;
+  image: string;
+  image_large: string;
+  image_mobile: string;
+  key?: string; // nanoid для Drag and Drop
+}
+
+// User API
+export interface IUser {
+  name: string;
+  email: string;
+}
+
+export interface IResetPassword {
+  password: string;
+  token: string;
+}
+
+export interface IForgotPassword {
+  email: string;
+}
+
+export interface IOrderBurgerRequest {
+  ingredients: string[];
+}
+
+// Типы WebSocket API (для работы с Orders)
+
+export interface IWsApiError {
+  status?: number;
+  statusText?: string;
+  body?: string;
+  message?: string;
+}
+
+export const TApiErrorStatus = {
+  CUSTOM_ERROR: 'CUSTOM_ERROR',
+} as const;
+
+export type TOrderStatus = 'created' | 'pending' | 'done';
+
+export interface IOrderDetails {
+  _id: string;
+  ingredients: string[];
+  status: TOrderStatus;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+  number: number;
+}
+
+export interface IWsMessageBase {
+  success: boolean;
+  message?: string; // Для ошибок типа: 'Invalid or missing token'
+}
+
+export interface IOrdersMessage extends IWsMessageBase {
+  total: number;
+  totalToday: number;
+  orders: IOrderDetails[];
+}
+
+export type TApiErrorStatus = (typeof TApiErrorStatus)[keyof typeof TApiErrorStatus];
+
+export interface IOrdersData {
+  data?: IOrdersMessage;
+  error?: unknown;
+  isUninitialized: boolean;
+  isLoading: boolean;
+  isError: boolean;
+  isSuccess: boolean;
+}

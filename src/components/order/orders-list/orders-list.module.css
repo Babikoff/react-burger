@@ -1,0 +1,38 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.error_message {
+  position: relative;
+  top: 10vh;
+  text-align: center;
+}
+
+.orders_list {
+  display: flex;
+  flex-direction: column;
+  max-width: 600px;
+  max-height: 80%;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  color: var(--text-primary-color);
+  list-style-type: none;
+}
+
+.preloader_container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: center;
+  height: 20vh;
+  margin: auto;
+}
+
+.preloader {
+  width: 100px;
+  height: 100px;
+  margin: auto;
+}
